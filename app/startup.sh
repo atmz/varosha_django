@@ -1,2 +1,2 @@
 #!/bin/bash
-python manage.py collectstatic && gunicorn --workers 2 myproject.wsgi
+gunicorn --workers 2 varosha.wsgi
