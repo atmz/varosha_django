@@ -1,2 +1,2 @@
 #!/bin/bash
-gunicorn --workers 2 varosha.wsgi
+python manage.py migrate && gunicorn --workers 2 varosha.wsgi
