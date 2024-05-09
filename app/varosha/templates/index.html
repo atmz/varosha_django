@@ -1,4 +1,5 @@
 
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,6 +14,7 @@
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 	<style>
 		html, body {
@@ -80,48 +82,15 @@
 //	var survey = L.tileLayer('./maps/survey_new/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'})
 
     var baseMaps = {
-    "Street map": osm,
+    "{% translate "Street map" %}": osm,
     };
     var layerMaps = {
-    "Street map": osm2,
-    "2023 Satellite": sat_layer,
+	"{% translate "Street map" %}": osm2,
+    "{% translate "2023 Satellite" %}": sat_layer,
    // "1963 Aerial": aerial_layer,
  //   "1929 Survey": survey,
     };
 
-	var locations = [
-		{
-			coords: [35.1155655,33.9486951],
-			media: "https://varosha-media.s3.amazonaws.com/5_EDISON.webm",
-			text: "5 Edison St<br>Home of Panayiotis and Ioulia Toumazis, and their children Elena and Tonis."
-		},
-		{
-			coords: [35.1115813, 33.9498385],
-			media: null,
-			text: "Agios Nikolaos Church"
-		},
-		{
-			coords: [35.1168699, 33.9573485],
-			media: null,
-			text: "Agia Triada Church"
-		},
-		{
-			coords: [35.1187799, 33.9516266],
-			media: null,
-			text: "Agios Ioannis Church"
-		},
-		{
-			coords: [35.1171854, 33.9580097],
-			media: "https://varosha-media.s3.amazonaws.com/asterias_old.jpg",
-			text: "Asperia Hotel",
-		},
-		{
-			coords: [35.1141570, 33.9549849],
-			media: "https://varosha-media.s3.amazonaws.com/lykio_ellinidon.jpg",
-			text: "Lykio Ellinidon"
-		}
-	];
-	
 	markers = []
 	const dbPointData = JSON.parse(
 		document.getElementById('point-data').textContent
@@ -132,7 +101,8 @@
 		
 		// Define the popup content with either image or video and text
 		var popupContent = '<div class="popup-content">';
-		if (location.media !== null) {
+		console.log(location)
+		if (location.media) {
 			var media_src = location.media.url
 			if (media_src.endsWith('.mp4') || media_src.endsWith('.webm')) {
 				popupContent += '<video autoplay><source src="' + media_src+ '" type="video/mp4">Your browser does not support the video tag.</video>';
@@ -178,6 +148,23 @@
     .setLatLng(center)
     .setContent('<p>What is this?<br />This is a map of the fenced off city of Varosha,<br /> with layers showing a current satellite view, <br />a 1963 aerial view, <br />and a set of 1929 survey maps.<br /><br />Use the layer controls at top right to <br />control what you see</p>')
     .openOn(map);
+	var addPointPopup = L.popup();
+	function onClick(e) {
+		if (!Boolean(map.getContainer().querySelector('.leaflet-popup'))) {
+			addPointPopup
+				.setLatLng(e.latlng)
+				.setContent("")
+				.openOn(map);
+			console.log(e.latlng);
+			var url="add-point-form?x="+ e.latlng.lat +"&y=" + e.latlng.lng;
+			$.get(url).done(function(data) {
+				addPointPopup.setContent(data);
+				addPointPopup.update();
+			});
+}		}
+
+	map.on('click', onClick); 
+
 </script>
 
 

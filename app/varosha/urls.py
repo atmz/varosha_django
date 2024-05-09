@@ -21,6 +21,7 @@ from varosha import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("point-form/", views.point_form, name="point-form"),
+    path("add-point-form/", views.point_add_from_map_form, name="add-point-form"),
     path("media-form/", views.media_form, name="media-form"),
     path('admin/', admin.site.urls),
 ]
