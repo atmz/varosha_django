@@ -127,3 +127,5 @@ MEDIA_URL = "https://varosha-media.s3.amazonaws.com/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_TRUSTED_ORIGINS = ['https://6zytaqhsqx.us-east-1.awsapprunner.com/']
