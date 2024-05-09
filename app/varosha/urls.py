@@ -20,5 +20,7 @@ from varosha import views
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path("point-form/", views.point_form, name="point-form"),
+    path("media-form/", views.media_form, name="media-form"),
     path('admin/', admin.site.urls),
 ]

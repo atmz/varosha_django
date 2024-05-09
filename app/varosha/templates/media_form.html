@@ -1,0 +1,10 @@
+<form action="/media-form/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>
+
+
+{% for media in media %}
+    <li>{{ media.path }} -- {{ media.source }} -- {{ media.point }}</li>
+{% endfor %}

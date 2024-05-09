@@ -52,6 +52,8 @@
 
 
 
+{{ point_data|json_script:"point-data" }}
+
 <div id="map" style="width: 1400px; height: 1000px;"></div>
 <script>
     var corner1 = L.latLng(35.123819,33.931361),
@@ -112,13 +114,8 @@
 			text: "Agios Ioannis Church"
 		},
 		{
-			coords: [35.11469994, 33.95588472],
-			media: "https://varosha-media.s3.amazonaws.com/edelweis_old.jpg",
-			text: "Eidelweiss Cafe"
-		},
-		{
 			coords: [35.1171854, 33.9580097],
-			media: "https://varosha-media.s3.amazonaws.com//asterias_old.jpg",
+			media: "https://varosha-media.s3.amazonaws.com/asterias_old.jpg",
 			text: "Asperia Hotel",
 		},
 		{
@@ -127,7 +124,32 @@
 			text: "Lykio Ellinidon"
 		}
 	];
+	
 	markers = []
+	const dbPointData = JSON.parse(
+		document.getElementById('point-data').textContent
+		);
+
+	dbPointData.forEach(function(location) {
+		var marker = L.marker([location.x, location.y])
+		
+		// Define the popup content with either image or video and text
+		var popupContent = '<div class="popup-content">';
+		if (location.media !== null) {
+			var media_src = location.media.url
+			if (media_src.endsWith('.mp4') || media_src.endsWith('.webm')) {
+				popupContent += '<video autoplay><source src="' + media_src+ '" type="video/mp4">Your browser does not support the video tag.</video>';
+			} else {
+				popupContent += '<img src="' + media_src + '">';
+			}
+		}
+		popupContent += '<p>' + location.name + '</p>';
+
+		// Bind the popup content to the marker
+		marker.bindPopup(popupContent);
+		markers.push(marker)
+	});
+/*
 	locations.forEach(function(location) {
 		var marker = L.marker(location.coords)
 		
@@ -146,6 +168,7 @@
 		marker.bindPopup(popupContent);
 		markers.push(marker)
 	});
+	*/
 
 	var poi = L.layerGroup(markers).addTo(map);
 	var overlayMaps = {
@@ -159,6 +182,7 @@
     .setContent('<p>What is this?<br />This is a map of the fenced off city of Varosha,<br /> with layers showing a current satellite view, <br />a 1963 aerial view, <br />and a set of 1929 survey maps.<br /><br />Use the layer controls at top right to <br />control what you see</p>')
     .openOn(map);
 </script>
+
 
 
 

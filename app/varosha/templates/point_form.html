@@ -1,0 +1,10 @@
+<form action="/point-form/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>
+
+
+{% for point in points %}
+    <li>{{ point.x }} -- {{ point.y }} -- {{ point.name }}</li>
+{% endfor %}
