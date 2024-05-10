@@ -1,11 +1,11 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from .settings import MEDIA_URL
 
 from .models import Media, Point
-from .forms import MediaForm, PointAddFromMapForm, PointForm
+from .forms import MediaForm, PointAddFromMapForm, PointDeleteForm, PointForm
 
 
 def point_form(request):
@@ -24,7 +24,12 @@ def point_form(request):
 
     return render(request, "point_form.html", {"form": form, "points": Point.objects.all()})
 
-@ensure_csrf_cookie
+def delete_point(request, point_id):
+    point = get_object_or_404(Point, id=point_id)
+    point.delete()
+    return redirect("/point-form")  # Redirect to your form page after deletion
+
+
 def point_add_from_map_form(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
@@ -71,6 +76,7 @@ def index(request):
             'x':p.x,
             'y':p.y,
             'name':p.name,
+            'name_gr':p.name_gr,
         }
         media = list(p.media_set.all())[0] if p.media_set.count()>0 else None
         if media:

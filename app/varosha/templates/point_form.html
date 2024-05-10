@@ -1,10 +1,19 @@
-<form action="/point-form/" method="post">
+<form action="/point-form/" method="post" class="styled-form">
     {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit">
+    {{ form.as_p }}
+    <button type="submit" class="submit-button">Submit</button>
 </form>
 
-
-{% for point in points %}
-    <li>{{ point.x }} -- {{ point.y }} -- {{ point.name }}</li>
-{% endfor %}
+<ul>
+    {% for point in points %}
+        <li>
+            {{ point.x }} -- {{ point.y }} -- {{ point.name }}-- {{ point.type }}
+            <form action="{% url 'delete_point' point.id %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this point?');">
+                    Delete
+                </button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>

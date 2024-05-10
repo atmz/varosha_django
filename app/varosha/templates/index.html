@@ -1,8 +1,10 @@
 
 {% load i18n %}
+{% get_current_language as current_language %}
+
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_language }}">
 <head>
 	<base target="_top">
 	<meta charset="utf-8">
@@ -29,12 +31,10 @@
 			}
 		
 	.leaflet-popup-content-wrapper {
-      width: 95vw; /* Set the width of the popup to 100% of the viewport width */
-      max-width: none !important; /* Disable max-width constraint */
+	  max-width: 95vw; /* Set the width of the popup to 100% of the viewport width */
     }
 	.leaflet-popup-content {
-      width: 95% !important; /* Ensure media fills the popup width */
-      max-width: none !important; /* Disable max-width constraint */   
+	  max-width: 95% !important; /* Ensure media fills the popup width */
       overflow-y: auto; /* Enable vertical scrolling if content exceeds the height */
     }
 
@@ -47,14 +47,14 @@
 
 	
 </head>
-<body>
-
-
 
 {{ point_data|json_script:"point-data" }}
+<body data-locale="{{ current_language }}">
 
 <div id="map" style="width: 1400px; height: 1000px;"></div>
 <script>
+	var currentLocale = document.body.getAttribute('data-locale');
+
     var corner1 = L.latLng(35.123819,33.931361),
     corner2 = L.latLng(35.082100,33.988048),
     bounds = L.latLngBounds(corner1, corner2);
@@ -67,6 +67,28 @@
         maxBounds: bounds
     });
 	
+    // Create a new Leaflet control for the language switcher
+    var LanguageControl = L.Control.extend({
+        onAdd: function(map) {
+            var div = L.DomUtil.create('div', 'language-switcher-control');
+            div.innerHTML = '<form action="{% url "set_language" %}" method="post">' +
+                '{% csrf_token %}' +
+                '<select name="language" onchange="this.form.submit()">' +
+                '{% get_current_language as LANGUAGE_CODE %}' +
+                '{% get_available_languages as LANGUAGES %}' +
+                '{% for code, name in LANGUAGES %}' +
+                '<option value="{{ code }}" {% if code == LANGUAGE_CODE %}selected{% endif %}>{{ name }}</option>' +
+                '{% endfor %}' +
+                '</select>' +
+                '</form>';
+            L.DomEvent.disableClickPropagation(div);
+            return div;
+        }
+    });
+
+    // Add the language switcher control to the map
+    map.addControl(new LanguageControl({position: 'topright'}));
+
 	const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 20,
 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -98,7 +120,15 @@
 
 	dbPointData.forEach(function(location) {
 		var marker = L.marker([location.x, location.y])
-		
+		    // Determine the name to use based on the locale
+			var locationName;
+			console.log(currentLocale)
+			if (currentLocale === 'el') {
+				locationName = location.name_gr || location.name;  // Fallback to name if name_gr is not available
+			} else {
+				locationName = location.name || location.name_gr;
+			}
+
 		// Define the popup content with either image or video and text
 		var popupContent = '<div class="popup-content">';
 		console.log(location)
@@ -110,43 +140,22 @@
 				popupContent += '<img src="' + media_src + '">';
 			}
 		}
-		popupContent += '<p>' + location.name + '</p>';
+		popupContent += '<p>' + locationName + '</p>';
 
 		// Bind the popup content to the marker
 		marker.bindPopup(popupContent);
 		markers.push(marker)
 	});
-/*
-	locations.forEach(function(location) {
-		var marker = L.marker(location.coords)
-		
-		// Define the popup content with either image or video and text
-		var popupContent = '<div class="popup-content">';
-		if (location.media !== null) {
-			if (location.media.endsWith('.mp4') || location.media.endsWith('.webm')) {
-				popupContent += '<video autoplay><source src="' + location.media + '" type="video/mp4">Your browser does not support the video tag.</video>';
-			} else {
-				popupContent += '<img src="' + location.media + '">';
-			}
-		}
-		popupContent += '<p>' + location.text + '</p>';
-
-		// Bind the popup content to the marker
-		marker.bindPopup(popupContent);
-		markers.push(marker)
-	});
-	*/
-
 	var poi = L.layerGroup(markers).addTo(map);
 	var overlayMaps = {
-		"Points of Interest": poi
+		"{% translate "Points of Interest" %}": poi
 	}
     var layerControl = L.control.layers( layerMaps,overlayMaps,{
 			collapsed:false,
 	}).addTo(map);
 	var popup = L.popup({keepInView: true})
     .setLatLng(center)
-    .setContent('<p>What is this?<br />This is a map of the fenced off city of Varosha,<br /> with layers showing a current satellite view, <br />a 1963 aerial view, <br />and a set of 1929 survey maps.<br /><br />Use the layer controls at top right to <br />control what you see</p>')
+    .setContent('<p>{% translate "What is this?" %}<br />{% translate "This is a map of the fenced off city of Varosha,<br /> with layers showing a current satellite view, <br />a 1963 aerial view, <br />and a set of 1929 survey maps." %}<br /><br />{% translate "Use the layer controls at top right to <br />control what you see" %}</p>')
     .openOn(map);
 	var addPointPopup = L.popup();
 	function onClick(e) {
