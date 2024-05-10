@@ -28,4 +28,6 @@ urlpatterns = [
     path("media-form/", views.media_form, name="media-form"),
     path('delete-point/<int:point_id>/', views.delete_point, name='delete_point'),
     path('admin/', admin.site.urls),
+    path('el/', views.set_language_to_greek, name='set_language_greek'),
+
 ]

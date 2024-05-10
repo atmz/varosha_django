@@ -1,12 +1,15 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.csrf import ensure_csrf_cookie
 
-from .settings import MEDIA_URL
+from django.utils.translation import activate
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 from .models import Media, Point
 from .forms import MediaForm, PointAddFromMapForm, PointDeleteForm, PointForm
 
+from .settings import MEDIA_URL
+from django.conf import settings
 
 def point_form(request):
     # if this is a POST request we need to process the form data
@@ -67,7 +70,6 @@ def media_form(request):
 
     return render(request, "media_form.html", {"form": form, "media": Media.objects.all()})
 
-@ensure_csrf_cookie
 def index(request):
     context = {}
     context["point_data"] = []
@@ -85,3 +87,9 @@ def index(request):
             }
         context["point_data"].append(point_data)
     return render(request, "index.html", context)
+
+def set_language_to_greek(request):
+    activate('el')  # Activate the Greek language
+    response = HttpResponseRedirect(reverse('index'))  # Redirect to the index page or a specified URL
+    response.set_cookie(settings.LANGUAGE_COOKIE_NAME, 'el')
+    return response
