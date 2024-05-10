@@ -41,7 +41,7 @@ def point_add_from_map_form(request):
         # check whether it's valid:
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect("")
+            return HttpResponseRedirect(reverse('index'))  # Redirect to the index page
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -90,6 +90,6 @@ def index(request):
 
 def set_language_to_greek(request):
     activate('el')  # Activate the Greek language
-    response = HttpResponseRedirect(reverse('index'))  # Redirect to the index page or a specified URL
+    response = HttpResponseRedirect(reverse('index'))  # Redirect to the index page
     response.set_cookie(settings.LANGUAGE_COOKIE_NAME, 'el')
     return response

@@ -19,8 +19,8 @@ class Person(models.Model):
 class Point(models.Model):
     x = models.FloatField(verbose_name=_("Longitude"))
     y = models.FloatField(verbose_name=_("Latitude"))
-    name = models.CharField(max_length=30, verbose_name=_("Name"))
-    name_gr = models.CharField(max_length=30, verbose_name=_("Name in Greek"))
+    name_gr = models.CharField(max_length=30, verbose_name=_("Name in Greek"), blank=True, default='')
+    name = models.CharField(max_length=30, verbose_name=_("Name in English"), blank=True, default='')
     STATUS_CHOICES = [
         ("P", _("Pending")),
         ("A", _("Approved")),
