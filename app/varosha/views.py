@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from .settings import MEDIA_URL
 
@@ -23,6 +24,7 @@ def point_form(request):
 
     return render(request, "point_form.html", {"form": form, "points": Point.objects.all()})
 
+@ensure_csrf_cookie
 def point_add_from_map_form(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
@@ -60,6 +62,7 @@ def media_form(request):
 
     return render(request, "media_form.html", {"form": form, "media": Media.objects.all()})
 
+@ensure_csrf_cookie
 def index(request):
     context = {}
     context["point_data"] = []
