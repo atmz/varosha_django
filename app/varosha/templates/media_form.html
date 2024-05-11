@@ -1,4 +1,4 @@
-<form action="/media-form/" method="post">
+<form action="/media-form/" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Submit">

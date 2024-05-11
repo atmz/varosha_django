@@ -24,4 +24,4 @@ class PointDeleteForm(ModelForm):
 class MediaForm(ModelForm):
      class Meta:
          model = Media
-         fields = ["path", "source", "point"]
+         fields = ["file", "source", "point"]

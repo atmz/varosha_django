@@ -12,3 +12,9 @@ run:
   secrets:
     - name: DATABASE_SECRET
       value-from: "arn:aws:ssm:us-east-1:556614631457:parameter/postgresspass"
+
+    - name: AWS_SECRET_ACCESS_KEY
+      value-from: "arn:aws:ssm:us-east-1:556614631457:parameter/django-AWS_SECRET_ACCESS_KEY"
+
+    - name: AWS_ACCESS_KEY_ID
+      value-from: "arn:aws:ssm:us-east-1:556614631457:parameter/django-AWS_ACCESS_KEY_ID"

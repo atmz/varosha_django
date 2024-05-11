@@ -3,10 +3,12 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Media(models.Model):
-    path = models.CharField(max_length=64)
+    file = models.FileField(upload_to='uploads/')  # Path in S3 where files will be stored
     source = models.CharField(max_length=64)
     point = models.ForeignKey("Point", on_delete=models.CASCADE)
-
+    @property
+    def path(self):
+        return self.file.url
 
 class Person(models.Model):
     name = models.CharField(max_length=64)
