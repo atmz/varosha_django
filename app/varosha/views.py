@@ -58,6 +58,18 @@ def media_form(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
+        import boto3
+        from botocore.exceptions import NoCredentialsError, PartialCredentialsError
+
+        s3 = boto3.client('s3')
+
+        try:
+            response = s3.list_buckets()
+            print("S3 Buckets:", response['Buckets'])
+        except NoCredentialsError:
+            print("Credentials not available")
+        except PartialCredentialsError:
+            print("Incomplete credentials provided")
         form = MediaForm(request.POST, request.FILES)
         # check whether it's valid:
         if form.is_valid():
