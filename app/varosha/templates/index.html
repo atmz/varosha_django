@@ -43,6 +43,15 @@
       width: 95%; /* Ensure media fills the popup width */
       max-width: 95% !important; /* Ensure images fill the popup width */
     }
+        .popup-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .popup-content li {
+            color: grey;
+            font-size: smaller;
+        }
 	</style>
 
 	
@@ -140,7 +149,22 @@
 				popupContent += '<img src="' + media_src + '">';
 			}
 		}
-		popupContent += '<p>' + locationName + '</p>';
+            popupContent += '<p>' + locationName + '</p>';
+
+
+            // Add associated people to the popup content
+            if (location.people && location.people.length > 0) {
+                popupContent += '<ul>';
+                location.people.forEach(function(person) {
+                    var personName = (currentLocale === 'el') ? person.name_gr : person.name;
+                    var birthDeathInfo = person.birth_year + " - " + (person.death_year || '');
+                    popupContent += '<li>' + personName + ' (' + birthDeathInfo + ')</li>';
+                });
+                popupContent += '</ul>';
+            }
+
+            popupContent += '</div>';
+
 
 		// Bind the popup content to the marker
 		marker.bindPopup(popupContent);

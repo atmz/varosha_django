@@ -5,8 +5,8 @@ from django.utils.translation import activate
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from .models import Media, Point
-from .forms import MediaForm, PointAddFromMapForm, PointDeleteForm, PointForm
+from .models import Media, Person, Point
+from .forms import MediaForm, PointAddFromMapForm, PointDeleteForm, PointForm, PersonForm, PersonDeleteForm
 
 from .settings import MEDIA_URL
 from django.conf import settings
@@ -27,6 +27,28 @@ def point_form(request):
 
     return render(request, "point_form.html", {"form": form, "points": Point.objects.all()})
 
+def person_form(request, person_id=None):
+    if person_id:
+        person = get_object_or_404(Person, id=person_id)
+    else:
+        person = None
+
+    if request.method == "POST":
+        form = PersonForm(request.POST, instance=person)
+        if form.is_valid():
+            form.save()
+            return redirect("/person-form")   # Redirect to the form page after saving
+    else:
+        form = PersonForm(instance=person)
+
+    return render(request, "person_form.html", {"form": form, "persons": Person.objects.all()})
+
+def delete_person(request, person_id):
+    person = get_object_or_404(Person, id=person_id)
+    person.delete()
+    return redirect("/person-form")  # Redirect to your form page after deletion
+
+
 def delete_point(request, point_id):
     point = get_object_or_404(Point, id=point_id)
     point.delete()
@@ -40,7 +62,8 @@ def point_add_from_map_form(request):
         form = PointForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            form.save()
+            point = form.save()
+            point.person_set.set(form.cleaned_data['persons'])
             return HttpResponseRedirect(reverse('index'))  # Redirect to the index page
 
     # if a GET (or any other method) we'll create a blank form
@@ -97,6 +120,16 @@ def index(request):
             point_data['media'] =  {
                 'url': f"{MEDIA_URL}{media.path}"
             }
+        # Include associated people with birth and death dates
+        associated_people = p.persons.all()
+        point_data['people'] = [
+            {
+                'name': person.name,
+                'name_gr': person.name_gr,
+                'birth_year': person.birth_year,
+                'death_year': person.death_year
+            } for person in associated_people
+        ]
         context["point_data"].append(point_data)
     return render(request, "index.html", context)
 

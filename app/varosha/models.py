@@ -9,17 +9,32 @@ class Media(models.Model):
     @property
     def path(self):
         return self.file.url
+    
 
 class Person(models.Model):
     name = models.CharField(max_length=64)
     name_gr = models.CharField(max_length=64)
     birth_year = models.CharField(max_length=4)
-    death_year = models.CharField(max_length=4)
-    parents = models.ManyToManyField("self", symmetrical=False, related_name="children")
-    point = models.ForeignKey("Point", on_delete=models.CASCADE,)
+    death_year = models.CharField(max_length=4, null=True, blank=True)
+    mother = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children_from_mother')
+    father = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children_from_father')
+    points = models.ManyToManyField('Point', related_name='persons')
+
+
+    def __str__(self):
+        return self.name
+
+    def get_parents(self):
+        return {
+            "mother": self.mother,
+            "father": self.father,
+        }
+
+    def get_children(self):
+        return list(self.children_from_mother.all()) + list(self.children_from_father.all())
 
 class Point(models.Model):
-    x = models.FloatField(verbose_name=_("Longitude"))
+    x = models.FloatField(verbose_name=_("Longitude"))  
     y = models.FloatField(verbose_name=_("Latitude"))
     name_gr = models.CharField(max_length=30, verbose_name=_("Name in Greek"), blank=True, default='')
     name = models.CharField(max_length=30, verbose_name=_("Name in English"), blank=True, default='')

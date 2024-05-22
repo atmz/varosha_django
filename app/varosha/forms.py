@@ -1,8 +1,20 @@
 from django import forms
 from django.forms import ModelForm
 
-from .models import Point, Media
+from .models import Person, Point, Media
+from django_select2.forms import ModelSelect2MultipleWidget
 
+
+class PersonForm(ModelForm):
+     class Meta:
+         model = Person
+         exclude = []
+
+class PersonDeleteForm(ModelForm):
+     class Meta:
+         model = Person
+         fields = ["id"]
+         widgets = {'id': forms.HiddenInput()}
 
 class PointForm(ModelForm):
      class Meta:
@@ -10,10 +22,15 @@ class PointForm(ModelForm):
          fields = ["x", "y", "name", "name_gr", "type"]
 
 class PointAddFromMapForm(ModelForm):
-     class Meta:
-         model = Point
-         fields = ["x", "y", "name","name_gr", "type"]
-         widgets = {'x': forms.HiddenInput(), 'y': forms.HiddenInput()}
+    persons = forms.ModelMultipleChoiceField(
+        queryset=Person.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    class Meta:
+        model = Point
+        fields = ["x", "y", "name","name_gr", "type"]
+        widgets = {'x': forms.HiddenInput(), 'y': forms.HiddenInput()}
 
 class PointDeleteForm(ModelForm):
      class Meta:

@@ -22,11 +22,15 @@ from django.urls import path, include
 
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
+    path('select2/', include('django_select2.urls')),
     path("", views.index, name="index"),
     path("point-form/", views.point_form, name="point-form"),
+    path('delete-point/<int:point_id>/', views.delete_point, name='delete_point'),
+    path("person-form/", views.person_form, name="person_form"),
+    path('person-form/<int:person_id>/', views.person_form, name='person_form'),
+    path('delete-person/<int:person_id>/', views.delete_person, name='delete_person'),
     path("add-point-form/", views.point_add_from_map_form, name="add-point-form"),
     path("media-form/", views.media_form, name="media-form"),
-    path('delete-point/<int:point_id>/', views.delete_point, name='delete_point'),
     path('admin/', admin.site.urls),
     path('el/', views.set_language_to_greek, name='set_language_greek'),
 
