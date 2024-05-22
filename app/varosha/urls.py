@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from varosha import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 from django.urls import path, include
 
@@ -34,4 +36,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('el/', views.set_language_to_greek, name='set_language_greek'),
 
-]
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

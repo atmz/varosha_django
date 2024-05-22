@@ -110,6 +110,7 @@ def index(request):
     context["point_data"] = []
     for p in Point.objects.all():
         point_data = {
+            'id':p.id,
             'x':p.x,
             'y':p.y,
             'name':p.name,

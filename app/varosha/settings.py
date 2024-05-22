@@ -137,6 +137,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = 'static/'
+
 MEDIA_URL = "https://varosha-media.s3.amazonaws.com/"
 
 # Default primary key field type

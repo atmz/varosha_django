@@ -1,0 +1,87 @@
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+.leaflet-container {
+    height: 1000px;
+    width: 1000px;
+    max-width: 100%;
+    max-height: 100%;
+    }
+
+.leaflet-popup-content-wrapper {
+max-width: 95vw; /* Set the width of the popup to 100% of the viewport width */
+}
+.leaflet-popup-content {
+max-width: 95% !important; /* Ensure media fills the popup width */
+overflow-y: auto; /* Enable vertical scrolling if content exceeds the height */
+}
+
+.popup-content img, .popup-content video {
+max-height: 50% !important; /* Ensure images fill the popup width */
+width: 95%; /* Ensure media fills the popup width */
+max-width: 95% !important; /* Ensure images fill the popup width */
+}
+.popup-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.popup-content li {
+    color: grey;
+    font-size: smaller;
+}
+.styled-form {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 350px;
+    margin: auto;
+    font-family: 'Arial', sans-serif;
+}
+
+.styled-form p {
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.styled-form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+.styled-form input[type="text"],
+.styled-form input[type="email"],
+.styled-form input[type="password"],
+.styled-form select,
+.styled-form textarea {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.submit-button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
+
+/* Additional style for the popup container */
+.leaflet-popup-content-wrapper {
+    border-radius: 10px;
+}
