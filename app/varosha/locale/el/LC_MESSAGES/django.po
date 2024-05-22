@@ -71,13 +71,13 @@ msgstr "Δορυφόρος 2023"
 
 #: varosha/templates/index.html:142
 msgid "Name"
-msgstr "Όνομα"
+msgstr "Όνομα στα Αγγλικά"
 
 #: varosha/templates/index.html:144
 #, fuzzy
 #| msgid "Name in Greek"
 msgid "Name (Greek)"
-msgstr "Όνομα στα Ελληνικά"
+msgstr "Όνομα"
 
 #: varosha/templates/index.html:146
 msgid "Birth Year"

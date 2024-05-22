@@ -122,7 +122,6 @@
 					contentType: false,
 					success: function(response) {
 						if (response.success) {
-							alert('Media uploaded successfully!');
 							popup.close();
 						} else {
 							alert('Error uploading media: ' + response.error);
@@ -136,17 +135,21 @@
             var popup = L.popup()
                 .setLatLng([x,y])
                 .setContent(`
-				<form id="add-person-from-map-form" action="/person-form/" method="post">
+				<form id="add-person-from-map-form" action="/person-form-ajax/" method="post">
 					{% csrf_token %}
 					<input type="hidden" name="points" value="${pointId}">
 					<label for="name">{% trans "Name" %}:</label>
 					<input type="text" name="name" id="name" required>
+					<br />
 					<label for="name_gr">{% trans "Name (Greek)" %}:</label>
 					<input type="text" name="name_gr" id="name_gr">
+					<br />
 					<label for="birth_year">{% trans "Birth Year" %}:</label>
 					<input type="text" name="birth_year" id="birth_year">
+					<br />
 					<label for="death_year">{% trans "Death Year" %}:</label>
 					<input type="text" name="death_year" id="death_year">
+					<br />
 					<button type="submit">{% trans "Add New Person" %}</button>
 				</form>				`
 				)
@@ -162,7 +165,6 @@
 					contentType: false,
 					success: function(response) {
 						if (response.success) {
-							alert('Person added successfully!');
 							popup.close();
 						} else {
 							alert('Error uploading media: ' + response.error);

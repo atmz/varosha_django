@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from django.utils.translation import activate
@@ -42,6 +42,14 @@ def person_form(request, person_id=None):
         form = PersonForm(instance=person)
 
     return render(request, "person_form.html", {"form": form, "persons": Person.objects.all()})
+
+
+def person_form_ajax(request):
+    form = PersonForm(request.POST)
+    if form.is_valid():
+        form.save()
+        return JsonResponse({"success": "saved person"})
+    return JsonResponse({"error": "failed to save"})
 
 def delete_person(request, person_id):
     person = get_object_or_404(Person, id=person_id)

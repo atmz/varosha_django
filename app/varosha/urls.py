@@ -29,6 +29,7 @@ urlpatterns = [
     path('delete-point/<int:point_id>/', views.delete_point, name='delete_point'),
     path("person-form/", views.person_form, name="person_form"),
     path('person-form/<int:person_id>/', views.person_form, name='person_form'),
+    path("person-form-ajax/", views.person_form_ajax, name="person-form-ajax"),
     path('delete-person/<int:person_id>/', views.delete_person, name='delete_person'),
     path("add-point-form/", views.point_add_from_map_form, name="add-point-form"),
     path("media-form/", views.media_form, name="media-form"),
