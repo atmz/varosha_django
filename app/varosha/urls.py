@@ -24,7 +24,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
-    path('select2/', include('django_select2.urls')),
     path("", views.index, name="index"),
     path("point-form/", views.point_form, name="point-form"),
     path('delete-point/<int:point_id>/', views.delete_point, name='delete_point'),
