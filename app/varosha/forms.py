@@ -2,7 +2,6 @@ from django import forms
 from django.forms import ModelForm
 
 from .models import Person, Point, Media
-from django_select2.forms import ModelSelect2MultipleWidget
 
 
 class PersonForm(ModelForm):
