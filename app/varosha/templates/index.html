@@ -90,6 +90,18 @@
  //   "1929 Survey": survey,
     };
 
+	function openEditForm(pointId, x, y) {
+			
+			addPointPopup
+				.setLatLng([x,y])
+				.setContent("")
+				.openOn(map);
+			var url="add-point-form?x="+ x +"&y=" + y + "&id="+ pointId;
+			$.get(url).done(function(data) {
+				addPointPopup.setContent(data);
+				addPointPopup.update();
+			});
+		}
         function openUploadForm(pointId, x, y) {
 			
             var popup = L.popup()
@@ -111,7 +123,7 @@
 					success: function(response) {
 						if (response.success) {
 							alert('Media uploaded successfully!');
-							$('#media-upload-modal').hide();
+							popup.close();
 						} else {
 							alert('Error uploading media: ' + response.error);
 						}
@@ -119,6 +131,47 @@
 				});
 			});
 		}
+        function openAddPersonForm(pointId, x, y) {
+			
+            var popup = L.popup()
+                .setLatLng([x,y])
+                .setContent(`
+				<form id="add-person-from-map-form" action="/person-form/" method="post">
+					{% csrf_token %}
+					<input type="hidden" name="points" value="${pointId}">
+					<label for="name">{% trans "Name" %}:</label>
+					<input type="text" name="name" id="name" required>
+					<label for="name_gr">{% trans "Name (Greek)" %}:</label>
+					<input type="text" name="name_gr" id="name_gr">
+					<label for="birth_year">{% trans "Birth Year" %}:</label>
+					<input type="text" name="birth_year" id="birth_year">
+					<label for="death_year">{% trans "Death Year" %}:</label>
+					<input type="text" name="death_year" id="death_year">
+					<button type="submit">{% trans "Add New Person" %}</button>
+				</form>				`
+				)
+                .openOn(map);
+			$('#add-person-from-map-form').submit(function(event) {
+				event.preventDefault();
+				var formData = new FormData(this);
+				$.ajax({
+					url: $(this).attr('action'),
+					type: $(this).attr('method'),
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function(response) {
+						if (response.success) {
+							alert('Person added successfully!');
+							popup.close();
+						} else {
+							alert('Error uploading media: ' + response.error);
+						}
+					}
+				});
+			});
+		}
+
 
 
 	markers = []
@@ -160,8 +213,12 @@
                     popupContent += '<li>' + personName + ' (' + birthDeathInfo + ')</li>';
                 });
                 popupContent += '</ul>';
-            }
+            }			
+			popupContent += '<button onclick="openEditForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% translate "Edit location" %}</button>';
+
 			popupContent += '<button onclick="openUploadForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% translate "Upload Media" %}</button>';
+
+			popupContent += '<button onclick="openAddPersonForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% translate "Add Person" %}</button>';
 
             popupContent += '</div>';
 

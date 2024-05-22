@@ -59,21 +59,31 @@ def point_add_from_map_form(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
-        form = PointForm(request.POST)
+        form = PointAddFromMapForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
             point = form.save()
-            point.person_set.set(form.cleaned_data['persons'])
+            print(form.cleaned_data['persons'])
+            point.persons.set(form.cleaned_data['persons'])
             return HttpResponseRedirect(reverse('index'))  # Redirect to the index page
 
     # if a GET (or any other method) we'll create a blank form
     else:
         x = request.GET["x"]
         y = request.GET["y"]
-        form = PointAddFromMapForm(initial={
-            "x":x,
-            "y":y
-        })
+        if "id" in request.GET:
+            point = get_object_or_404(Point,id=request.GET["id"])
+            form = PointAddFromMapForm(instance=point,
+            initial = {
+                'persons': point.persons.all(),  # Set the initial value for persons field
+            }
+        )
+        else:
+            form = PointAddFromMapForm(initial={
+                "x":x,
+                "y":y
+            })
+
 
     return render(request, "add_point_from_map_form.html", {"form": form, "points": Point.objects.all()})
 

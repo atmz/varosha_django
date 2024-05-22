@@ -1,8 +1,5 @@
 {% load i18n %}
 
-{% load static %}
-
-<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 <form action="/add-point-form/" method="post" class="styled-form">
     {% csrf_token %}
     {{ form.as_p }}
