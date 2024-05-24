@@ -6,5 +6,10 @@
 
 
 {% for media in media %}
-    <li>{{ media.path }} -- {{ media.source }} -- {{ media.point }}</li>
+    <li>{{ media.path }} -- {{ media.source }} -- {{ media.point }}<
+        <form action="{% url 'delete_media' media.id %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this media?');">Delete</button>
+        </form>
+        /li>
 {% endfor %}

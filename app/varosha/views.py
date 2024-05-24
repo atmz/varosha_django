@@ -83,6 +83,11 @@ def delete_person(request, person_id):
     person.delete()
     return redirect("/person-form")  # Redirect to your form page after deletion
 
+def delete_media(request, media_id):
+    media = get_object_or_404(Media, id=media_id)
+    media.delete()
+    return redirect("/media-form")  # Redirect to your form page after deletion
+
 
 def delete_point(request, point_id):
     point = get_object_or_404(Point, id=point_id)
