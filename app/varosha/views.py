@@ -153,7 +153,7 @@ def index(request):
         media = list(p.media_set.all())[0] if p.media_set.count()>0 else None
         if media:
             point_data['media'] =  {
-                'url': f"{MEDIA_URL}{media.path}"
+                'url': f"{media.path}"
             }
         # Include associated people with birth and death dates
         associated_people = p.persons.all()
