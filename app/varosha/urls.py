@@ -26,6 +26,7 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path("", views.index, name="index"),
     path("point-form/", views.point_form, name="point-form"),
+    path("point-form/<int:point_id>/", views.point_form, name="point-form"),
     path('delete-point/<int:point_id>/', views.delete_point, name='delete_point'),
     path("person-form/", views.person_form, name="person_form"),
     path('person-form/<int:person_id>/', views.person_form, name='person_form'),

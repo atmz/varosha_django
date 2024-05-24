@@ -12,11 +12,16 @@ from .forms import MediaForm, PointAddFromMapForm, PointDeleteForm, PointForm, P
 from .settings import MEDIA_URL
 from django.conf import settings
 
-def point_form(request):
+def point_form(request, point_id=None):
     # if this is a POST request we need to process the form data
+    if point_id:
+        point = get_object_or_404(Point, id=point_id)
+    else:
+        point = None
+
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
-        form = PointForm(request.POST)
+        form = PointForm(request.POST, instance=point)
         # check whether it's valid:
         if form.is_valid():
             form.save()
@@ -24,7 +29,7 @@ def point_form(request):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = PointForm()
+        form = PointForm(instance=point)
 
     return render(request, "point_form.html", {"form": form, "points": Point.objects.all()})
 
@@ -95,11 +100,16 @@ def delete_point(request, point_id):
     return redirect("/point-form")  # Redirect to your form page after deletion
 
 
-def point_add_from_map_form(request):
+def point_add_from_map_form(request, point_id=None):
     # if this is a POST request we need to process the form data
+
+    if point_id:
+        point = get_object_or_404(Point, id=point_id)
+    else:
+        point = None
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
-        form = PointAddFromMapForm(request.POST)
+        form = PointForm(request.POST, instance=point)
         # check whether it's valid:
         if form.is_valid():
             point = form.save()
