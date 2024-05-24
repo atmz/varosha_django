@@ -28,6 +28,18 @@ def point_form(request):
     return render(request, "point_form.html", {"form": form, "points": Point.objects.all()})
 
 def person_form(request, person_id=None):
+    import boto3
+    from botocore.exceptions import NoCredentialsError, PartialCredentialsError
+
+    s3 = boto3.client('s3')
+
+    try:
+        response = s3.list_buckets()
+        print("S3 Buckets:", response['Buckets'])
+    except NoCredentialsError:
+        print("Credentials not available")
+    except PartialCredentialsError:
+        print("Incomplete credentials provided")
     if person_id:
         person = get_object_or_404(Person, id=person_id)
     else:
