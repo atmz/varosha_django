@@ -165,11 +165,11 @@ def index(request):
             'name':p.name,
             'name_gr':p.name_gr,
         }
-        media = list(p.media_set.all())[0] if p.media_set.count()>0 else None
-        if media:
-            point_data['media'] =  {
-                'url': f"{media.path}"
-            }
+        media = p.media_set.all()
+        if media.exists():
+            point_data['media'] = [{'url': m.path} for m in media]
+        else:
+            point_data['media'] = []
         # Include associated people with birth and death dates
         associated_people = p.persons.all()
         point_data['people'] = [

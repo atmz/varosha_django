@@ -21,6 +21,8 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
+	<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+	<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 	
 </head>
 
@@ -195,14 +197,33 @@
 		// Define the popup content with either image or video and text
 		var popupContent = '<div class="popup-content">';
 		console.log(location)
-		if (location.media) {
-			var media_src = location.media.url
-			if (media_src.endsWith('.mp4') || media_src.endsWith('.webm')) {
-				popupContent += '<video autoplay><source src="' + media_src+ '" type="video/mp4">Your browser does not support the video tag.</video>';
-			} else {
-				popupContent += '<img src="' + media_src + '">';
-			}
+		if (location.media && location.media.length > 0) {
+			var swiperContainer = '<div class="swiper-container"><div class="swiper-wrapper">';
+			location.media.forEach(function(media) {
+				var media_src = media.url;
+				if (media_src.endsWith('.mp4') || media_src.endsWith('.webm')) {
+					swiperContainer += '<div class="swiper-slide"><video autoplay controls><source src="' + media_src + '" type="video/mp4">Your browser does not support the video tag.</video></div>';
+				} else {
+					swiperContainer += '<div class="swiper-slide"><img src="' + media_src + '"></div>';
+				}
+			});
+			swiperContainer += '</div><div class="swiper-pagination"></div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div></div>';
+			popupContent += swiperContainer;
 		}
+
+// Initialize Swiper after the popup is added to the DOM
+new Swiper('.swiper-container', {
+    loop: true,
+    pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+    },
+    navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+    },
+});
+
             popupContent += '<p>' + locationName + '</p>';
 
 
