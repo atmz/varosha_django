@@ -151,11 +151,10 @@ CSRF_TRUSTED_ORIGINS = ['https://6zytaqhsqx.us-east-1.awsapprunner.com']
 if "AWS_SECRET_ACCESS_KEY" in environ:
     AWS_ACCESS_KEY_ID = environ.get("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = environ.get("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = 'varosha-media'
-AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL = 'public-read'
-AWS_S3_REGION_NAME = 'us-east-1' 
-
-# Set default file storage to S3
-#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    AWS_STORAGE_BUCKET_NAME = 'varosha-media'
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_S3_REGION_NAME = 'us-east-1'
+else:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
