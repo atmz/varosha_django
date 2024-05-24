@@ -124,6 +124,7 @@
 					contentType: false,
 					success: function(response) {
 						if (response.success) {
+							alert('Uploaded successfully');
 							popup.close();
 						} else {
 							alert('Error uploading media: ' + response.error);
@@ -201,7 +202,7 @@
 			var swiperContainer = '<div class="swiper-container"><div class="swiper-wrapper">';
 			location.media.forEach(function(media) {
 				var media_src = media.url;
-				if (media_src.endsWith('.mp4') || media_src.endsWith('.webm')) {
+				if (media_src.includes('.mp4?') || media_src.includes('.webm?')) {
 					swiperContainer += '<div class="swiper-slide"><video autoplay controls><source src="' + media_src + '" type="video/mp4">Your browser does not support the video tag.</video></div>';
 				} else {
 					swiperContainer += '<div class="swiper-slide"><img src="' + media_src + '"></div>';
