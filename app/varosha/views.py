@@ -1,3 +1,4 @@
+import os
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -28,10 +29,22 @@ def point_form(request):
     return render(request, "point_form.html", {"form": form, "points": Point.objects.all()})
 
 def person_form(request, person_id=None):
+    import logging
     import boto3
     from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 
-    s3 = boto3.client('s3')
+    logging.basicConfig(level=logging.DEBUG)
+
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_DEFAULT_REGION = os.getenv("AWS_DEFAULT_REGION", 'us-east-1')
+
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        region_name=AWS_DEFAULT_REGION
+    )
 
     try:
         response = s3.list_buckets()
@@ -40,6 +53,8 @@ def person_form(request, person_id=None):
         print("Credentials not available")
     except PartialCredentialsError:
         print("Incomplete credentials provided")
+    except Exception as e:
+        print(f"An error occurred: {e}")
     if person_id:
         person = get_object_or_404(Person, id=person_id)
     else:
@@ -111,18 +126,6 @@ def media_form(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
-        import boto3
-        from botocore.exceptions import NoCredentialsError, PartialCredentialsError
-
-        s3 = boto3.client('s3')
-
-        try:
-            response = s3.list_buckets()
-            print("S3 Buckets:", response['Buckets'])
-        except NoCredentialsError:
-            print("Credentials not available")
-        except PartialCredentialsError:
-            print("Incomplete credentials provided")
         form = MediaForm(request.POST, request.FILES)
         # check whether it's valid:
         if form.is_valid():
