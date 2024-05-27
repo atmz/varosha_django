@@ -88,5 +88,5 @@ max-width: 95% !important; /* Ensure images fill the popup width */
     border-radius: 10px;
 }
 .leaflet-control-layers {
-    z-index: 650; /* lower than the popup */
+    z-index: 650  !important; /* lower than the popup */
 }
