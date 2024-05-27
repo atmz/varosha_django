@@ -79,6 +79,7 @@
 	
 	var sat_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/sat256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'})
 	var aerial_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/1963_256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'})
+	var survey_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/survey_256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'})
 
 //	var survey = L.tileLayer('./maps/survey_new/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'})
 
@@ -89,7 +90,7 @@
 	"{% translate "Street map" %}": osm2,
     "{% translate "2023 Satellite" %}": sat_layer,
     "{% translate "1963 Aerial"%}": aerial_layer,
- //   "1929 Survey": survey,
+    "{% translate "1929 Survey"%}": survey_layer,
     };
 
 	function openEditForm(pointId, x, y) {
