@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-24 14:32+0300\n"
+"POT-Creation-Date: 2024-05-27 12:24+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,55 +61,65 @@ msgstr "Άλλο"
 msgid "Type"
 msgstr "Τύπος"
 
+#: varosha/templates/add_point_from_map_form.html:6
+msgid "Save"
+msgstr "Αποθήκευση"
 
-
-#: varosha/templates/index.html:84 varosha/templates/index.html:87
+#: varosha/templates/index.html:77 varosha/templates/index.html:80
 msgid "Street map"
 msgstr "Χάρτης οδών"
 
-#: varosha/templates/index.html:88
+#: varosha/templates/index.html:81
 msgid "2023 Satellite"
 msgstr "Δορυφόρος 2023"
 
-#: varosha/templates/index.html:141
+#: varosha/templates/index.html:82
+msgid "1963 Aerial"
+msgstr "Αεροφωτογραφία 1963"
+
+#: varosha/templates/index.html:83
+msgid "1929 Survey"
+msgstr "Χάρτης 1929"
+
+#: varosha/templates/index.html:134
 msgid "Name"
 msgstr "Όνομα στα Αγγλικά"
 
-#: varosha/templates/index.html:144
+#: varosha/templates/index.html:137
 #, fuzzy
 #| msgid "Name in Greek"
 msgid "Name (Greek)"
 msgstr "Όνομα"
 
-#: varosha/templates/index.html:147
+#: varosha/templates/index.html:140
 msgid "Birth Year"
 msgstr "Έτος Γέννησης"
 
-#: varosha/templates/index.html:150
+#: varosha/templates/index.html:143
 msgid "Death Year"
 msgstr "Έτος Θανάτου"
 
-#: varosha/templates/index.html:153
+#: varosha/templates/index.html:146
 msgid "Add New Person"
 msgstr "Προσθήκη Νέου Προσώπου"
 
-#: varosha/templates/index.html:219
-msgid "Edit location"
-msgstr "Επεξεργασία τοποθεσίας"
+#: varosha/templates/index.html:206
+msgid "Upload Media"
+msgstr "Μεταφόρτωση Μέσων"
 
-#: varosha/templates/index.html:223
+#: varosha/templates/index.html:207
 msgid "Add Person"
 msgstr "Προσθήκη Προσώπου"
 
-#: varosha/templates/index.html:234
+#: varosha/templates/index.html:229
 msgid "Points of Interest"
 msgstr "Σημεία Ενδιαφέροντος"
 
-#: varosha/templates/index.html:241
+#: varosha/templates/index.html:238
 msgid "What is this?"
 msgstr "Τι είναι αυτό;"
 
-#: varosha/templates/index.html:241
+#: varosha/templates/index.html:238
 msgid ""
 "This is a map of the fenced off city of Varosha,<br /> with layers showing a "
 "current satellite view, <br />a 1963 aerial view, <br />and a set of 1929 "
@@ -119,26 +129,17 @@ msgstr ""
 "επίπεδα που δείχνουν μια τρέχουσα δορυφορική προβολή, <br />μια "
 "αεροφωτογραφία του 1963, <br />και μια σειρά χαρτών από το 1929."
 
-#: varosha/templates/index.html:241
+#: varosha/templates/index.html:238
 msgid "Use the layer controls at top right to <br />control what you see"
 msgstr ""
 "Χρησιμοποιήστε τα επίπεδα ελέγχου πάνω δεξιά <br />για να ρυθμίσετε τι "
 "βλέπετε"
 
+#~ msgid "Edit location"
+#~ msgstr "Επεξεργασία τοποθεσίας"
+
 #~ msgid "Add"
 #~ msgstr "Προσθήκη"
 
-#~ msgid "Upload Media"
-#~ msgstr "Μεταφόρτωση Μέσων"
-
-#: varosha/templates/add_point_from_map_form.html:6
-msgid "Save"
-msgstr "Αποθήκευση"
-
-#: varosha/templates/index.html:89
-msgid "1963 Aerial"
-msgstr "Αεροφωτογραφία 1963"
-
-#: varosha/templates/index.html:221
-msgid "Add Photo or video"
-msgstr "Προσθήκη Φωτογραφίας ή Βίντεο"
+#~ msgid "Add Photo or video"
+#~ msgstr "Προσθήκη Φωτογραφίας ή Βίντεο"
