@@ -14,14 +14,17 @@
     <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
 </head>
 <body data-locale="{{ current_language }}">
     {{ point_data|json_script:"point-data" }}
     <div id="map" style="width: 1400px; height: 1000px;"></div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
 
     <script>
         var currentLocale = document.body.getAttribute('data-locale');
@@ -174,55 +177,67 @@
         );
 
         dbPointData.forEach(function(location) {
-            var marker = L.marker([location.x, location.y]);
+			var marker = L.marker([location.x, location.y]);
 
-            var locationName = (currentLocale === 'el') ? location.name_gr : location.name;
+			var locationName = (currentLocale === 'el') ? location.name_gr : location.name;
 
-            var popupContent = '<div class="popup-content">';
-            if (location.media && location.media.length > 0) {
-                var swiperContainer = '<div class="swiper-container"><div class="swiper-wrapper">';
-                location.media.forEach(function(media) {
-                    var media_src = media.url;
-                    if (media_src.includes('.mp4?') || media_src.includes('.webm?')) {
-                        swiperContainer += '<div class="swiper-slide"><video autoplay controls><source src="' + media_src + '" type="video/mp4">Your browser does not support the video tag.</video></div>';
-                    } else {
-                        swiperContainer += '<div class="swiper-slide"><img src="' + media_src + '"></div>';
-                    }
-                });
-                swiperContainer += '</div><div class="swiper-pagination"></div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div></div>';
-                popupContent += swiperContainer;
-            }
-            popupContent += '<p>' + locationName + '</p>';
+			var popupContent = '<div class="popup-content">';
+			if (location.media && location.media.length > 0) {
+				var swiperContainer = '<div class="swiper-container"><div class="swiper-wrapper">';
+				location.media.forEach(function(media) {
+					var media_src = media.url;
+					if (media_src.includes('.mp4?') || media_src.includes('.webm?')) {
+						swiperContainer += '<div class="swiper-slide"><a class="popup-video" href="' + media_src + '"><video autoplay controls><source src="' + media_src + '" type="video/mp4">Your browser does not support the video tag.</video></a></div>';
+					} else {
+						swiperContainer += '<div class="swiper-slide"><a class="popup-image" href="' + media_src + '"><img src="' + media_src + '"></a></div>';
+					}
+				});
+				swiperContainer += '</div><div class="swiper-pagination"></div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div></div>';
+				popupContent += swiperContainer;
+			}
+			popupContent += '<p>' + locationName + '</p>';
 
-            if (location.people && location.people.length > 0) {
-                popupContent += '<ul>';
-                location.people.forEach(function(person) {
-                    var personName = (currentLocale === 'el') ? person.name_gr : person.name;
-                    var birthDeathInfo = person.birth_year + " - " + (person.death_year || '');
-                    popupContent += '<li>' + personName + ' (' + birthDeathInfo + ')</li>';
-                });
-                popupContent += '</ul>';
-            }
-            popupContent += '<button onclick="openUploadForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Upload Media" %}</button>';
-            popupContent += '<button onclick="openAddPersonForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Add Person" %}</button>';
-            popupContent += '</div>';
+			if (location.people && location.people.length > 0) {
+				popupContent += '<ul>';
+				location.people.forEach(function(person) {
+					var personName = (currentLocale === 'el') ? person.name_gr : person.name;
+					var birthDeathInfo = person.birth_year + " - " + (person.death_year || '');
+					popupContent += '<li>' + personName + ' (' + birthDeathInfo + ')</li>';
+				});
+				popupContent += '</ul>';
+			}
+			popupContent += '<button onclick="openUploadForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Upload Media" %}</button>';
+			popupContent += '<button onclick="openAddPersonForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Add Person" %}</button>';
+			popupContent += '</div>';
 
-            marker.bindPopup(popupContent);
-            markers.push(marker);
+			marker.bindPopup(popupContent);
+			markers.push(marker);
 
-            marker.on('popupopen', function() {
-                new Swiper('.swiper-container', {
-                    navigation: {
-                        nextEl: '.swiper-button-next',
-                        prevEl: '.swiper-button-prev',
-                    },
-                    pagination: {
-                        el: '.swiper-pagination',
-                        clickable: true,
-                    },
-                });
-            });
-        });
+			marker.on('popupopen', function() {
+				new Swiper('.swiper-container', {
+					navigation: {
+						nextEl: '.swiper-button-next',
+						prevEl: '.swiper-button-prev',
+					},
+					pagination: {
+						el: '.swiper-pagination',
+						clickable: true,
+					},
+				});
+
+				// Initialize Magnific Popup
+				$('.popup-image').magnificPopup({
+					type: 'image',
+					gallery: {
+						enabled: true
+					}
+				});
+
+				$('.popup-video').magnificPopup({
+					type: 'iframe'
+				});
+			});
+		});
 
         var poi = L.layerGroup(markers).addTo(map);
         var overlayMaps = {
