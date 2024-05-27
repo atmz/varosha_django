@@ -11,11 +11,13 @@ html, body {
     }
 
 .leaflet-popup-content-wrapper {
-max-width: 95vw; /* Set the width of the popup to 100% of the viewport width */
+    max-width: 95vw; /* Set the width of the popup to 100% of the viewport width */
+    min-width: 300px; /* Ensure a minimum width for the popup */
+    width: auto; /* Allow the width to be responsive */
 }
 .leaflet-popup-content {
-max-width: 95% !important; /* Ensure media fills the popup width */
-overflow-y: auto; /* Enable vertical scrolling if content exceeds the height */
+    max-width: 100% !important; /* Ensure media fills the popup width */
+    overflow-y: auto; /* Enable vertical scrolling if content exceeds the height */
 }
 
 .popup-content img, .popup-content video {
