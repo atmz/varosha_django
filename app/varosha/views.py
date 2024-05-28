@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from .models import Media, Person, Point
-from .forms import MediaForm, PointAddFromMapForm, PointDeleteForm, PointForm, PersonForm, PersonDeleteForm
+from .forms import MediaForm, PointAddFromMapForm, PointDeleteForm, PointForm, PersonForm, PersonDeleteForm, PointLinkForm
 
 from .settings import MEDIA_URL
 from django.conf import settings
@@ -82,6 +82,21 @@ def person_form_ajax(request):
         form.save()
         return JsonResponse({"success": "saved person"})
     return JsonResponse({"error": "failed to save"})
+
+
+def link_form_ajax(request):
+    if request.method == 'POST':
+        form = PointLinkForm(request.POST)
+        if form.is_valid():
+            link = form.save(commit=False)
+            point_id = request.POST.get('point_id')
+            point = get_object_or_404(Point, id=point_id)
+            link.point = point
+            link.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'error': form.errors})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 def delete_person(request, person_id):
     person = get_object_or_404(Person, id=person_id)
@@ -170,6 +185,9 @@ def index(request):
             point_data['media'] = [{'url': m.path} for m in media]
         else:
             point_data['media'] = []
+             # Include associated links
+        links = p.links.all()
+        point_data['links'] = [{'name': link.name, 'url': link.url} for link in links]
         # Include associated people with birth and death dates
         associated_people = p.persons.all()
         point_data['people'] = [

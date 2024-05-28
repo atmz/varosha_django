@@ -163,6 +163,7 @@
                     success: function(response) {
                         if (response.success) {
                             popup.close();
+							location.reload();  // Reload the page to see the new link
                         } else {
                             alert('Error uploading media: ' + response.error);
                         }
@@ -170,6 +171,45 @@
                 });
             });
         }
+
+		function openAddLinkForm(pointId, x, y) {
+			var popup = L.popup()
+				.setLatLng([x, y])
+				.setContent(`
+					<form id="add-link-from-map-form" action="/link-form-ajax/" method="post">
+						{% csrf_token %}
+						<input type="hidden" name="point_id" value="${pointId}">
+						<label for="link_name">{% trans "Link Name" %}:</label>
+						<input type="text" name="name" id="link_name" required>
+						<br />
+						<label for="link_url">{% trans "URL" %}:</label>
+						<input type="url" name="url" id="link_url" required>
+						<br />
+						<button type="submit">{% trans "Add New Link" %}</button>
+					</form>
+				`)
+				.openOn(map);
+
+			$('#add-link-from-map-form').submit(function(event) {
+				event.preventDefault();
+				var formData = new FormData(this);
+				$.ajax({
+					url: $(this).attr('action'),
+					type: $(this).attr('method'),
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function(response) {
+						if (response.success) {
+							popup.close();
+							location.reload();  // Reload the page to see the new link
+						} else {
+							alert('Error adding link: ' + response.error);
+						}
+					}
+				});
+			});
+		}
 
         const markers = [];
         const dbPointData = JSON.parse(
@@ -206,8 +246,16 @@
 				});
 				popupContent += '</ul>';
 			}
+			if (location.links && location.links.length > 0) {
+				popupContent += '<ul>';
+				location.links.forEach(function(link) {
+					popupContent += '<li><a href="' + link.url + '" target="_blank">' + link.name + '</a></li>';
+				});
+				popupContent += '</ul>';
+			}
 			popupContent += '<button onclick="openUploadForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Upload Media" %}</button>';
 			popupContent += '<button onclick="openAddPersonForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Add Person" %}</button>';
+			popupContent += '<button onclick="openAddLinkForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Add Link" %}</button>';
 			popupContent += '</div>';
 
 			marker.bindPopup(popupContent);

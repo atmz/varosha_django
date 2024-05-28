@@ -37,5 +37,7 @@ urlpatterns = [
     path("media-form/", views.media_form, name="media-form"),
     path('admin/', admin.site.urls),
     path('el/', views.set_language_to_greek, name='set_language_greek'),
+    path('link-form-ajax/', views.link_form_ajax, name='link-form-ajax'),
+
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

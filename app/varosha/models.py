@@ -64,3 +64,7 @@ class Point(models.Model):
         return f"{self.name} - [{self.x},{self.y}]"
 
     
+class PointLink(models.Model):
+    point = models.ForeignKey(Point, related_name='links', on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, verbose_name=_("Link Name"))
+    url = models.URLField(verbose_name=_("URL"))

@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 
-from .models import Person, Point, Media
+from .models import Person, Point, Media, PointLink
 
 
 class PersonForm(ModelForm):
@@ -41,3 +41,8 @@ class MediaForm(ModelForm):
      class Meta:
          model = Media
          fields = ["file", "source", "point"]
+
+class PointLinkForm(forms.ModelForm):
+    class Meta:
+        model = PointLink
+        fields = ['name', 'url']
