@@ -102,7 +102,7 @@ def point_add_from_map_form(request, point_id=None):
         # check whether it's valid:
         if form.is_valid():
             point = form.save()
-            point.persons.set(form.cleaned_data['persons'])
+            # point.persons.set(form.cleaned_data['persons'])
             return HttpResponseRedirect(reverse('index')) 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -111,9 +111,9 @@ def point_add_from_map_form(request, point_id=None):
         if "id" in request.GET:
             point = get_object_or_404(Point,id=request.GET["id"])
             form = PointAddFromMapForm(instance=point,
-            initial = {
-                'persons': point.persons.all(),  # Set the initial value for persons field
-            }
+            # initial = {
+            #     'persons': point.persons.all(),  # Set the initial value for persons field
+            # }
         )
         else:
             form = PointAddFromMapForm(initial={

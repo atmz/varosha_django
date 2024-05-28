@@ -21,11 +21,11 @@ class PointForm(ModelForm):
          fields = ["x", "y", "name", "name_gr", "type"]
 
 class PointAddFromMapForm(ModelForm):
-    persons = forms.ModelMultipleChoiceField(
-        queryset=Person.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
+    # persons = forms.ModelMultipleChoiceField(
+    #     queryset=Person.objects.all(),
+    #     widget=forms.CheckboxSelectMultiple,
+    #     required=False
+    # )
     class Meta:
         model = Point
         fields = ["x", "y", "name","name_gr", "type"]
