@@ -29,7 +29,7 @@
     <script>
         var currentLocale = document.body.getAttribute('data-locale');
 
-        var corner1 = L.latLng(35.123819,33.931361),
+        var corner1 = L.latLng(35.123819,33.921361),
         corner2 = L.latLng(35.082100,33.988048),
         bounds = L.latLngBounds(corner1, corner2);
         center = L.latLng(35.1162,33.9502)
@@ -219,7 +219,10 @@
         dbPointData.forEach(function(location) {
 			var marker = L.marker([location.x, location.y]);
 
-			var locationName = (currentLocale === 'el') ? location.name_gr : location.name;
+			var locationName = location.name
+			if((!locationName || currentLocale === 'el') && location.name_gr) {
+				locationName = location.name_gr
+			}
 
 			var popupContent = '<div class="popup-content">';
 			if (location.media && location.media.length > 0) {
