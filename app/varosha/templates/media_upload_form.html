@@ -1,8 +1,10 @@
+{% load i18n %}
+
 <form id="media-upload-form" action="/media-form/" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="hidden" name="point" id="point"  value="${pointId}">
     <input type="hidden" name="source" id="source" value="Unknown">
-    <label for="file">Choose media file:</label>
+    <label for="file">"{% trans  "Choose media file:"}</label>
     <input type="file" name="file" id="file" accept="image/*,video/*">
-    <button type="submit">Upload</button>
+    <button type="submit">"{% trans Upload}</button>
 </form>
