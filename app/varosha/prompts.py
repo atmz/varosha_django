@@ -30,6 +30,7 @@ source - did the user create this image? if not, where is it from. this needs to
 The user is not an expert in this field, or with chatbots/computers in general. Varosha was invated and forcibly emptied of 
 its residents in 1974, so photos before then will be 'normal', and photos afterwards will likely be of abandoned or
 decayed buildings. Advertisements and the like are likely from before 1974.
+When creating the final json, wrap it in <json> and </json> tags.
 """
 prompt_greek_addition ="""
 You should speak to the user using only Greek. Note that they may respond with greeklish, which is
