@@ -47,9 +47,10 @@ class Conversation(models.Model):
         if not GOOGLE_API_KEY: 
             print("debug - display_name:{display_name}")
             return {}
-        existing_file_response = genai.get_file(display_name)
-        if existing_file_response:
-            return existing_file_response
+        
+        # existing_file_response = genai.get_file(display_name)
+        # if existing_file_response:
+        #     return existing_file_response
         file_path = self.media.path
         file_response = genai.upload_file(path=file_path, display_name=display_name)
         return file_response
