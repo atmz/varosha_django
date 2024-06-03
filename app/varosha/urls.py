@@ -38,6 +38,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('el/', views.set_language_to_greek, name='set_language_greek'),
     path('link-form-ajax/', views.link_form_ajax, name='link-form-ajax'),
-
+    path('chat-bot-ai-send-message/', views.user_chat_bot_ai_conversation_send_message, name='user_chat_bot_ai_conversation_send_message'),
+    path('get-conversation/<int:conversation_id>/', views.get_conversation, name='get_conversation'),
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

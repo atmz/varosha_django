@@ -1,10 +1,17 @@
 import os
+from django.utils.translation import gettext as _
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from django.utils.translation import activate
+from django.utils.translation import get_language
+
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+
+from django.views.decorators.http import require_POST
+from .models import Conversation
+from .forms import UserChatBotAIConversationSendMessageForm
 
 from .models import Media, Person, Point
 from .forms import MediaForm, PointAddFromMapForm, PointDeleteForm, PointForm, PersonForm, PersonDeleteForm, PointLinkForm
@@ -125,18 +132,22 @@ def point_add_from_map_form(request, point_id=None):
     return render(request, "add_point_from_map_form.html", {"form": form, "points": Point.objects.all()})
 
 def media_form(request):
-    # if this is a POST request we need to process the form data
     if request.method == "POST":
-        import logging
-        logging.basicConfig(level=logging.DEBUG)
-        # create a form instance and populate it with data from the request:
         form = MediaForm(request.POST, request.FILES)
-        # check whether it's valid:
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect("")
+            media = form.save()
 
-    # if a GET (or any other method) we'll create a blank form
+            # Get the current language
+            current_language = get_language()
+
+            # Start a new conversation for the uploaded media with the current language
+            conversation = Conversation.objects.create(media=media, language=current_language)
+            conversation.initialize()
+            
+            return JsonResponse({'success': True, 'conversation_id': conversation.id})
+        else:
+            return JsonResponse({'success': False, 'error': form.errors})
+
     else:
         form = MediaForm()
 
@@ -180,3 +191,40 @@ def set_language_to_greek(request):
     response = HttpResponseRedirect(reverse('index'))  # Redirect to the index page
     response.set_cookie(settings.LANGUAGE_COOKIE_NAME, 'el')
     return response
+
+@require_POST
+def user_chat_bot_ai_conversation_send_message(request):
+    form = UserChatBotAIConversationSendMessageForm(request.POST)
+    if form.is_valid():
+        conversation_id = form.cleaned_data['conversation_id']
+        user_message = form.cleaned_data['user_message']
+        
+        conversation = get_object_or_404(Conversation, id=conversation_id)
+        conversation.send_message(user_message)
+        
+        # Retrieve the conversation messages
+        messages = conversation.messages.all().values('sender', 'text', 'timestamp')
+        
+        return JsonResponse({'messages': list(messages)}, status=200)
+    else:
+        return JsonResponse({'error': 'Invalid form data'}, status=400)
+    
+
+def get_conversation(request, conversation_id):
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+
+    messages = conversation.messages.all().values('sender', 'text', 'timestamp')
+    localized_messages = []
+    for message in messages:
+        if message['sender'] == 'user':
+            sender = _('You')
+        elif message['sender'] == 'model':
+            sender = _('AI Helper')
+        else:
+            sender = message['sender']  # Fallback in case there are other senders
+        localized_messages.append({
+            'sender': sender,
+            'text': message['text']
+        })
+
+    return JsonResponse({'conversation_id': conversation.id, 'messages': localized_messages})

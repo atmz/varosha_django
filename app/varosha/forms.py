@@ -46,3 +46,8 @@ class PointLinkForm(forms.ModelForm):
     class Meta:
         model = PointLink
         fields = ['name', 'url']
+
+
+class UserChatBotAIConversationSendMessageForm(forms.Form):
+    conversation_id = forms.IntegerField()
+    user_message = forms.CharField(widget=forms.Textarea)

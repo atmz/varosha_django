@@ -158,3 +158,8 @@ if "AWS_SECRET_ACCESS_KEY" in environ:
     AWS_S3_REGION_NAME = 'us-east-1'
 else:
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
+if "GOOGLE_API_KEY" in environ:
+    GOOGLE_API_KEY = environ.get("GOOGLE_API_KEY")
+else:
+    GOOGLE_API_KEY = None
