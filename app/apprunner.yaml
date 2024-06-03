@@ -3,7 +3,6 @@ runtime: python311
 build:
   commands:
     build:
-    build:        
       - pip3 install pipenv
       - pipenv install
 
@@ -23,3 +22,6 @@ build:
 
     - name: AWS_ACCESS_KEY_ID
       value-from: "arn:aws:ssm:us-east-1:556614631457:parameter/django-AWS_ACCESS_KEY_ID"
+
+    - name: GOOGLE_API_KEY
+      value-from: "arn:aws:ssm:us-east-1:556614631457:parameter/django-GOOGLE_API_KEY"
