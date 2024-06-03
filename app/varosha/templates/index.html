@@ -154,12 +154,12 @@
                     conversationContent.append('<p><strong>' + message.sender + ':</strong> ' + message.text + '</p>');
                 });
                 conversationContent.append(`
-                    <form id="user-message-form">
-                        {% csrf_token %}
-                        <input type="hidden" name="conversation_id" value="${data.conversation_id}">
-                        <textarea name="user_message" placeholder="Type your message here..."></textarea>
-                        <button type="submit">Send</button>
-                    </form>
+                <form id="user-message-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="conversation_id" value="${data.conversation_id}">
+                    <input type="text" name="user_message" placeholder="Type your message here..." style="width: 80%;">
+                    <button type="submit">Send</button>
+                </form>
                 `);
 
                 $('#user-message-form').submit(function(event) {
