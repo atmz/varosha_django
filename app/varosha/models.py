@@ -1,5 +1,6 @@
 import json
 import os
+import mimetypes
 import re
 import tempfile
 from django.db import models
@@ -66,6 +67,7 @@ class Conversation(models.Model):
     def _upload_media_file_to_gemini(self):
         file_url = self.media.path
         display_name = self._generate_display_name()
+        mime_type, _ = mimetypes.guess_type(display_name)
 
         # Download the file from S3 to a local temporary file
         response = requests.get(file_url)
@@ -78,8 +80,8 @@ class Conversation(models.Model):
 
         try:
             # Upload the local file to Google
-            logger.debug(f"genai.upload_file(path={tmp_file_path}, display_name={display_name})")
-            file_response = genai.upload_file(path=tmp_file_path, display_name=display_name)
+            logger.debug(f"genai.upload_file(path={tmp_file_path}, display_name={display_name}), mime_type={mime_type}")
+            file_response = genai.upload_file(path=tmp_file_path, display_name=display_name, mime_type=mime_type)
             
             logger.debug(f"Uploaded file {file_response.display_name} as: {file_response.uri}")
             logger.debug(f"Uploaded file {file_response.__dict__}")
