@@ -45,7 +45,9 @@ class Conversation(models.Model):
 
     def _generate_display_name(self):
         base_name = self.media.file.name
+        logger.debug(f"self.media.file.name - {self.media.file.name}")
         unique_name = f"{self.media.id}_{base_name}"
+        logger.debug(f"_generate_display_name - {unique_name}")
         return unique_name
 
     # def _upload_media_file_to_gemini(self):

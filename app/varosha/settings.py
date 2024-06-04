@@ -165,7 +165,6 @@ else:
     GOOGLE_API_KEY = None
 
 
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -180,16 +179,20 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         },
     },
+    'root': {
+        'level': 'WARNING',
+        'handlers': ['console', 'file']
+    },
     'loggers': {
         'django': {
-            'handlers': ['file', 'console'],
-            'level': 'DEBUG',
-            'propagate': True,
+            'handlers': ['console', 'file'],
+            'level': 'WARNING',
+            'propagate': False,
         },
-        'varosha': { 
-            'handlers': ['file', 'console'],
+        'myapp': {  # Replace 'myapp' with your app name
+            'handlers': ['console', 'file'],
             'level': 'DEBUG',
-            'propagate': True,
+            'propagate': False,
         },
     },
 }
