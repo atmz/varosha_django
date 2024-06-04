@@ -80,7 +80,9 @@ class Conversation(models.Model):
             # Upload the local file to Google
             logger.debug(f"genai.upload_file(path={tmp_file_path}, display_name={display_name})")
             file_response = genai.upload_file(path=tmp_file_path, display_name=display_name)
+            
             logger.debug(f"Uploaded file {file_response.display_name} as: {file_response.uri}")
+            logger.debug(f"Uploaded file {file_response.__dict__}")
         finally:
             # Ensure the temporary file is deleted
             os.remove(tmp_file_path)
