@@ -39,6 +39,7 @@ class Conversation(models.Model):
         ('en', 'English'),
         ('el', 'Greek')
     ])
+    is_over = models.BooleanField(default=False)
 
     def _generate_display_name(self):
         base_name = self.media.file.name
@@ -60,7 +61,7 @@ class Conversation(models.Model):
 
     def _upload_media_file_to_gemini(self):
         file_url = self.media.path
-        display_name = self.generate_display_name()
+        display_name = self._generate_display_name()
 
         # Download the file from S3 to a local temporary file
         response = requests.get(file_url)
@@ -138,9 +139,16 @@ class Conversation(models.Model):
                     self.media.type = response_data.get('type', self.media.type)
                     self.media.source = response_data.get('source', self.media.source)
                     self.media.save()
-                    return "" # success! return "" to end the conversation
+                    self.is_over = True
+                    self.save()
+                    return _("Thank you! We have saved the information you provided for this image")
             except json.JSONDecodeError:
                 pass
+
+        if not response.text.strip():
+            self.is_over = True
+            self.save()
+
         return response.text
     
     def initialize(self):
