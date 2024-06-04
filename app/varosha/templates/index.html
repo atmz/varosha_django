@@ -23,8 +23,19 @@
 <body data-locale="{{ current_language }}">
     {{ point_data|json_script:"point-data" }}
     <div id="map" style="width: 1400px; height: 1000px;"></div>
-    <div id='fullScreenView'><div id="conversation-content"></div></div>
-
+    <div id="fullScreenView">
+        <div id="close-icon">&#x2715;</div>
+        <div id="conversation-content"></div>
+        <form id="user-message-form">
+            {% csrf_token %}
+            <input type="hidden" name="conversation_id">
+            <input type="text" name="user_message" placeholder="Type your message here...">
+            <button id="submitBtn" type="submit">Send</button>
+        </form>
+        <form id="close-conversation-form">
+            <button type="submit">Close</button>
+        </form>
+    </div>
 
 
     <script>
@@ -136,17 +147,6 @@
                     }
                 });
             });
-
-            function fetchConversation(conversationId) {
-                $.ajax({
-                    url: `/get-conversation/${conversationId}/`,
-                    type: 'GET',
-                    success: function(response) {
-                        displayConversation(response);
-                    }
-                });
-            }
-
             function displayConversation(data) {
                 var mapDiv = document.getElementById('map');
                 mapDiv.style.display = "none";
@@ -155,30 +155,44 @@
 
                 var conversationContent = $('#conversation-content');
 
-                conversationContent.empty();
-                conversationContent.append('</p><img src=' + data.media_path+'></p>')
-                data.messages.forEach(function(message) {
+                if (!conversationContent.data('initialized')) {
+                    conversationContent.empty();
+                    conversationContent.append('<p><img src=' + data.media_path + '></p>');
+                    conversationContent.data('initialized', true);
+                }
+
+                var lastMessageId = conversationContent.data('lastMessageId') || 0;
+                var newMessages = data.messages.filter(message => message.id > lastMessageId);
+                newMessages.forEach(function(message) {
                     conversationContent.append('<p><strong>' + message.sender + ':</strong> ' + message.text + '</p>');
                 });
-                conversationContent.append(`
-                <form id="user-message-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="conversation_id" value="${data.conversation_id}">
-                    <input type="text" name="user_message" placeholder="Type your message here..." style="width: 80%;">
-                    <button id="submitBtn" type="submit">Send</button>
-                </form>
-                <form id="close-conversation-form"><button  type="submit">Close</button>                </form>
+                if (newMessages.length) {
+                    conversationContent.data('lastMessageId', newMessages[newMessages.length - 1].id);
+                }
 
-                `);
+                conversationContent.scrollTop(conversationContent[0].scrollHeight);
 
-                $('#close-conversation-form').submit(function(event) {
-                    var fullScreenDiv = document.getElementById('fullScreenView');
+                // Update the hidden input for conversation ID
+                $('#user-message-form input[name="conversation_id"]').val(data.conversation_id);
+
+                $('#close-conversation-form').off('submit').submit(function(event) {
+                    event.preventDefault();
                     fullScreenDiv.style.display = "none";
-                    var mapDiv = document.getElementById('map');
                     mapDiv.style.display = "block";
-                })
+                    conversationContent.data('initialized', false);
+                    conversationContent.data('lastMessageId', 0);
+                    conversationContent.empty();
+                });
 
-                $('#user-message-form').submit(function(event) {
+                $('#close-icon').off('click').on('click', function(event) {
+                    fullScreenDiv.style.display = "none";
+                    mapDiv.style.display = "block";
+                    conversationContent.data('initialized', false);
+                    conversationContent.data('lastMessageId', 0);
+                    conversationContent.empty();
+                });
+
+                $('#user-message-form').off('submit').submit(function(event) {
                     event.preventDefault();
                     $("#user-message-form #submitBtn").attr("disabled", true);
 
@@ -195,6 +209,16 @@
                             alert('Error sending message: ' + response.error);
                         }
                     });
+                });
+            }
+
+            function fetchConversation(conversationId) {
+                $.ajax({
+                    url: `/get-conversation/${conversationId}/`,
+                    type: 'GET',
+                    success: function(response) {
+                        displayConversation(response);
+                    }
                 });
             }
         }

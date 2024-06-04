@@ -213,7 +213,7 @@ def user_chat_bot_ai_conversation_send_message(request):
 def get_conversation(request, conversation_id):
     conversation = get_object_or_404(Conversation, id=conversation_id)
 
-    messages = conversation.messages.all().values('sender', 'text', 'timestamp')
+    messages = conversation.messages.all().values('id','sender', 'text', 'timestamp')
     localized_messages = []
     for message in messages:
         if message['sender'] == 'user':
@@ -223,6 +223,7 @@ def get_conversation(request, conversation_id):
         else:
             sender = message['sender']  # Fallback in case there are other senders
         localized_messages.append({
+            'id': message['id'],
             'sender': sender,
             'text': message['text']
         })
