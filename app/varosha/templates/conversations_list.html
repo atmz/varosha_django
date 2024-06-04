@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversations List</title>
+    <style>
+        .delete-button {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Conversations</h1>
+    <ul>
+        {% for conversation in conversations %}
+            <li>
+                {{ conversation.media.path }} -- {{ conversation.language }} -- {{ conversation.created_at }} -- {{ conversation.is_over }}
+                <ul>
+                    {% for message in conversation.messages.all %}
+                        <li>
+                            <strong>{{ message.sender }}:</strong> {{ message.text }} -- {{ message.timestamp }}
+                        </li>
+                    {% endfor %}
+                </ul>
+                <form action="{% url 'delete_conversation' conversation.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-button">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

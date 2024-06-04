@@ -229,3 +229,14 @@ def get_conversation(request, conversation_id):
         })
 
     return JsonResponse({'conversation_id': conversation.id, 'messages': localized_messages, "media_path": conversation.media.path})
+
+
+def conversations_list(request):
+    conversations = Conversation.objects.all()
+    return render(request, 'conversations_list.html', {'conversations': conversations})
+
+@require_POST
+def delete_conversation(request, conversation_id):
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    conversation.delete()
+    return redirect(reverse('conversations_list'))

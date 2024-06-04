@@ -40,5 +40,8 @@ urlpatterns = [
     path('link-form-ajax/', views.link_form_ajax, name='link-form-ajax'),
     path('chat-bot-ai-send-message/', views.user_chat_bot_ai_conversation_send_message, name='user_chat_bot_ai_conversation_send_message'),
     path('get-conversation/<int:conversation_id>/', views.get_conversation, name='get_conversation'),
+    path('conversations/', views.conversations_list, name='conversations_list'),
+    path('delete-conversation/<int:conversation_id>/', views.delete_conversation, name='delete_conversation'),
+
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
