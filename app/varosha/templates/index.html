@@ -156,6 +156,7 @@
                 var conversationContent = $('#conversation-content');
 
                 conversationContent.empty();
+                conversationContent.append('</p><img src=' + data.media_path+'></p>')
                 data.messages.forEach(function(message) {
                     conversationContent.append('<p><strong>' + message.sender + ':</strong> ' + message.text + '</p>');
                 });

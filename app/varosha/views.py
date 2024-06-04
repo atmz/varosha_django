@@ -227,4 +227,4 @@ def get_conversation(request, conversation_id):
             'text': message['text']
         })
 
-    return JsonResponse({'conversation_id': conversation.id, 'messages': localized_messages})
+    return JsonResponse({'conversation_id': conversation.id, 'messages': localized_messages, "media_path": conversation.media.path})
