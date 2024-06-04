@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-03 11:50+0300\n"
+"POT-Creation-Date: 2024-06-04 09:21+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,57 +17,61 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: varosha/models.py:166
+#: varosha/models.py:144
+msgid "Thank you! We have saved the information you provided for this image"
+msgstr "Ευχαριστούμε! Έχουμε αποθηκεύσει τις πληροφορίες που παρείχατε για αυτήν την εικόνα"
+
+#: varosha/models.py:200
 msgid "Longitude"
 msgstr "Γεωγραφικό Μήκος"
 
-#: varosha/models.py:167
+#: varosha/models.py:201
 msgid "Latitude"
 msgstr "Γεωγραφικό Πλάτος"
 
-#: varosha/models.py:168
+#: varosha/models.py:202
 msgid "Name in Greek"
 msgstr "Όνομα στα Ελληνικά"
 
-#: varosha/models.py:169
+#: varosha/models.py:203
 msgid "Name in English"
 msgstr "Όνομα στα Αγγλικά"
 
-#: varosha/models.py:171
+#: varosha/models.py:205
 msgid "Pending"
 msgstr "Εκκρεμής"
 
-#: varosha/models.py:172
+#: varosha/models.py:206
 msgid "Approved"
 msgstr "Εγκεκριμένο"
 
-#: varosha/models.py:178
+#: varosha/models.py:212
 msgid "Status"
 msgstr "Κατάσταση"
 
-#: varosha/models.py:181
+#: varosha/models.py:215
 msgid "Home"
 msgstr "Κατοικία"
 
-#: varosha/models.py:182
+#: varosha/models.py:216
 msgid "Business"
 msgstr "Επιχείρηση"
 
-#: varosha/models.py:183
+#: varosha/models.py:217
 msgid "Other"
 msgstr "Άλλο"
 
-#: varosha/models.py:189
+#: varosha/models.py:223
 msgid "Type"
 msgstr "Τύπος"
 
-#: varosha/models.py:198 varosha/templates/index.html:235
+#: varosha/models.py:232 varosha/templates/index.html:235
 #, fuzzy
 #| msgid "Name"
 msgid "Link Name"
 msgstr "Όνομα Συνδέσμου"
 
-#: varosha/models.py:199 varosha/templates/index.html:238
+#: varosha/models.py:233 varosha/templates/index.html:238
 msgid "URL"
 msgstr "Διεύθυνση URL"
 
@@ -165,11 +169,11 @@ msgstr ""
 "Χρησιμοποιήστε τα επίπεδα ελέγχου πάνω δεξιά <br />για να ρυθμίσετε τι "
 "βλέπετε"
 
-#: varosha/views.py:219
+#: varosha/views.py:220
 msgid "You"
 msgstr "Εσείς"
 
-#: varosha/views.py:221
+#: varosha/views.py:222
 msgid "AI Helper"
 msgstr "Βοηθός AI"
 

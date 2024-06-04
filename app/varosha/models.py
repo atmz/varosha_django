@@ -74,6 +74,7 @@ class Conversation(models.Model):
         try:
             # Upload the local file to Google
             file_response = genai.upload_file(path=tmp_file_path, display_name=display_name)
+            print(f"Uploaded file {file_response.display_name} as: {file_response.uri}")
         finally:
             # Ensure the temporary file is deleted
             os.remove(tmp_file_path)
@@ -115,6 +116,7 @@ class Conversation(models.Model):
             model = genai.GenerativeModel('gemini-1.5-flash')
 
             # Generate content using the model
+            print(f"Messages: {messages}")
             response = model.generate_content(messages)
 
 
