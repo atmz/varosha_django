@@ -69,6 +69,7 @@ class Conversation(models.Model):
 
         # Download the file from S3 to a local temporary file
         response = requests.get(file_url)
+        logger.debug(f"Dowloaded file {file_url} from s3")
         response.raise_for_status()  # Ensure we notice bad responses
 
         with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
@@ -77,6 +78,7 @@ class Conversation(models.Model):
 
         try:
             # Upload the local file to Google
+            logger.debug(f"genai.upload_file(path={tmp_file_path}, display_name={display_name})")
             file_response = genai.upload_file(path=tmp_file_path, display_name=display_name)
             logger.debug(f"Uploaded file {file_response.display_name} as: {file_response.uri}")
         finally:
