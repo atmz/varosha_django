@@ -1,7 +1,10 @@
 import json
+import os
 import re
+import tempfile
 from django.db import models
 import google.generativeai as genai
+import requests
 from varosha.settings import GOOGLE_API_KEY
 
 from varosha.prompts import prompt_el, prompt_en, get_point_prompt
@@ -42,18 +45,40 @@ class Conversation(models.Model):
         unique_name = f"{self.media.id}_{base_name}"
         return unique_name
 
-    def _upload_media_file_to_gemini(self):
-        display_name = self._generate_display_name()
-        if not GOOGLE_API_KEY: 
-            print("debug - display_name:{display_name}")
-            return {}
+    # def _upload_media_file_to_gemini(self):
+    #     display_name = self._generate_display_name()
+    #     if not GOOGLE_API_KEY: 
+    #         print("debug - display_name:{display_name}")
+    #         return {}
         
-        # existing_file_response = genai.get_file(display_name)
-        # if existing_file_response:
-        #     return existing_file_response
-        file_path = self.media.path
-        file_response = genai.upload_file(path=file_path, display_name=display_name)
+    #     # existing_file_response = genai.get_file(display_name)
+    #     # if existing_file_response:
+    #     #     return existing_file_response
+    #     file_path = self.media.path
+    #     file_response = genai.upload_file(path=file_path, display_name=display_name)
+    #     return file_response
+
+    def _upload_media_file_to_gemini(self):
+        file_url = self.media.path
+        display_name = self.generate_display_name()
+
+        # Download the file from S3 to a local temporary file
+        response = requests.get(file_url)
+        response.raise_for_status()  # Ensure we notice bad responses
+
+        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+            tmp_file.write(response.content)
+            tmp_file_path = tmp_file.name
+
+        try:
+            # Upload the local file to Google
+            file_response = genai.upload_file(path=tmp_file_path, display_name=display_name)
+        finally:
+            # Ensure the temporary file is deleted
+            os.remove(tmp_file_path)
+
         return file_response
+
 
     def _get_conversation_format_gemini_api(self):
         image = self._upload_media_file_to_gemini()
