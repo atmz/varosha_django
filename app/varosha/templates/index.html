@@ -23,6 +23,7 @@
 <body data-locale="{{ current_language }}">
     {{ point_data|json_script:"point-data" }}
     <div id="map" style="width: 1400px; height: 1000px;"></div>
+    <div id='fullScreenView'><div id="conversation-content"></div></div>
 
 
 
@@ -108,7 +109,6 @@
                     <input type="file" name="file" id="file" accept="image/*,video/*">
                     <button id = "submitBtn" type="submit">{% trans "Upload" %}</button>
                 </form>
-                <div id="conversation-content"></div>
             `;
 
             var popup = L.popup()
@@ -118,7 +118,7 @@
 
             $('#media-upload-form').submit(function(event) {
                 event.preventDefault();
-                $("#media-upload-form'.submitBtn").attr("disabled", true);
+                $("#media-upload-form #submitBtn").attr("disabled", true);
                 var formData = new FormData(this);
                 $.ajax({
                     url: $(this).attr('action'),
@@ -130,7 +130,6 @@
                         if (response.success) {
                             // Fetch and display the conversation
                             fetchConversation(response.conversation_id);
-                            $("#media-upload-form'.submitBtn").attr("disabled", false);
                         } else {
                             alert('Error uploading media: ' + response.error);
                         }
@@ -149,7 +148,13 @@
             }
 
             function displayConversation(data) {
+                var mapDiv = document.getElementById('map');
+                mapDiv.style.display = "none";
+                var fullScreenDiv = document.getElementById('fullScreenView');
+                fullScreenDiv.style.display = "block";
+
                 var conversationContent = $('#conversation-content');
+
                 conversationContent.empty();
                 data.messages.forEach(function(message) {
                     conversationContent.append('<p><strong>' + message.sender + ':</strong> ' + message.text + '</p>');
@@ -159,12 +164,23 @@
                     {% csrf_token %}
                     <input type="hidden" name="conversation_id" value="${data.conversation_id}">
                     <input type="text" name="user_message" placeholder="Type your message here..." style="width: 80%;">
-                    <button type="submit">Send</button>
+                    <button id="submitBtn" type="submit">Send</button>
                 </form>
+                <form id="close-conversation-form"><button  type="submit">Close</button>                </form>
+
                 `);
+
+                $('#close-conversation-form').submit(function(event) {
+                    var fullScreenDiv = document.getElementById('fullScreenView');
+                    fullScreenDiv.style.display = "none";
+                    var mapDiv = document.getElementById('map');
+                    mapDiv.style.display = "block";
+                })
 
                 $('#user-message-form').submit(function(event) {
                     event.preventDefault();
+                    $("#user-message-form #submitBtn").attr("disabled", true);
+
                     var formData = $(this).serialize();
                     $.ajax({
                         url: '/chat-bot-ai-send-message/',
@@ -172,6 +188,7 @@
                         data: formData,
                         success: function(response) {
                             fetchConversation(data.conversation_id);
+                            $("#user-message-form #submitBtn").attr("disabled", false);
                         },
                         error: function(response) {
                             alert('Error sending message: ' + response.error);

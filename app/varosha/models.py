@@ -89,6 +89,21 @@ class Conversation(models.Model):
 
 
     def _get_conversation_format_gemini_api(self):
+        if not GOOGLE_API_KEY: 
+            prompt_message = {
+                'role': 'user',
+                'parts': [prompt_en, get_point_prompt(self.media.point)]
+            }
+            messages = self.messages.all()
+            formatted_messages = [
+                prompt_message,
+                *[
+                    {'role': message.sender, 'parts': [message.text]}
+                    for message in messages
+                ]
+            ]
+            return formatted_messages
+
         image = self._upload_media_file_to_gemini()
         if self.language == 'el':
             prompt_message = {
