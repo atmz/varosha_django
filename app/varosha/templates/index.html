@@ -106,7 +106,7 @@
                     <input type="hidden" name="source" id="source" value="unknown">
                     <label for="file">{% trans "Choose media file:" %}</label>
                     <input type="file" name="file" id="file" accept="image/*,video/*">
-                    <button type="submit">{% trans "Upload" %}</button>
+                    <button id = "submitBtn" type="submit">{% trans "Upload" %}</button>
                 </form>
                 <div id="conversation-content"></div>
             `;
@@ -118,6 +118,7 @@
 
             $('#media-upload-form').submit(function(event) {
                 event.preventDefault();
+                $("#media-upload-form'.submitBtn").attr("disabled", true);
                 var formData = new FormData(this);
                 $.ajax({
                     url: $(this).attr('action'),
@@ -129,6 +130,7 @@
                         if (response.success) {
                             // Fetch and display the conversation
                             fetchConversation(response.conversation_id);
+                            $("#media-upload-form'.submitBtn").attr("disabled", false);
                         } else {
                             alert('Error uploading media: ' + response.error);
                         }
@@ -149,7 +151,6 @@
             function displayConversation(data) {
                 var conversationContent = $('#conversation-content');
                 conversationContent.empty();
-                conversationContent.append('<h3>Conversation ID: ' + data.conversation_id + '</h3>');
                 data.messages.forEach(function(message) {
                     conversationContent.append('<p><strong>' + message.sender + ':</strong> ' + message.text + '</p>');
                 });

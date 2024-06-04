@@ -48,9 +48,7 @@ user Yes
 model Great. Based on the cars and the building, would you say this photo is from the 1960s, or a different decade?
 
 user 1960s sounds likely, let's go with that
-model It looks like a photo of a business to me.  Do you agree?
 
-user Yes
 model Did you take this photo yourself, or find it somewhere else?
 
 user I found it on Facebook
