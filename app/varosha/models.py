@@ -44,7 +44,7 @@ class Conversation(models.Model):
     is_over = models.BooleanField(default=False)
 
     def _generate_display_name(self):
-        base_name = self.media.file.name.split('/')[-1]
+        base_name = self.media.file.name.split('//')[-1]
         logger.debug(f"self.media.file.name - {self.media.file.name}")
         unique_name = f"{self.media.id}_{base_name}"
         logger.debug(f"_generate_display_name - {unique_name}")
