@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-04 15:59+0300\n"
+"POT-Creation-Date: 2024-06-04 17:27+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,6 +97,7 @@ msgstr "Αεροφωτογραφία 1963"
 #: varosha/templates/index.html:123
 msgid "1929 Survey"
 msgstr "Χάρτης 1929"
+
 #: varosha/templates/index.html:138
 msgid "Welcome to the interactive map of Varosha!"
 msgstr "Καλώς ήρθατε στον διαδραστικό χάρτη της Αμμοχώστου!"
@@ -108,12 +109,12 @@ msgstr "Καλώς ήρθατε στον διαδραστικό χάρτη τη�
 #| "showing a current satellite view, <br />a 1963 aerial view, <br />and a "
 #| "set of 1929 survey maps."
 msgid ""
-"Explore the fascinating history of the fenced-off city through different "
-"layers showing a current satellite view, a 1963 aerial view, and a set of "
-"1929 survey maps."
+"Explore the history of the fenced-off city through different layers showing "
+"a current satellite view, a 1963 aerial view, and a set of 1929 survey maps."
 msgstr ""
-"Εξερευνήστε την συναρπαστική ιστορία της περιφραγμένης πόλης μέσα από διάφορα "
-"επίπεδα που δείχνουν μια τρέχουσα δορυφορική προβολή, μια αεροφωτογραφία του 1963, και μια σειρά χαρτών από το 1929."
+"Εξερευνήστε την ιστορία της περιφραγμένης πόλης μέσα από διάφορα επίπεδα που "
+"δείχνουν μια τρέχουσα δορυφορική προβολή, μια αεροφωτογραφία του 1963, και "
+"μια σειρά χαρτών από το 1929."
 
 #: varosha/templates/index.html:141
 msgid "Did you know you can add new locations to the map?"
@@ -124,39 +125,54 @@ msgid ""
 "Simply click on any point on the map to start adding a new location. Share "
 "your knowledge and enrich the map with your contributions!"
 msgstr ""
-"Απλά κάντε κλικ σε οποιοδήποτε σημείο στον χάρτη για να ξεκινήσετε να προσθέτετε μια νέα τοποθεσία. "
-"Μοιραστείτε τις γνώσεις σας και εμπλουτίστε τον χάρτη με τις συνεισφορές σας!"
+"Απλά κάντε κλικ σε οποιοδήποτε σημείο στον χάρτη για να ξεκινήσετε να "
+"προσθέτετε μια νέα τοποθεσία. Μοιραστείτε τις γνώσεις σας και εμπλουτίστε "
+"τον χάρτη με τις συνεισφορές σας!"
 
 #: varosha/templates/index.html:144
-msgid "Click on any existing location to see more details and add media."
-msgstr "Κάντε κλικ σε οποιαδήποτε υπάρχουσα τοποθεσία για να δείτε περισσότερες λεπτομέρειες και να προσθέσετε πολυμέσα."
+#, fuzzy
+#| msgid "Click on any existing location to see more details and add media."
+msgid "Click on any existing location to see more details and add photos."
+msgstr ""
+"Κάντε κλικ σε οποιαδήποτε υπάρχουσα τοποθεσία για να δείτε περισσότερες "
+"λεπτομέρειες και να προσθέσετε πολυμέσα."
 
 #: varosha/templates/index.html:144
+#, fuzzy
+#| msgid ""
+#| "You can view photos, videos, and information added by others, and "
+#| "contribute your own media to tell the story of Varosha."
 msgid ""
 "You can view photos, videos, and information added by others, and contribute "
-"your own media to tell the story of Varosha."
+"your own photos to tell the story of Varosha."
 msgstr ""
-"Μπορείτε να δείτε φωτογραφίες, βίντεο και πληροφορίες που προστέθηκαν από άλλους, και να συνεισφέρετε "
-"τα δικά σας πολυμέσα για να διηγηθείτε την ιστορία της Αμμοχώστου."
+"Μπορείτε να δείτε φωτογραφίες, βίντεο και πληροφορίες που προστέθηκαν από "
+"άλλους, και να συνεισφέρετε τα δικά σας πολυμέσα για να διηγηθείτε την "
+"ιστορία της Αμμοχώστου."
 
 #: varosha/templates/index.html:147
+#, fuzzy
+#| msgid ""
+#| "When you add media, our friendly chatbot will assist you in labeling it "
+#| "appropriately."
 msgid ""
-"When you add media, our friendly chatbot will assist you in labeling it "
+"When you add photos, our friendly chatbot will assist you in labeling it "
 "appropriately."
 msgstr ""
-"Όταν προσθέτετε πολυμέσα, το φιλικό μας chatbot θα σας βοηθήσει να τα επισημάνετε κατάλληλα."
+"Όταν προσθέτετε φωτογραφίες, το φιλικό μας chatbot θα σας βοηθήσει να τα "
+"επισημάνετε κατάλληλα."
 
 #: varosha/templates/index.html:147
 msgid ""
 "This ensures all contributions are well-organized and easy to explore for "
 "everyone."
 msgstr ""
-"Αυτό διασφαλίζει ότι όλες οι συνεισφορές είναι καλά οργανωμένες και εύκολες να εξερευνηθούν από όλους."
-
+"Αυτό διασφαλίζει ότι όλες οι συνεισφορές είναι καλά οργανωμένες και εύκολες "
+"να εξερευνηθούν από όλους."
 
 #: varosha/templates/index.html:177
-msgid "Choose media file:"
-msgstr "Επιλέξτε αρχείο πολυμέσων:"
+msgid "Choose photo:"
+msgstr ""
 
 #: varosha/templates/index.html:179
 #, fuzzy
@@ -193,8 +209,10 @@ msgid "Add New Link"
 msgstr "Προσθήκη Νέου Συνδέσμου"
 
 #: varosha/templates/index.html:413
-msgid "Upload Media"
-msgstr "Μεταφόρτωση Μέσων"
+#, fuzzy
+#| msgid "Upload Media"
+msgid "Upload Photo"
+msgstr "Μεταφόρτωση Φωτογραφίας"
 
 #: varosha/templates/index.html:415
 msgid "Add Person"
@@ -215,6 +233,12 @@ msgstr "Εσείς"
 #: varosha/views.py:222
 msgid "AI Helper"
 msgstr "Βοηθός AI"
+
+#~ msgid "Choose media file:"
+#~ msgstr "Επιλέξτε αρχείο πολυμέσων:"
+
+#~ msgid "Upload Media"
+#~ msgstr "Μεταφόρτωση Μέσων"
 
 #~ msgid "What is this?"
 #~ msgstr "Τι είναι αυτό;"

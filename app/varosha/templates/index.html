@@ -135,16 +135,16 @@
             let popupContent = '';
             switch(step) {
                 case 1:
-                    popupContent = '<p>{% trans "Welcome to the interactive map of Varosha!" %}<br />{% trans "Explore the fascinating history of the fenced-off city through different layers showing a current satellite view, a 1963 aerial view, and a set of 1929 survey maps." %}<br /><br /><a href="#" onclick="showInstructionalPopup(2)">More...</a></p>';
+                    popupContent = '<p>{% trans "Welcome to the interactive map of Varosha!" %}<br />{% trans "Explore the history of the fenced-off city through different layers showing a current satellite view, a 1963 aerial view, and a set of 1929 survey maps." %}<br /><br /><a href="#" onclick="showInstructionalPopup(2)">More...</a></p>';
                     break;
                 case 2:
                     popupContent = '<p>{% trans "Did you know you can add new locations to the map?" %}<br />{% trans "Simply click on any point on the map to start adding a new location. Share your knowledge and enrich the map with your contributions!" %}<br /><br /><a href="#" onclick="showInstructionalPopup(3)">More...</a></p>';
                     break;
                 case 3:
-                    popupContent = '<p>{% trans "Click on any existing location to see more details and add media." %}<br />{% trans "You can view photos, videos, and information added by others, and contribute your own media to tell the story of Varosha." %}<br /><br /><a href="#" onclick="showInstructionalPopup(4)">More...</a></p>';
+                    popupContent = '<p>{% trans "Click on any existing location to see more details and add photos." %}<br />{% trans "You can view photos, videos, and information added by others, and contribute your own photos to tell the story of Varosha." %}<br /><br /><a href="#" onclick="showInstructionalPopup(4)">More...</a></p>';
                     break;
                 case 4:
-                    popupContent = '<p>{% trans "When you add media, our friendly chatbot will assist you in labeling it appropriately." %}<br />{% trans "This ensures all contributions are well-organized and easy to explore for everyone." %}<br /><br /></p>';
+                    popupContent = '<p>{% trans "When you add photos, our friendly chatbot will assist you in labeling it appropriately." %}<br />{% trans "This ensures all contributions are well-organized and easy to explore for everyone." %}<br /><br /></p>';
                     break;
             }
             var popup = L.popup({ keepInView: true })
@@ -174,7 +174,7 @@
                     {% csrf_token %}
                     <input type="hidden" name="point" id="point" value="${pointId}">
                     <input type="hidden" name="source" id="source" value="unknown">
-                    <label for="file">{% trans "Choose media file:" %}</label>
+                    <label for="file">{% trans "Choose photo:" %}</label>
                     <input type="file" name="file" id="file" accept="image/*,video/*">
                     <button id = "submitBtn" type="submit">{% trans "Upload" %}</button>
                 </form>
@@ -410,7 +410,7 @@
 				});
 				popupContent += '</ul>';
 			}
-			popupContent += '<button onclick="openUploadForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Upload Media" %}</button>';
+			popupContent += '<button onclick="openUploadForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Upload Photo" %}</button>';
 			// No people for now
 			//popupContent += '<button onclick="openAddPersonForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Add Person" %}</button>';
 			popupContent += '<button onclick="openAddLinkForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Add Link" %}</button>';
