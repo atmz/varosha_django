@@ -9,7 +9,9 @@ from varosha.settings import GOOGLE_API_KEY
 
 from varosha.prompts import prompt_el, prompt_en, get_point_prompt
 from django.utils.translation import gettext_lazy as _
+import logging
 
+logger = logging.getLogger('varosha') 
 class Media(models.Model):
     file = models.FileField(upload_to='uploads/')  # Path in S3 where files will be stored
     source = models.CharField(max_length=64, choices=[
@@ -74,7 +76,7 @@ class Conversation(models.Model):
         try:
             # Upload the local file to Google
             file_response = genai.upload_file(path=tmp_file_path, display_name=display_name)
-            print(f"Uploaded file {file_response.display_name} as: {file_response.uri}")
+            logger.debug(f"Uploaded file {file_response.display_name} as: {file_response.uri}")
         finally:
             # Ensure the temporary file is deleted
             os.remove(tmp_file_path)
@@ -116,7 +118,7 @@ class Conversation(models.Model):
             model = genai.GenerativeModel('gemini-1.5-flash')
 
             # Generate content using the model
-            print(f"Messages: {messages}")
+            logger.debug(f"Messages: {messages}")
             response = model.generate_content(messages)
 
 
