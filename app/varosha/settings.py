@@ -189,7 +189,7 @@ LOGGING = {
             'level': 'WARNING',
             'propagate': False,
         },
-        'myapp': {  # Replace 'myapp' with your app name
+        'varosha': {  # Replace 'myapp' with your app name
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
             'propagate': False,
