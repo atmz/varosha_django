@@ -130,12 +130,6 @@ class Conversation(models.Model):
             response = model.generate_content(messages)
 
 
-        # Append model response to the conversation
-        Message.objects.create(
-            conversation=self,
-            sender='model',
-            text=response.text
-        )
         # Extract JSON data from the response text
         json_pattern = re.compile(r'<json>(.*?)</json>', re.DOTALL)
         json_match = json_pattern.search(response.text)
@@ -153,7 +147,13 @@ class Conversation(models.Model):
                     self.media.save()
                     self.is_over = True
                     self.save()
-                    return _("Thank you! We have saved the information you provided for this image")
+                    # Append model response to the conversation
+                    Message.objects.create(
+                        conversation=self,
+                        sender='model',
+                        text=_("Thank you! We have saved the information you provided for this image")
+                    )           
+                    return 
             except json.JSONDecodeError:
                 pass
 
@@ -161,7 +161,14 @@ class Conversation(models.Model):
             self.is_over = True
             self.save()
 
-        return response.text
+        # Append model response to the conversation
+        Message.objects.create(
+            conversation=self,
+            sender='model',
+            text=response.text
+        )           
+
+        return
     
     def initialize(self):
         if not self.messages.exists():
