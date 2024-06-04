@@ -23,6 +23,9 @@
 <body data-locale="{{ current_language }}">
     {{ point_data|json_script:"point-data" }}
     <div id="map" style="width: 1400px; height: 1000px;"></div>
+    <div id="help-button" style="position: absolute; top: 80px; left: 10px; z-index: 1000;">
+        <button id="help-icon">&#9432;</button>
+    </div>
     <div id="fullScreenView">
         <div id="close-icon">&#x2715;</div>
         <div id="conversation-content"></div>
@@ -52,6 +55,28 @@
             minZoom:15,
             maxBounds: bounds
         });
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+        var selectedLayer = getCookie('selectedLayer') || "{% trans "Street map" %}";
+        var hasSeenInstructionalPopup = getCookie('hasSeenInstructionalPopup') === 'true';
 
         // Create a new Leaflet control for the language switcher
         var LanguageControl = L.Control.extend({
@@ -98,6 +123,39 @@
             "{% trans "1929 Survey"%}": survey_layer,
         };
 
+        // Select the saved layer
+        for (var layerName in layerMaps) {
+            if (layerMaps.hasOwnProperty(layerName) && layerName === selectedLayer) {
+                map.addLayer(layerMaps[layerName]);
+            } else {
+                map.removeLayer(layerMaps[layerName]);
+            }
+        }
+        function showInstructionalPopup(step = 1) {
+            let popupContent = '';
+            switch(step) {
+                case 1:
+                    popupContent = '<p>{% trans "Welcome to the interactive map of Varosha!" %}<br />{% trans "Explore the fascinating history of the fenced-off city through different layers showing a current satellite view, a 1963 aerial view, and a set of 1929 survey maps." %}<br /><br /><a href="#" onclick="showInstructionalPopup(2)">More...</a></p>';
+                    break;
+                case 2:
+                    popupContent = '<p>{% trans "Did you know you can add new locations to the map?" %}<br />{% trans "Simply click on any point on the map to start adding a new location. Share your knowledge and enrich the map with your contributions!" %}<br /><br /><a href="#" onclick="showInstructionalPopup(3)">More...</a></p>';
+                    break;
+                case 3:
+                    popupContent = '<p>{% trans "Click on any existing location to see more details and add media." %}<br />{% trans "You can view photos, videos, and information added by others, and contribute your own media to tell the story of Varosha." %}<br /><br /><a href="#" onclick="showInstructionalPopup(4)">More...</a></p>';
+                    break;
+                case 4:
+                    popupContent = '<p>{% trans "When you add media, our friendly chatbot will assist you in labeling it appropriately." %}<br />{% trans "This ensures all contributions are well-organized and easy to explore for everyone." %}<br /><br /></p>';
+                    break;
+            }
+            var popup = L.popup({ keepInView: true })
+                .setLatLng(center)
+                .setContent(popupContent)
+                .openOn(map);
+            }
+        
+        $('#help-icon').on('click', function(event) {
+            showInstructionalPopup();
+        })
         function openEditForm(pointId, x, y) {
             addPointPopup
                 .setLatLng([x,y])
@@ -396,10 +454,16 @@
             collapsed: false,
         }).addTo(map);
 
-        var popup = L.popup({keepInView: true})
-            .setLatLng(center)
-            .setContent('<p>{% trans "What is this?" %}<br />{% trans "This is a map of the fenced off city of Varosha,<br /> with layers showing a current satellite view, <br />a 1963 aerial view, <br />and a set of 1929 survey maps." %}<br /><br />{% trans "Use the layer controls at top right to <br />control what you see" %}</p>')
-            .openOn(map);
+
+        map.on('baselayerchange', function(e) {
+            setCookie('selectedLayer', e.name, 7);
+        });
+
+
+        if (!hasSeenInstructionalPopup) {
+            showInstructionalPopup();
+            setCookie('hasSeenInstructionalPopup', 'true', 7);
+        }
 
         var addPointPopup = L.popup();
 
