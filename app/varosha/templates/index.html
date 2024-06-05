@@ -28,6 +28,9 @@
         <div id="conversation-content"></div>
         <form id="user-message-form">
             {% csrf_token %}
+            <input type="hidden" id="point_id" name="point_id">
+            <input type="hidden" id="point_x" name="point_x">
+            <input type="hidden" id="point_y" name="point_y">
             <input type="hidden" name="conversation_id">
             <input type="text" id="user_message" name="user_message" placeholder="Type your message here...">
             <button id="submitBtn" type="submit">Send</button>
@@ -191,6 +194,9 @@
                     contentType: false,
                     success: function(response) {
                         if (response.success) {
+                            // Store coordinates in hidden inputs
+                            $('#user-message-form input[name="point_x"]').val(x);
+                            $('#user-message-form input[name="point_y"]').val(y);
                             // Fetch and display the conversation
                             fetchConversation(response.conversation_id);
                         } else {
@@ -229,20 +235,17 @@
 
                 $('#close-conversation-form').off('submit').submit(function(event) {
                     event.preventDefault();
-                    fullScreenDiv.style.display = "none";
-                    mapDiv.style.display = "block";
-                    conversationContent.data('initialized', false);
-                    conversationContent.data('lastMessageId', 0);
-                    conversationContent.empty();
+                    var point_x = $('#user-message-form input[name="point_x"]').val();
+                    var point_y = $('#user-message-form input[name="point_y"]').val();
+                    window.location.href = `/?lat=${point_x}&lng=${point_y}`;
                 });
 
                 $('#close-icon').off('click').on('click', function(event) {
-                    fullScreenDiv.style.display = "none";
-                    mapDiv.style.display = "block";
-                    conversationContent.data('initialized', false);
-                    conversationContent.data('lastMessageId', 0);
-                    conversationContent.empty();
+                    var point_x = $('#user-message-form input[name="point_x"]').val();
+                    var point_y = $('#user-message-form input[name="point_y"]').val();
+                    window.location.href = `/?lat=${point_x}&lng=${point_y}`;
                 });
+
 
                 $('#user-message-form').off('submit').submit(function(event) {
                     event.preventDefault();
@@ -520,14 +523,30 @@
             return {
                 lat: parseFloat(urlParams.get('lat')),
                 lng: parseFloat(urlParams.get('lng')),
+                point_id: parseInt(urlParams.get('point_id')),
             };
         }
 
         $(document).ready(function() {
             const { lat, lng } = getQueryParams();
             if (!isNaN(lat) && !isNaN(lng)) {
+            // Find the marker at the specified lat and lng
+            let foundMarker = null;
+            markers.forEach(function(marker) {
+                const markerLatLng = marker.getLatLng();
+                if (markerLatLng.lat === lat && markerLatLng.lng === lng) {
+                    foundMarker = marker;
+                }
+            });
+
+            // Center the map on the marker and trigger a click if found
+            if (foundMarker) {
+                map.setView(foundMarker.getLatLng(), 16);
+                foundMarker.fire('click');
+            } else {
                 map.setView([lat, lng], 18);
             }
+        }
         });
     </script>
 </body>

@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<form action="{% if form.instance.id %}{% url 'point-form' form.instance.id %}{% else %}{% url 'point-form' %}{% endif %}" method="post" class="styled-form">
+<form action="{% if form.instance.id %}{% url 'add-point-form' form.instance.id %}{% else %}{% url 'add-point-form' %}{% endif %}" method="post" class="styled-form">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="submit-button">{% translate "Save" %}</button>

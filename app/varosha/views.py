@@ -110,7 +110,7 @@ def point_add_from_map_form(request, point_id=None):
         if form.is_valid():
             point = form.save()
             # point.persons.set(form.cleaned_data['persons'])
-            return HttpResponseRedirect(reverse('index')) 
+            return redirect(f'{reverse("index")}?lat={point.x}&lng={point.y}')
     # if a GET (or any other method) we'll create a blank form
     else:
         x = request.GET["x"]
