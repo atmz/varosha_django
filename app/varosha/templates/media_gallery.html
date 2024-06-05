@@ -33,9 +33,20 @@
         .media-details {
             margin-top: 10px;
         }
+        @media (max-width: 600px) {
+            .media-gallery {
+                gap: 10px;
+            }
+            .media-item {
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+        }
     </style>
 </head>
 <body>
+    <h1>{% trans "Media Gallery" %}</h1>
     <div class="media-gallery">
         {% for media in media_list %}
             <div class="media-item">
@@ -68,7 +79,6 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -77,17 +87,6 @@
                 gallery: {
                     enabled: true
                 }
-            });
-
-            var swiper = new Swiper('.swiper-container', {
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true,
-                },
             });
         });
     </script>
