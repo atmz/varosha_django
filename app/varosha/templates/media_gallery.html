@@ -1,4 +1,6 @@
 {% load i18n %}
+{% load l10n %}
+
 {% get_current_language as current_language %}
 {% load static %}
 <!DOCTYPE html>
@@ -72,7 +74,7 @@
                     </p>
                     <p><strong>{% trans "Type:" %}</strong> {{ media.get_type_display }}</p>
                     <p><strong>{% trans "Location:" %}</strong> 
-                        <a href="{% url 'index' %}?lat={{ media.point.x }}&lng={{ media.point.y }}">
+                        <a href="{% url 'index' %}?lat={{ media.point.x|unlocalize }}&lng={{ media.point.y|unlocalize }}">
                             {% if current_language == 'el' and media.point.name_gr %}
                                 {{ media.point.name_gr }}
                             {% else %}
