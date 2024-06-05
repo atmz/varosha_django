@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-04 17:27+0300\n"
+"POT-Creation-Date: 2024-06-05 14:41+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,13 +67,13 @@ msgstr "Άλλο"
 msgid "Type"
 msgstr "Τύπος"
 
-#: varosha/models.py:262 varosha/templates/index.html:336
+#: varosha/models.py:262 varosha/templates/index.html:331
 #, fuzzy
 #| msgid "Name"
 msgid "Link Name"
 msgstr "Όνομα Συνδέσμου"
 
-#: varosha/models.py:263 varosha/templates/index.html:339
+#: varosha/models.py:263 varosha/templates/index.html:334
 msgid "URL"
 msgstr "Διεύθυνση URL"
 
@@ -81,28 +81,28 @@ msgstr "Διεύθυνση URL"
 msgid "Save"
 msgstr "Αποθήκευση"
 
-#: varosha/templates/index.html:78 varosha/templates/index.html:117
-#: varosha/templates/index.html:120
+#: varosha/templates/index.html:75 varosha/templates/index.html:114
+#: varosha/templates/index.html:117
 msgid "Street map"
 msgstr "Χάρτης οδών"
 
-#: varosha/templates/index.html:121
+#: varosha/templates/index.html:118
 msgid "2023 Satellite"
 msgstr "Δορυφόρος 2023"
 
-#: varosha/templates/index.html:122
+#: varosha/templates/index.html:119
 msgid "1963 Aerial"
 msgstr "Αεροφωτογραφία 1963"
 
-#: varosha/templates/index.html:123
+#: varosha/templates/index.html:120
 msgid "1929 Survey"
 msgstr "Χάρτης 1929"
 
-#: varosha/templates/index.html:138
+#: varosha/templates/index.html:135
 msgid "Welcome to the interactive map of Varosha!"
 msgstr "Καλώς ήρθατε στον διαδραστικό χάρτη της Αμμοχώστου!"
 
-#: varosha/templates/index.html:138
+#: varosha/templates/index.html:135
 #, fuzzy
 #| msgid ""
 #| "This is a map of the fenced off city of Varosha,<br /> with layers "
@@ -116,11 +116,11 @@ msgstr ""
 "δείχνουν μια τρέχουσα δορυφορική προβολή, μια αεροφωτογραφία του 1963, και "
 "μια σειρά χαρτών από το 1929."
 
-#: varosha/templates/index.html:141
+#: varosha/templates/index.html:138
 msgid "Did you know you can add new locations to the map?"
 msgstr "Γνωρίζατε ότι μπορείτε να προσθέσετε νέες τοποθεσίες στον χάρτη;"
 
-#: varosha/templates/index.html:141
+#: varosha/templates/index.html:138
 msgid ""
 "Simply click on any point on the map to start adding a new location. Share "
 "your knowledge and enrich the map with your contributions!"
@@ -129,7 +129,7 @@ msgstr ""
 "προσθέτετε μια νέα τοποθεσία. Μοιραστείτε τις γνώσεις σας και εμπλουτίστε "
 "τον χάρτη με τις συνεισφορές σας!"
 
-#: varosha/templates/index.html:144
+#: varosha/templates/index.html:141
 #, fuzzy
 #| msgid "Click on any existing location to see more details and add media."
 msgid "Click on any existing location to see more details and add photos."
@@ -137,7 +137,7 @@ msgstr ""
 "Κάντε κλικ σε οποιαδήποτε υπάρχουσα τοποθεσία για να δείτε περισσότερες "
 "λεπτομέρειες και να προσθέσετε πολυμέσα."
 
-#: varosha/templates/index.html:144
+#: varosha/templates/index.html:141
 #, fuzzy
 #| msgid ""
 #| "You can view photos, videos, and information added by others, and "
@@ -150,7 +150,7 @@ msgstr ""
 "άλλους, και να συνεισφέρετε τα δικά σας πολυμέσα για να διηγηθείτε την "
 "ιστορία της Αμμοχώστου."
 
-#: varosha/templates/index.html:147
+#: varosha/templates/index.html:144
 #, fuzzy
 #| msgid ""
 #| "When you add media, our friendly chatbot will assist you in labeling it "
@@ -162,7 +162,7 @@ msgstr ""
 "Όταν προσθέτετε φωτογραφίες, το φιλικό μας chatbot θα σας βοηθήσει να τα "
 "επισημάνετε κατάλληλα."
 
-#: varosha/templates/index.html:147
+#: varosha/templates/index.html:144
 msgid ""
 "This ensures all contributions are well-organized and easy to explore for "
 "everyone."
@@ -170,61 +170,92 @@ msgstr ""
 "Αυτό διασφαλίζει ότι όλες οι συνεισφορές είναι καλά οργανωμένες και εύκολες "
 "να εξερευνηθούν από όλους."
 
-#: varosha/templates/index.html:177
+#: varosha/templates/index.html:171
 msgid "Choose photo:"
 msgstr ""
 
-#: varosha/templates/index.html:179
+#: varosha/templates/index.html:173
 #, fuzzy
 #| msgid "Upload Media"
 msgid "Upload"
 msgstr "Μεταφόρτωση"
 
-#: varosha/templates/index.html:291
+#: varosha/templates/index.html:286
 msgid "Name"
 msgstr "Όνομα"
 
-#: varosha/templates/index.html:294
+#: varosha/templates/index.html:289
 #, fuzzy
 #| msgid "Name in Greek"
 msgid "Name (Greek)"
 msgstr "Όνομα (Ελληνικά)"
 
-#: varosha/templates/index.html:297
+#: varosha/templates/index.html:292
 msgid "Birth Year"
 msgstr "Έτος Γέννησης"
 
-#: varosha/templates/index.html:300
+#: varosha/templates/index.html:295
 msgid "Death Year"
 msgstr "Έτος Θανάτου"
 
-#: varosha/templates/index.html:303
+#: varosha/templates/index.html:298
 msgid "Add New Person"
 msgstr "Προσθήκη Νέου Προσώπου"
 
-#: varosha/templates/index.html:342
+#: varosha/templates/index.html:337
 #, fuzzy
 #| msgid "Add New Person"
 msgid "Add New Link"
 msgstr "Προσθήκη Νέου Συνδέσμου"
 
-#: varosha/templates/index.html:413
+#: varosha/templates/index.html:408
 #, fuzzy
 #| msgid "Upload Media"
 msgid "Upload Photo"
 msgstr "Μεταφόρτωση Φωτογραφίας"
 
-#: varosha/templates/index.html:415
+#: varosha/templates/index.html:410
 msgid "Add Person"
 msgstr "Προσθήκη Προσώπου"
 
-#: varosha/templates/index.html:416
+#: varosha/templates/index.html:411
 msgid "Add Link"
 msgstr "Προσθήκη Συνδέσμου"
 
-#: varosha/templates/index.html:450
+#: varosha/templates/index.html:445
 msgid "Points of Interest"
 msgstr "Σημεία Ενδιαφέροντος"
+#: varosha/templates/index.html:457
+msgid "Photo Gallery"
+msgstr "Φωτογραφική Συλλογή"
+
+#: varosha/templates/media_gallery.html:48
+msgid "Media Gallery"
+msgstr "Συλλογή Πολυμέσων"
+
+#: varosha/templates/media_gallery.html:56
+msgid "Source:"
+msgstr "Πηγή:"
+
+#: varosha/templates/media_gallery.html:57
+msgid "Date:"
+msgstr "Ημερομηνία:"
+
+#: varosha/templates/media_gallery.html:58
+msgid "Description:"
+msgstr "Περιγραφή:"
+
+#: varosha/templates/media_gallery.html:65
+#, fuzzy
+#| msgid "Type"
+msgid "Type:"
+msgstr "Τύπος"
+
+#: varosha/templates/media_gallery.html:66
+#, fuzzy
+#| msgid "Edit location"
+msgid "Location:"
+msgstr "Επεξεργασία τοποθεσίας"
 
 #: varosha/views.py:220
 msgid "You"
@@ -247,9 +278,6 @@ msgstr "Βοηθός AI"
 #~ msgstr ""
 #~ "Χρησιμοποιήστε τα επίπεδα ελέγχου πάνω δεξιά <br />για να ρυθμίσετε τι "
 #~ "βλέπετε"
-
-#~ msgid "Edit location"
-#~ msgstr "Επεξεργασία τοποθεσίας"
 
 #~ msgid "Add"
 #~ msgstr "Προσθήκη"
