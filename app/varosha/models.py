@@ -8,7 +8,7 @@ import google.generativeai as genai
 import requests
 from varosha.settings import GOOGLE_API_KEY
 
-from varosha.prompts import prompt_el, prompt_en, get_point_prompt
+from varosha.prompts import prompt_el, prompt_en, get_point_prompt, system_prompt
 from django.utils.translation import gettext_lazy as _
 import logging
 
@@ -134,7 +134,7 @@ class Conversation(models.Model):
             response =  type("Foo",(object,),dict(text=f"fake response to {messages[-1]}"))
         else:
             # Initialize the generative model
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            model = genai.GenerativeModel('gemini-1.5-flash', system_instruction=system_prompt)
 
             # Generate content using the model
             logger.debug(f"Messages: {messages}")
