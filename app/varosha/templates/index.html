@@ -23,9 +23,6 @@
 <body data-locale="{{ current_language }}">
     {{ point_data|json_script:"point-data" }}
     <div id="map" style="width: 1400px; height: 1000px;"></div>
-    <div id="help-button" style="position: absolute; top: 80px; left: 10px; z-index: 1000;">
-        <button id="help-icon">&#9432;</button>
-    </div>
     <div id="fullScreenView">
         <div id="close-icon">&#x2715;</div>
         <div id="conversation-content"></div>
@@ -153,9 +150,6 @@
                 .openOn(map);
             }
         
-        $('#help-icon').on('click', function(event) {
-            showInstructionalPopup();
-        })
         function openEditForm(pointId, x, y) {
             addPointPopup
                 .setLatLng([x,y])
@@ -456,6 +450,42 @@
         }).addTo(map);
 
 
+        // Custom Control for Photo Gallery Link
+        var photoGalleryControl = L.Control.extend({
+            onAdd: function(map) {
+                var div = L.DomUtil.create('div', 'photo-gallery-control');
+                div.innerHTML = '<a href="{% url 'media_gallery' %}" target="_self" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">{% trans "Photo Gallery" %}</a>';
+                return div;
+            },
+            onRemove: function(map) {
+                // Nothing to do here
+            }
+        });
+
+        // Adding the custom control to the map
+        map.addControl(new photoGalleryControl({ position: 'topright' }));
+              // Custom Control for Info Button
+              var infoControl = L.Control.extend({
+            onAdd: function(map) {
+                var div = L.DomUtil.create('div', 'info-control');
+                div.innerHTML = '<button id="help-icon" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">&#9432;</button>';
+                div.style.backgroundColor = 'white';
+                div.style.padding = '5px';
+                div.style.border = '1px solid #ccc';
+                div.style.borderRadius = '5px';
+                L.DomEvent.on(div, 'click', function(event) {
+                    showInstructionalPopup();
+                });
+                return div;
+            },
+            onRemove: function(map) {
+                // Nothing to do here
+            }
+        });
+
+        // Adding the custom info control to the map
+        map.addControl(new infoControl({ position: 'topleft' }));
+
         map.on('baselayerchange', function(e) {
             setCookie('selectedLayer', e.name, 7);
         });
@@ -483,6 +513,22 @@
         }
 
         map.on('click', onClick);
+
+
+        function getQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                lat: parseFloat(urlParams.get('lat')),
+                lng: parseFloat(urlParams.get('lng')),
+            };
+        }
+
+        $(document).ready(function() {
+            const { lat, lng } = getQueryParams();
+            if (!isNaN(lat) && !isNaN(lng)) {
+                map.setView([lat, lng], 18);
+            }
+        });
     </script>
 </body>
 </html>

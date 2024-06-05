@@ -42,6 +42,7 @@ urlpatterns = [
     path('get-conversation/<int:conversation_id>/', views.get_conversation, name='get_conversation'),
     path('conversations/', views.conversations_list, name='conversations_list'),
     path('delete-conversation/<int:conversation_id>/', views.delete_conversation, name='delete_conversation'),
+    path('media-gallery/', views.media_gallery, name='media_gallery'),
 
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

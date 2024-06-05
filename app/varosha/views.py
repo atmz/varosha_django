@@ -240,3 +240,8 @@ def delete_conversation(request, conversation_id):
     conversation = get_object_or_404(Conversation, id=conversation_id)
     conversation.delete()
     return redirect(reverse('conversations_list'))
+
+
+def media_gallery(request):
+    media_list = Media.objects.select_related('point').all()
+    return render(request, 'media_gallery.html', {'media_list': media_list})

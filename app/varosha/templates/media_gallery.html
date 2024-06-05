@@ -1,0 +1,95 @@
+{% load i18n %}
+{% get_current_language as current_language %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="{{ current_language }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "Media Gallery" %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .media-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .media-item {
+            width: 300px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        .media-item img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        .media-details {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="media-gallery">
+        {% for media in media_list %}
+            <div class="media-item">
+                <a class="popup-link" href="{{ media.path }}">
+                    <img src="{{ media.path }}" alt="{{ media.type }}">
+                </a>
+                <div class="media-details">
+                    <p><strong>{% trans "Source:" %}</strong> {{ media.source }}</p>
+                    <p><strong>{% trans "Date:" %}</strong> {{ media.date }}</p>
+                    <p><strong>{% trans "Description:" %}</strong> 
+                        {% if current_language == 'el' %}
+                            {{ media.description_el }}
+                        {% else %}
+                            {{ media.description_en }}
+                        {% endif %}
+                    </p>
+                    <p><strong>{% trans "Type:" %}</strong> {{ media.get_type_display }}</p>
+                    <p><strong>{% trans "Location:" %}</strong> 
+                        <a href="{% url 'index' %}?lat={{ media.point.x }}&lng={{ media.point.y }}"></a>
+                            {% if current_language == 'el' and media.point.name_gr %}
+                                {{ media.point.name_gr }}
+                            {% else %}
+                                {{ media.point.name }}
+                            {% endif %}
+                        </a>
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.popup-link').magnificPopup({
+                type: 'image',
+                gallery: {
+                    enabled: true
+                }
+            });
+
+            var swiper = new Swiper('.swiper-container', {
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+            });
+        });
+    </script>
+</body>
+</html>
