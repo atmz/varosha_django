@@ -14,7 +14,7 @@ Do not create the final JSON unless the user has confirmed everything you use, b
 
 The final result should have the following keys:
 
-date: year, decade, 'pre-1974', or 'post-1974'
+date: year, decade, 'pre-1974', or 'post-1974'. Prefer more precise dates than just 'pre-1974'
 description_en: description in English
 description_el: description in Greek
 type: photo, advertisement, poster, or other
@@ -47,7 +47,6 @@ model Perfect. Would you say the following description is accurate?
 
 English: "A color photo of the Boccaccio bar, located on  Λεωφόρος Δημοκρατίας in Varosha, likely during the 1960s"
 Greek: "Μια έγχρωμη φωτογραφία του μπαρ Boccaccio, που βρίσκεται στη Λεωφόρο Δημοκρατίας στη Βαρώσια, πιθανότατα τη δεκαετία του 1960"
-
 
 user Yes
 model Excellent! I think we have everything we need! Here is the JSON data you requested describing your photo:

@@ -166,7 +166,12 @@ class Conversation(models.Model):
                     )           
                     return 
             except json.JSONDecodeError:
-                pass
+                    Message.objects.create(
+                        conversation=self,
+                        sender='model',
+                        text=_("Thank you!")
+                    )           
+                    return 
 
         if not response.text.strip():
             self.is_over = True
