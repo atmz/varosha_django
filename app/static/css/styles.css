@@ -100,7 +100,7 @@ max-width: 95% !important; /* Ensure images fill the popup width */
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 90%;
     height: 100%;
     background-color: white;
     overflow-y: auto;

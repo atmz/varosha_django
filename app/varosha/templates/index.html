@@ -32,7 +32,7 @@
         <form id="user-message-form">
             {% csrf_token %}
             <input type="hidden" name="conversation_id">
-            <input type="text" name="user_message" placeholder="Type your message here...">
+            <input type="text" id="user_message" name="user_message" placeholder="Type your message here...">
             <button id="submitBtn" type="submit">Send</button>
         </form>
         <form id="close-conversation-form">
@@ -261,6 +261,7 @@
                         data: formData,
                         success: function(response) {
                             fetchConversation(data.conversation_id);
+                            $("#user-message-form #user_message").val("");
                             $("#user-message-form #submitBtn").attr("disabled", false);
                         },
                         error: function(response) {
