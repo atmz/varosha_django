@@ -244,4 +244,6 @@ def delete_conversation(request, conversation_id):
 
 def media_gallery(request):
     media_list = Media.objects.select_related('point').all()
+    for media in media_list:
+        media.is_video = media.path.endswith('.mp4') or media.path.endswith('.webm')
     return render(request, 'media_gallery.html', {'media_list': media_list})

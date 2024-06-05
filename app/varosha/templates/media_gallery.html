@@ -45,11 +45,10 @@
     </style>
 </head>
 <body>
-    <h1>{% trans "Media Gallery" %}</h1>
     <div class="media-gallery">
         {% for media in media_list %}
             <div class="media-item">
-                {% if media.path.endswith('.mp4') or media.path.endswith('.webm') %}
+                {% if media.is_video %}
                     <a class="popup-video" href="{{ media.path }}">
                         <video autoplay controls>
                             <source src="{{ media.path }}" type="video/mp4">
