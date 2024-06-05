@@ -54,7 +54,7 @@
                     </p>
                     <p><strong>{% trans "Type:" %}</strong> {{ media.get_type_display }}</p>
                     <p><strong>{% trans "Location:" %}</strong> 
-                        <a href="{% url 'index' %}?lat={{ media.point.x }}&lng={{ media.point.y }}"></a>
+                        <a href="{% url 'index' %}?lat={{ media.point.x }}&lng={{ media.point.y }}">
                             {% if current_language == 'el' and media.point.name_gr %}
                                 {{ media.point.name_gr }}
                             {% else %}
