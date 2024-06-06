@@ -182,7 +182,7 @@ def index(request):
                 'death_year': person.death_year
             } for person in associated_people
         ]
-        point_data['people'] = [] # No people for now
+        #point_data['people'] = [] # No people for now
         context["point_data"].append(point_data)
     return render(request, "index.html", context)
 
