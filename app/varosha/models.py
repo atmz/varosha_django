@@ -26,6 +26,7 @@ class Media(models.Model):
         ('poster', 'Poster'),
         ('other', 'Other')
     ], default="photo")
+    url = models.URLField(verbose_name=_("URL"), null=True)
     
     @property
     def path(self):
@@ -155,6 +156,7 @@ class Conversation(models.Model):
                     self.media.description_el = response_data.get('description_el', self.media.description_el)
                     self.media.type = response_data.get('type', self.media.type)
                     self.media.source = response_data.get('source', self.media.source)
+                    self.media.url = response_data.get('url', self.media.url)
                     self.media.save()
                     self.is_over = True
                     self.save()
