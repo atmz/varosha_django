@@ -19,12 +19,6 @@ html, body {
     max-width: 100% !important; /* Ensure media fills the popup width */
     overflow-y: auto; /* Enable vertical scrolling if content exceeds the height */
 }
-
-.popup-content img, .popup-content video {
-max-height: 50% !important; /* Ensure images fill the popup width */
-width: 95%; /* Ensure media fills the popup width */
-max-width: 95% !important; /* Ensure images fill the popup width */
-}
 .popup-content ul {
     list-style: none;
     padding: 0;
@@ -128,4 +122,34 @@ max-width: 95% !important; /* Ensure images fill the popup width */
     left: 10px;
     font-size: 24px;
     cursor: pointer;
+}
+
+.media-thumbnails-container {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px 0;
+}
+.media-thumbnails {
+    display: inline-block;
+}
+.media-thumbnail {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: inline-block;
+    margin-right: 10px;
+    position: relative;
+}
+.media-thumbnail img, .media-thumbnail video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 100%;
+    width: auto;
+    transform: translate(-50%, -50%);
+}
+.media-thumbnail video {
+    object-fit: cover;
 }

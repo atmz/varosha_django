@@ -377,19 +377,19 @@
 			}
 
 			var popupContent = '<div class="popup-content">';
-			if (location.media && location.media.length > 0) {
-				var swiperContainer = '<div class="swiper-container"><div class="swiper-wrapper">';
-				location.media.forEach(function(media) {
-					var media_src = media.url;
-					if (media_src.includes('.mp4?') || media_src.includes('.webm?')) {
-						swiperContainer += '<div class="swiper-slide"><a class="popup-video" href="' + media_src + '"><video autoplay controls><source src="' + media_src + '" type="video/mp4">Your browser does not support the video tag.</video></a></div>';
-					} else {
-						swiperContainer += '<div class="swiper-slide"><a class="popup-image" href="' + media_src + '"><img src="' + media_src + '"></a></div>';
-					}
-				});
-				swiperContainer += '</div><div class="swiper-pagination"></div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div></div>';
-				popupContent += swiperContainer;
-			}
+            if (location.media && location.media.length > 0) {
+                var mediaContainer = '<div class="media-thumbnails-container"><div class="media-thumbnails">';
+                location.media.forEach(function(media) {
+                    var media_src = media.url;
+                    if (media_src.includes('.mp4?') || media_src.includes('.webm?')) {
+                        mediaContainer += '<div class="media-thumbnail"><a class="popup-video" href="' + media_src + '"><video width="100" height="100" muted><source src="' + media_src + '" type="video/mp4">Your browser does not support the video tag.</video></a></div>';
+                    } else {
+                        mediaContainer += '<div class="media-thumbnail"><a class="popup-image" href="' + media_src + '"><img src="' + media_src + '" width="100" height="100"></a></div>';
+                    }
+                });
+                mediaContainer += '</div></div>';
+                popupContent += mediaContainer;
+            }
 			popupContent += '<p>' + locationName + '</p>';
 
 			if (location.people && location.people.length > 0) {
