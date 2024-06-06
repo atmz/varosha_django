@@ -16,7 +16,7 @@ logger = logging.getLogger('varosha')
 class Media(models.Model):
     file = models.FileField(upload_to='uploads/')  # Path in S3 where files will be stored
     source = models.CharField(max_length=64, default="unknown")
-    point = models.ForeignKey("Point", on_delete=models.CASCADE)
+    point = models.ForeignKey("Point", on_delete=models.CASCADE, null=True)
     date = models.CharField(max_length=16, default="")
     description_en = models.TextField(default="")
     description_el = models.TextField(default="")
@@ -24,6 +24,7 @@ class Media(models.Model):
         ('photo', 'Photo'),
         ('advertisement', 'Advertisement'),
         ('poster', 'Poster'),
+        ('video', 'Video'),
         ('other', 'Other')
     ], default="photo")
     url = models.URLField(verbose_name=_("URL"), null=True)
@@ -31,6 +32,10 @@ class Media(models.Model):
     @property
     def path(self):
         return self.file.url
+    
+    def __str__(self):
+        return f"{self.description_en} - {self.type}"
+
 
 class Conversation(models.Model):
     media = models.ForeignKey(Media, on_delete=models.CASCADE, related_name='conversations')
@@ -219,6 +224,7 @@ class Person(models.Model):
     mother = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children_from_mother')
     father = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children_from_father')
     points = models.ManyToManyField('Point', related_name='persons')
+    media = models.ManyToManyField('Media', related_name='media')
 
 
     def __str__(self):

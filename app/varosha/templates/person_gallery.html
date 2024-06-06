@@ -1,0 +1,141 @@
+{% load i18n %}
+{% load l10n %}
+{% get_current_language as current_language %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="{{ current_language }}">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .person-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .person-item {
+            max-width: 400px;
+            min-width: 400px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        .person-media-thumbnails {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .person-media-thumbnail {
+            width: 100px;
+            height: 100px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: inline-block;
+            position: relative;
+        }
+        .person-media-thumbnail img, .person-media-thumbnail video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            height: 100%;
+            width: auto;
+            transform: translate(-50%, -50%);
+        }
+        .person-media-thumbnail video {
+            object-fit: cover;
+        }
+        .person-details {
+            margin-top: 10px;
+        }
+        @media (max-width: 600px) {
+            .person-gallery {
+                gap: 10px;
+            }
+            .person-item {
+                width: 100%;
+                max-width: 400px;
+                min-width: 300px;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="person-gallery">
+        {% for person in person_list %}
+            <div class="person-item">
+                <div class="person-details">
+                    <p><strong>{% trans "Name:" %}</strong> 
+                        {% if current_language == 'el' %}
+                            {{ person.name_gr }}
+                        {% else %}
+                            {{ person.name }}
+                        {% endif %}
+                    </p>
+                    <p><strong>{% trans "Birth Year:" %}</strong> {{ person.birth_year }}</p>
+                    <p><strong>{% trans "Death Year:" %}</strong> {{ person.death_year }}</p>
+                    <p><strong>{% trans "Children:" %}</strong>
+                        {% for child in person.get_children %}
+                            {{ child.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                    <p><strong>{% trans "Locations:" %}</strong>
+                        {% for point in person.points.all %}
+                            <a href="{% url 'index' %}?lat={{ point.x|unlocalize }}&lng={{ point.y|unlocalize }}">
+                                {% if current_language == 'el' and point.name_gr %}
+                                    {{ point.name_gr }}
+                                {% else %}
+                                    {{ point.name }}
+                                {% endif %}
+                            </a>{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+                <div class="person-media-thumbnails">
+                    {% for media in person.media.all %}
+                        <div class="person-media-thumbnail">
+                            {% if media.is_video %}
+                                <a class="popup-video" href="{{ media.path }}">
+                                    <video muted>
+                                        <source src="{{ media.path }}" type="video/mp4">
+                                        {% trans "Your browser does not support the video tag." %}
+                                    </video>
+                                </a>
+                            {% else %}
+                                <a class="popup-link" href="{{ media.path }}">
+                                    <img src="{{ media.path }}" alt="{{ media.type }}">
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.popup-link').magnificPopup({
+                type: 'image',
+                gallery: {
+                    enabled: true
+                }
+            });
+
+            $('.popup-video').magnificPopup({
+                type: 'iframe'
+            });
+        });
+    </script>
+</body>
+</html>

@@ -65,7 +65,13 @@
                     </a>
                 {% endif %}
                 <div class="media-details">
-                    <p><strong>{% trans "Source:" %}</strong> {{ media.source }}</p>
+                    <p><strong>{% trans "Source:" %}</strong> 
+                        {% if media.url %}
+                            {{ media.source }}
+                        {% else %}
+                            <a href="{{ media.url }}">{{ media.source }}</a>
+                        {% endif %}
+                    </p>
                     <p><strong>{% trans "Date:" %}</strong> {{ media.date }}</p>
                     <p><strong>{% trans "Description:" %}</strong> 
                         {% if current_language == 'el' %}
