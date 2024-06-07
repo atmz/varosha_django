@@ -1,4 +1,5 @@
 import os
+import re
 from django.utils.translation import gettext as _
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -246,9 +247,48 @@ def media_gallery(request):
     media_list = Media.objects.select_related('point').all()
     for media in media_list:
         media.is_video = '.mp4?' in media.path or '.webm?' in media.path
-    return render(request, 'media_gallery.html', {'media_list': media_list})
+    person_list = Person.objects.all()
+    return render(request, 'media_gallery.html', {'media_list': media_list, 'person_list': person_list})
 
 
 def person_gallery(request):
     person_list = Person.objects.all()
     return render(request, 'person_gallery.html', {'person_list': person_list})
+
+
+def tag_people(request):
+    if request.method == "POST":
+        media_id = request.POST.get('media_id')
+        existing_person_id = request.POST.get('existing_person')
+        new_person_name = request.POST.get('new_person_name') or None
+        new_person_birth_year = request.POST.get('new_person_birth_year') or None
+        new_person_death_year = request.POST.get('new_person_death_year') or None
+        new_person_mother = request.POST.get('new_person_mother') or None
+        new_person_father = request.POST.get('new_person_father') or None
+
+        media = get_object_or_404(Media, id=media_id)
+
+        if existing_person_id:
+            person = get_object_or_404(Person, id=existing_person_id)
+        elif new_person_name:
+            # Check if the name is in Greek or Latin characters
+            if re.search('[\u0370-\u03FF\u1F00-\u1FFF]', new_person_name):
+                name_kwargs = {'name_gr': new_person_name}
+            else:
+                name_kwargs = {'name': new_person_name}
+            person = Person.objects.create(
+                birth_year=new_person_birth_year,
+                death_year=new_person_death_year,
+                mother=Person.objects.filter(id=new_person_mother).first(),
+                father=Person.objects.filter(id=new_person_father).first(),
+                **name_kwargs
+            )
+        else:
+            return JsonResponse({'error': 'No person selected or provided.'}, status=400)
+
+        media.persons.add(person)
+        return JsonResponse({'success': 'Person tagged successfully.'})
+
+    return JsonResponse({'error': 'Invalid request method.'}, status=400)
+
+

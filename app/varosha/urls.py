@@ -44,6 +44,8 @@ urlpatterns = [
     path('delete-conversation/<int:conversation_id>/', views.delete_conversation, name='delete_conversation'),
     path('media-gallery/', views.media_gallery, name='media_gallery'),
     path('person-gallery/', views.person_gallery, name='person_gallery'),
+        path('tag-people/', views.tag_people, name='tag_people'),
+
 
 
 

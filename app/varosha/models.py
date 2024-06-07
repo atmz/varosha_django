@@ -224,7 +224,7 @@ class Person(models.Model):
     mother = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children_from_mother')
     father = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children_from_father')
     points = models.ManyToManyField('Point', related_name='persons')
-    media = models.ManyToManyField('Media', related_name='media')
+    media = models.ManyToManyField('Media', related_name='persons')
 
 
     def __str__(self):
