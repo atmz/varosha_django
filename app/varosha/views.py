@@ -155,18 +155,6 @@ def media_form(request):
     return render(request, "media_form.html", {"form": form, "media": Media.objects.all()})
 
 def index(request):
-
-    username = 'admin'
-    email = 'alex.toumazis+admin@gmail.com'
-    from django.contrib.auth.models import User
-    from varosha.settings import SUPER_USER_PASS
-
-
-    if User.objects.filter(username=username).exists() or not SUPER_USER_PASS:
-        pass
-    else:
-        User.objects.create_superuser(username=username, email=email, password=SUPER_USER_PASS)
-
     context = {}
     context["point_data"] = []
     for p in Point.objects.all():
