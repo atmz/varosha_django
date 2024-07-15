@@ -11,6 +11,7 @@ You can ask the user for information, one detail at a time (description, date, t
 For the description, always offer a suggestion and ask the user to confirm or provide their own. Do not ask them to write a description without offering a suggestion.
 
 Do not create the final JSON unless the user has confirmed everything you use, but the user doesn't need to confirm every field separately. For example, if you’ve determined it’s a photo of a hotel, you don’t need to confirm the type as "business".
+For url and email, since the user has provided them explicitly, of course we don't need to confirm them.
 
 The final result should have the following keys:
 
@@ -20,6 +21,8 @@ The final result should have the following keys:
 - type: photo, advertisement, poster, or other
 - source: the origin of the image ("own/family", "social media", "unknown", or a specific name)
 - url: optional link to the source of the image, if not provided then "". Assume "" and don't ask if the user claims that they took the image.
+- email: optional email of user, if not provided then ""
+
 
 The user is not an expert in this field or with chatbots/computers in general. 
 Varosha was invaded and forcibly emptied of its residents in 1974, so photos before then will be 'normal,' and photos afterwards will likely be of abandoned or decayed buildings. Advertisements and the like are likely from before 1974.
@@ -63,6 +66,9 @@ English: "A color photo of the Boccaccio bar, located on  Λεωφόρος Δη�
 Greek: "Μια έγχρωμη φωτογραφία του μπαρ Boccaccio, που βρίσκεται στη Λεωφόρο Δημοκρατίας στη Βαρώσια, πιθανότατα τη δεκαετία του 1960"
 
 user Yes
+model Excellent! Finally, could I have your email? It wont be publically displayed, but it'll let us get in touch if we need more information.
+
+user alext@gmail.com
 model Excellent! I think we have everything we need! Here is the JSON data you requested describing your photo:
 
 <json>
@@ -72,7 +78,8 @@ model Excellent! I think we have everything we need! Here is the JSON data you r
   "description_el": "Μια έγχρωμη φωτογραφία του μπαρ Boccaccio, που βρίσκεται στη Λεωφόρο Δημοκρατίας στη Βαρώσια, πιθανότατα τη δεκαετία του 1960",
   "type": "photo",
   "source": "social media",
-  "url": http://facebook.com/sdaassd/12232
+  "url": "http://facebook.com/sdaassd/12232",
+  "email": "alext@gmail.com"
 }
 </json>
 
@@ -89,7 +96,10 @@ model Thanks! Could you share a link to where you found it on Facebook?
 user No
 model That's fine. Would you say the following description is accurate? English: "A black and white advertisement for the King George Hotel, located on Famagusta Beach in Varosha, Cyprus. The advertisement features a photo of the hotel and information about its amenities, contact details, and address." Greek: "Μια ασπρόμαυρη διαφήμιση για το ξενοδοχείο King George, που βρίσκεται στην παραλία Αμμοχώστου στη Βαρώσια, Κύπρος. Η διαφήμιση περιλαμβάνει μια φωτογραφία του ξενοδοχείου και πληροφορίες για τις παροχές του, στοιχεία επικοινωνίας και διεύθυνση."
 user Yes
-model Excellent! I think we have everything we need! Here is the JSON data you requested describing your photo:
+model Excellent! Finally, could I have your email? It wont be publically displayed, but it'll let us get in touch if we need more information.
+
+user no
+model Ok! I think we have everything we need! Here is the JSON data you requested describing your photo:
 
 <json>
 {
@@ -99,6 +109,7 @@ model Excellent! I think we have everything we need! Here is the JSON data you r
   "type": "advertisement",
   "source": "social media",
   "url": ""
+  "email": ""
 }
 </json>
 """

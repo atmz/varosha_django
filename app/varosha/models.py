@@ -28,6 +28,7 @@ class Media(models.Model):
         ('other', 'Other')
     ], default="photo")
     url = models.URLField(verbose_name=_("URL"), null=True)
+    email = models.EmailField(verbose_name=_("Email"), null=True)
     
     @property
     def path(self):
@@ -162,6 +163,7 @@ class Conversation(models.Model):
                     self.media.type = response_data.get('type', self.media.type)
                     self.media.source = response_data.get('source', self.media.source)
                     self.media.url = response_data.get('url', self.media.url)
+                    self.media.email = response_data.get('email', self.media.email)
                     self.media.save()
                     self.is_over = True
                     self.save()
