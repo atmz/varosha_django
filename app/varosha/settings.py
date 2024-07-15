@@ -164,6 +164,11 @@ if "GOOGLE_API_KEY" in environ:
 else:
     GOOGLE_API_KEY = None
 
+if "SUPER_USER_PASS" in environ:
+    SUPER_USER_PASS = environ.get("SUPER_USER_PASS")
+else:
+    SUPER_USER_PASS = None
+
 
 LOGGING = {
     'version': 1,
