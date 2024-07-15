@@ -25,3 +25,6 @@ run:
 
     - name: GOOGLE_API_KEY
       value-from: "arn:aws:ssm:us-east-1:556614631457:parameter/django-GOOGLE_API_KEY"
+  
+    - name: SUPER_USER_PASS
+      value-from: "arn:aws:ssm:us-east-1:556614631457:parameter/django-SUPER_USER_PASS"
