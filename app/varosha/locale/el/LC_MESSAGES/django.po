@@ -49,7 +49,7 @@ msgstr "Όνομα στα Αγγλικά"
 
 #: varosha/models.py:248
 msgid "Pending"
-msgstr "Εκκρεμής"
+msgstr "Σε αναμονή"
 
 #: varosha/models.py:249
 msgid "Approved"
@@ -102,7 +102,7 @@ msgstr "Χάρτης 1929"
 
 #: varosha/templates/index.html:138
 msgid "Welcome to the interactive map of Varosha!"
-msgstr "Καλώς ήρθατε στον διαδραστικό χάρτη της Αμμοχώστου!"
+msgstr "Καλώς ήρθατε στον διαδραστικό χάρτη του Βαρωσίου!"
 
 #: varosha/templates/index.html:138
 msgid ""
@@ -115,7 +115,7 @@ msgstr ""
 
 #: varosha/templates/index.html:141
 msgid "Did you know you can add new locations to the map?"
-msgstr "Γνωρίζατε ότι μπορείτε να προσθέσετε νέες τοποθεσίες στον χάρτη;"
+msgstr "Ξέρατε ότι μπορείτε να προσθέσετε νέα σημεία στον χάρτη;"
 
 #: varosha/templates/index.html:141
 msgid ""
@@ -159,7 +159,7 @@ msgstr ""
 
 #: varosha/templates/index.html:174
 msgid "Choose photo:"
-msgstr "Επιλέξτε φωτογραφία:"
+msgstr "Διαλέξτε φωτογραφία:"
 
 #: varosha/templates/index.html:176
 msgid "Upload"
@@ -191,7 +191,7 @@ msgstr "Προσθήκη Νέου Συνδέσμου"
 
 #: varosha/templates/index.html:411
 msgid "Upload Photo"
-msgstr "Μεταφόρτωση Φωτογραφίας"
+msgstr "Ανέβασμα Φωτογραφίας"
 
 #: varosha/templates/index.html:413
 msgid "Add Person"
@@ -203,7 +203,7 @@ msgstr "Προσθήκη Συνδέσμου"
 
 #: varosha/templates/index.html:448
 msgid "Points of Interest"
-msgstr "Σημεία Ενδιαφέροντος"
+msgstr "Αξιοθέατα"
 
 #: varosha/templates/index.html:460
 msgid "Photo Gallery"
