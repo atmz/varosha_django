@@ -162,7 +162,7 @@ def index(request):
     from varosha.settings import SUPER_USER_PASS
 
 
-    if User.objects.filter(username=username).exists() and SUPER_USER_PASS:
+    if User.objects.filter(username=username).exists() or not SUPER_USER_PASS:
         pass
     else:
         User.objects.create_superuser(username=username, email=email, password=SUPER_USER_PASS)

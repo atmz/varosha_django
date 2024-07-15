@@ -73,7 +73,7 @@ msgstr "Άλλο"
 
 #: varosha/models.py:266
 msgid "Type"
-msgstr "Τύπος"
+msgstr "Κατηγορία"
 
 #: varosha/models.py:275 varosha/templates/index.html:334
 msgid "Link Name"
@@ -229,7 +229,7 @@ msgstr "Περιγραφή:"
 
 #: varosha/templates/media_gallery.html:108
 msgid "Type:"
-msgstr "Τύπος:"
+msgstr "Κατηγορία:"
 
 #: varosha/templates/media_gallery.html:109
 msgid "Location:"
