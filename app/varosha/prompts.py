@@ -128,3 +128,4 @@ def get_point_prompt(point):
                 f"Coordinates: [{point.x},{point.y}], " \
                 f"Type: {type_value}"
     return f"The point associated with this image has the following metadata: {details}"
+

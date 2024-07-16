@@ -34,6 +34,7 @@ urlpatterns = [
     path('delete-person/<int:person_id>/', views.delete_person, name='delete_person'),
     path('delete-media/<int:media_id>/', views.delete_media, name='delete_media'),
     path("add-point-form/", views.point_add_from_map_form, name="add-point-form"),
+    path("add-point-form/<int:point_id>/", views.point_add_from_map_form, name="add-point-form"),
     path("media-form/", views.media_form, name="media-form"),
     path('admin/', admin.site.urls),
     path('el/', views.set_language_to_greek, name='set_language_greek'),
@@ -41,10 +42,11 @@ urlpatterns = [
     path('chat-bot-ai-send-message/', views.user_chat_bot_ai_conversation_send_message, name='user_chat_bot_ai_conversation_send_message'),
     path('get-conversation/<int:conversation_id>/', views.get_conversation, name='get_conversation'),
     path('conversations/', views.conversations_list, name='conversations_list'),
+    path('create-new-point-conversation/', views.create_new_point_conversation, name="create_new_point_conversation"),
     path('delete-conversation/<int:conversation_id>/', views.delete_conversation, name='delete_conversation'),
     path('media-gallery/', views.media_gallery, name='media_gallery'),
     path('person-gallery/', views.person_gallery, name='person_gallery'),
-        path('tag-people/', views.tag_people, name='tag_people'),
+    path('tag-people/', views.tag_people, name='tag_people'),
 
 
 

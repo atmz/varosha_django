@@ -19,6 +19,7 @@ html, body {
     max-width: 100% !important; /* Ensure media fills the popup width */
     overflow-y: auto; /* Enable vertical scrolling if content exceeds the height */
 }
+
 .popup-content ul {
     list-style: none;
     padding: 0;
@@ -80,6 +81,12 @@ html, body {
 /* Additional style for the popup container */
 .leaflet-popup-content-wrapper {
     border-radius: 10px;
+}
+.leaflet-popup {
+    z-index: 1010;
+}
+.leaflet-control-layers {
+    z-index: 650  !important; /* lower than the popup */
 }
 
 
@@ -152,4 +159,49 @@ html, body {
 }
 .media-thumbnail video {
     object-fit: cover;
+}
+
+/* General styles for the container */
+#add-pin-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+}
+
+/* Style for the title */
+#add-pin-container > div:first-child {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Styling the buttons */
+.point-type-button {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+/* Hover effect for buttons */
+.point-type-button:hover {
+    background-color: #0056b3;
+}
+
+/* Active effect for buttons */
+.point-type-button:active {
+    background-color: #003d80;
 }

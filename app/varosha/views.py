@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from django.utils.translation import gettext as _
@@ -12,7 +13,7 @@ from django.urls import reverse
 
 from django.views.decorators.http import require_POST
 from .models import Conversation
-from .forms import UserChatBotAIConversationSendMessageForm
+from .forms import PersonFormSet, UserChatBotAIConversationSendMessageForm
 
 from .models import Media, Person, Point
 from .forms import MediaForm, PointAddFromMapForm, PointDeleteForm, PointForm, PersonForm, PersonDeleteForm, PointLinkForm
@@ -98,39 +99,40 @@ def delete_point(request, point_id):
 
 
 def point_add_from_map_form(request, point_id=None):
-    # if this is a POST request we need to process the form data
-
+    associated_people = False
     if point_id:
         point = get_object_or_404(Point, id=point_id)
+        associated_people = point.persons.all().exists()
     else:
-        point = None
-    if request.method == "POST":
-        # create a form instance and populate it with data from the request:
-        form = PointForm(request.POST, instance=point)
-        # check whether it's valid:
-        if form.is_valid():
-            point = form.save()
-            # point.persons.set(form.cleaned_data['persons'])
-            return redirect(f'{reverse("index")}?lat={point.x}&lng={point.y}')
-    # if a GET (or any other method) we'll create a blank form
+        point = Point()
+
+    if request.method == 'POST':
+        point_form = PointAddFromMapForm(request.POST, instance=point)
+        person_formset = PersonFormSet(request.POST, queryset=point.persons.all())
+
+        if point_form.is_valid() and person_formset.is_valid():
+            point = point_form.save()
+
+            # Handle many-to-many relationship
+            persons = person_formset.save(commit=False)
+            for person in persons:
+                person.save()
+            point.persons.set(persons)
+            person_formset.save_m2m()
+
+        return redirect(f'{reverse("index")}?lat={point.x}&lng={point.y}')    
     else:
-        x = request.GET["x"]
-        y = request.GET["y"]
-        if "id" in request.GET:
-            point = get_object_or_404(Point,id=request.GET["id"])
-            form = PointAddFromMapForm(instance=point,
-            # initial = {
-            #     'persons': point.persons.all(),  # Set the initial value for persons field
-            # }
-        )
-        else:
-            form = PointAddFromMapForm(initial={
-                "x":x,
-                "y":y
-            })
+        point_form = PointAddFromMapForm(instance=point)
+        person_formset = PersonFormSet(queryset=point.persons.all())
 
+    return render(request, 'add_point_from_map_form.html', {
+        'point_form': point_form,
+        'person_formset': person_formset,
+        'associated_people': associated_people,
 
-    return render(request, "add_point_from_map_form.html", {"form": form, "points": Point.objects.all()})
+    })
+
+    
 
 def media_form(request):
     if request.method == "POST":
@@ -142,7 +144,7 @@ def media_form(request):
             current_language = get_language()
 
             # Start a new conversation for the uploaded media with the current language
-            conversation = Conversation.objects.create(media=media, language=current_language)
+            conversation = Conversation.objects.create(point=media.point, media=media, language=current_language)
             conversation.initialize()
             
             return JsonResponse({'success': True, 'conversation_id': conversation.id})
@@ -153,6 +155,30 @@ def media_form(request):
         form = MediaForm()
 
     return render(request, "media_form.html", {"form": form, "media": Media.objects.all()})
+
+def create_new_point_conversation(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        type = data.get('type')
+        x = data.get('x')
+        y = data.get('y')
+
+        # Get the current language
+        current_language = get_language()
+
+        point =  Point.objects.create(
+            x=x,
+            y=y,
+            type=type,
+            status='U'
+        )
+        # Start a new conversation for the uploaded media with the current language
+        conversation = Conversation.objects.create(point=point, language=current_language)
+        conversation.initialize()
+        
+        return JsonResponse({'success': True, 'conversation_id': conversation.id})
+
+    return JsonResponse({'success': False})
 
 def index(request):
     context = {}
@@ -206,7 +232,7 @@ def user_chat_bot_ai_conversation_send_message(request):
         # Retrieve the conversation messages
         messages = conversation.messages.all().values('sender', 'text', 'timestamp')
         
-        return JsonResponse({'messages': list(messages)}, status=200)
+        return JsonResponse({'messages': list(messages), 'is_over': conversation.is_over}, status=200)
     else:
         return JsonResponse({'error': 'Invalid form data'}, status=400)
     
@@ -228,8 +254,23 @@ def get_conversation(request, conversation_id):
             'sender': sender,
             'text': message['text']
         })
-
-    return JsonResponse({'conversation_id': conversation.id, 'messages': localized_messages, "media_path": conversation.media.path})
+    type =  "media" if conversation.media else "point"
+    if type == "media":
+        return JsonResponse({
+            'conversation_id': conversation.id,
+            'messages': localized_messages,
+            'type': 'media',
+            'media_path': conversation.media.path,
+            'is_over': conversation.is_over,
+            })
+    elif type == "point":
+        return JsonResponse({
+            'conversation_id': conversation.id,
+            'messages': localized_messages,
+            'type': 'point',
+            'point_id': conversation.point.id,
+            'is_over': conversation.is_over,
+        })
 
 
 def conversations_list(request):

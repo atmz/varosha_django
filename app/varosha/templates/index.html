@@ -158,11 +158,97 @@
                 .setLatLng([x,y])
                 .setContent("")
                 .openOn(map);
-            var url="add-point-form?x="+ x +"&y=" + y + "&id="+ pointId;
+            var url="add-point-form?id="+ pointId;
             $.get(url).done(function(data) {
                 addPointPopup.setContent(data);
                 addPointPopup.update();
             });
+        }
+
+        function openAddPointForm(x, y) {
+            var popupContent = `
+                {% csrf_token %}
+                <div id="add-pin-container">
+                    <div>
+                        {% translate "Add pin" %}
+                    </div>
+                    <div>
+                        <button type="button" class="point-type-button" data-type="H">{% translate "Home" %}</button>
+                        <button type="button" class="point-type-button" data-type="B">{% translate "Business" %}</button>
+                        <button type="button" class="point-type-button" data-type="O">{% translate "Landmark" %}</button>
+                    </div>
+                    <button type="submit" id="submit-button" class="submit-button" style="display:none;">{% translate "Save" %}</button>
+                    <form id="point-form" method="post" class="styled-form" style="display:none;">
+                        <input type="hidden" name="x" id="x" value="${x}">
+                        <input type="hidden" name="y" id="y" value="${y}">
+                        <input name="name" id="name" >
+                        <input name="name_gr" id="name_gr" >
+                        <input name="type" id="type" ">
+                    </form>
+                </div>
+            `;
+
+            var popup = L.popup()
+                .setLatLng([x, y])
+                .setContent(popupContent)
+                .openOn(map);
+
+            $('.point-type-button').click(function() {
+                var type = $(this).data('type');
+                $('#type').val(type);
+
+                // Send AJAX request to create conversation
+                $.ajax({
+                    url: '/create-new-point-conversation/',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
+                    },
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        type: type,
+                        x: $('#x').val(),
+                        y: $('#y').val()
+                    }),
+                    success: function(data) {
+                        console.log('Conversation created:', data);
+
+                        fetchConversation(data.conversation_id);
+                        // // Show the form and submit button after successful creation
+                        // $('#point-form').show();
+                        // $('#submit-button').show();
+                    },
+                    error: function(error) {
+                        console.error('Error creating conversation:', error);
+                    }
+                });
+            }); 
+
+            // $('#media-upload-form').submit(function(event) {
+
+            // $('#media-upload-form').submit(function(event) {
+            //     event.preventDefault();
+            //     $("#media-upload-form #submitBtn").attr("disabled", true);
+            //     var formData = new FormData(this);
+            //     $.ajax({
+            //         url: $(this).attr('action'),
+            //         type: $(this).attr('method'),
+            //         data: formData,
+            //         processData: false,
+            //         contentType: false,
+            //         success: function(response) {
+            //             if (response.success) {
+            //                 // Store coordinates in hidden inputs
+            //                 $('#user-message-form input[name="point_x"]').val(x);
+            //                 $('#user-message-form input[name="point_y"]').val(y);
+            //                 // Fetch and display the conversation
+            //                 fetchConversation(response.conversation_id);
+            //             } else {
+            //                 alert('Error uploading media: ' + response.error);
+            //             }
+            //         }
+            //     });
+            // });
         }
 
         function openUploadForm(pointId, x, y) {
@@ -205,78 +291,92 @@
                     }
                 });
             });
-            function displayConversation(data) {
-                var mapDiv = document.getElementById('map');
-                mapDiv.style.display = "none";
-                var fullScreenDiv = document.getElementById('fullScreenView');
-                fullScreenDiv.style.display = "block";
+        }
+        function displayConversation(data) {
+            var mapDiv = document.getElementById('map');
+            mapDiv.style.display = "none";
+            var fullScreenDiv = document.getElementById('fullScreenView');
+            fullScreenDiv.style.display = "block";
 
-                var conversationContent = $('#conversation-content');
+            var conversationContent = $('#conversation-content');
 
-                if (!conversationContent.data('initialized')) {
-                    conversationContent.empty();
+            if (!conversationContent.data('initialized')) {
+                conversationContent.empty();
+                if(data.media_path) {
                     conversationContent.append('<p><img src=' + data.media_path + '></p>');
-                    conversationContent.data('initialized', true);
                 }
-
-                var lastMessageId = conversationContent.data('lastMessageId') || 0;
-                var newMessages = data.messages.filter(message => message.id > lastMessageId);
-                newMessages.forEach(function(message) {
-                    conversationContent.append('<p><strong>' + message.sender + ':</strong> ' + message.text + '</p>');
-                });
-                if (newMessages.length) {
-                    conversationContent.data('lastMessageId', newMessages[newMessages.length - 1].id);
-                }
-
-                conversationContent.scrollTop(conversationContent[0].scrollHeight);
-
-                // Update the hidden input for conversation ID
-                $('#user-message-form input[name="conversation_id"]').val(data.conversation_id);
-
-                $('#close-conversation-form').off('submit').submit(function(event) {
-                    event.preventDefault();
-                    var point_x = $('#user-message-form input[name="point_x"]').val();
-                    var point_y = $('#user-message-form input[name="point_y"]').val();
-                    window.location.href = `/?lat=${point_x}&lng=${point_y}`;
-                });
-
-                $('#close-icon').off('click').on('click', function(event) {
-                    var point_x = $('#user-message-form input[name="point_x"]').val();
-                    var point_y = $('#user-message-form input[name="point_y"]').val();
-                    window.location.href = `/?lat=${point_x}&lng=${point_y}`;
-                });
-
-
-                $('#user-message-form').off('submit').submit(function(event) {
-                    event.preventDefault();
-                    $("#user-message-form #submitBtn").attr("disabled", true);
-
-                    var formData = $(this).serialize();
-                    $.ajax({
-                        url: '/chat-bot-ai-send-message/',
-                        type: 'POST',
-                        data: formData,
-                        success: function(response) {
-                            fetchConversation(data.conversation_id);
-                            $("#user-message-form #user_message").val("");
-                            $("#user-message-form #submitBtn").attr("disabled", false);
-                        },
-                        error: function(response) {
-                            alert('Error sending message: ' + response.error);
-                        }
-                    });
-                });
+                conversationContent.data('initialized', true);
             }
 
-            function fetchConversation(conversationId) {
+            if(data["is_over"] && data["type"] == "point")
+            {
+                console.log('Conversation isOver:', conversationContent.data);
+
+                var url="add-point-form/"+ data["point_id"];
+                $.get(url).done(function(data) {
+                    fullScreenDiv.setContent(data);
+                    fullScreenDiv.update();
+                });
+                return;
+            }
+
+            var lastMessageId = conversationContent.data('lastMessageId') || 0;
+            var newMessages = data.messages.filter(message => message.id > lastMessageId);
+            newMessages.forEach(function(message) {
+                conversationContent.append('<p><strong>' + message.sender + ':</strong> ' + message.text + '</p>');
+            });
+            if (newMessages.length) {
+                conversationContent.data('lastMessageId', newMessages[newMessages.length - 1].id);
+            }
+
+            conversationContent.scrollTop(conversationContent[0].scrollHeight);
+
+            // Update the hidden input for conversation ID
+            $('#user-message-form input[name="conversation_id"]').val(data.conversation_id);
+
+            $('#close-conversation-form').off('submit').submit(function(event) {
+                event.preventDefault();
+                var point_x = $('#user-message-form input[name="point_x"]').val();
+                var point_y = $('#user-message-form input[name="point_y"]').val();
+                window.location.href = `/?lat=${point_x}&lng=${point_y}`;
+            });
+
+            $('#close-icon').off('click').on('click', function(event) {
+                var point_x = $('#user-message-form input[name="point_x"]').val();
+                var point_y = $('#user-message-form input[name="point_y"]').val();
+                window.location.href = `/?lat=${point_x}&lng=${point_y}`;
+            });
+
+
+            $('#user-message-form').off('submit').submit(function(event) {
+                event.preventDefault();
+                $("#user-message-form #submitBtn").attr("disabled", true);
+
+                var formData = $(this).serialize();
                 $.ajax({
-                    url: `/get-conversation/${conversationId}/`,
-                    type: 'GET',
+                    url: '/chat-bot-ai-send-message/',
+                    type: 'POST',
+                    data: formData,
                     success: function(response) {
-                        displayConversation(response);
+                        fetchConversation(data.conversation_id);
+                        $("#user-message-form #user_message").val("");
+                        $("#user-message-form #submitBtn").attr("disabled", false);
+                    },
+                    error: function(response) {
+                        alert('Error sending message: ' + response.error);
                     }
                 });
-            }
+            });
+        }
+
+        function fetchConversation(conversationId) {
+            $.ajax({
+                url: `/get-conversation/${conversationId}/`,
+                type: 'GET',
+                success: function(response) {
+                    displayConversation(response);
+                }
+            });
         }
 
         function openAddPersonForm(pointId, x, y) {
@@ -410,8 +510,8 @@
 			}
 			popupContent += '<button onclick="openUploadForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Upload Photo" %}</button>';
 			// No people for now
-			//popupContent += '<button onclick="openAddPersonForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Add Person" %}</button>';
-			popupContent += '<button onclick="openAddLinkForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Add Link" %}</button>';
+			popupContent += '<button onclick="openAddPersonForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Add Person" %}</button>';
+			//popupContent += '<button onclick="openAddLinkForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Add Link" %}</button>';
 			popupContent += '</div>';
 
 			marker.bindPopup(popupContent);
@@ -500,18 +600,20 @@
         }
 
         var addPointPopup = L.popup();
+        
 
         function onClick(e) {
             if (!Boolean(map.getContainer().querySelector('.leaflet-popup'))) {
-                addPointPopup
-                    .setLatLng(e.latlng)
-                    .setContent("")
-                    .openOn(map);
-                var url = "add-point-form?x=" + e.latlng.lat + "&y=" + e.latlng.lng;
-                $.get(url).done(function(data) {
-                    addPointPopup.setContent(data);
-                    addPointPopup.update();
-                });
+                openAddPointForm(e.latlng.lat, e.latlng.lng);
+                // addPointPopup
+                //     .setLatLng(e.latlng)
+                //     .setContent("")
+                //     .openOn(map);
+                // var url = "add-point-form?x=" + e.latlng.lat + "&y=" + e.latlng.lng;
+                // $.get(url).done(function(data) {
+                //     addPointPopup.setContent(data);
+                //     addPointPopup.update();
+                // });
             }
         }
 

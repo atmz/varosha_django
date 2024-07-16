@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import ModelForm
+from django.forms import ModelForm, inlineformset_factory
 
 from .models import Person, Point, Media, PointLink
 
@@ -17,8 +17,8 @@ class PersonDeleteForm(ModelForm):
 
 class PointForm(ModelForm):
      class Meta:
-         model = Point
-         fields = ["x", "y", "name", "name_gr", "type"]
+        model = Point
+        fields = ['x', 'y', 'name', 'name_gr', 'status', 'type']
 
 class PointAddFromMapForm(ModelForm):
     # persons = forms.ModelMultipleChoiceField(
@@ -29,7 +29,33 @@ class PointAddFromMapForm(ModelForm):
     class Meta:
         model = Point
         fields = ["x", "y", "name","name_gr", "type"]
-        widgets = {'x': forms.HiddenInput(), 'y': forms.HiddenInput()}
+        widgets = {
+            'x': forms.HiddenInput(), 
+            'y': forms.HiddenInput(),
+            'name': forms.TextInput(attrs={'class': 'name-field'}),
+            'name_gr': forms.TextInput(attrs={'class': 'name-field'}),
+        }
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.status = 'P'  # Set status to "Pending"
+        if commit:
+            instance.save()
+        return instance
+
+class PersonFormForPointAddFromMapForm(ModelForm):
+     class Meta:
+        model = Person
+        exclude = ["points", "media","mother","father"]
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'name-field'}),
+            'name_gr': forms.TextInput(attrs={'class': 'name-field'}),
+            'birth_year': forms.TextInput(attrs={'class': 'date-field'}),
+            'death_year': forms.TextInput(attrs={'class': 'date-field'}),
+        }
+
+PersonFormSet = forms.modelformset_factory(Person, form=PersonFormForPointAddFromMapForm, extra=0, can_delete=True)
+
 
 class PointDeleteForm(ModelForm):
      class Meta:
