@@ -19,8 +19,8 @@ logger = logging.getLogger('varosha')
 class Point(models.Model):
     x = models.FloatField(verbose_name=_("Longitude"))  
     y = models.FloatField(verbose_name=_("Latitude"))
-    name_gr = models.CharField(max_length=30, verbose_name=_("Name in Greek"), blank=True, default='')
-    name = models.CharField(max_length=30, verbose_name=_("Name in English"), blank=True, default='')
+    name_gr = models.CharField(max_length=100, verbose_name=_("Name in Greek"), blank=True, default='')
+    name = models.CharField(max_length=100, verbose_name=_("Name in English"), blank=True, default='')
     STATUS_CHOICES = [
         ("U", _("Under construction")),
         ("P", _("Pending")),
