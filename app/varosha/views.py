@@ -183,7 +183,7 @@ def create_new_point_conversation(request):
 def index(request):
     context = {}
     context["point_data"] = []
-    for p in Point.objects.all():
+    for p in Point.objects.exclude(status='U').all():
         point_data = {
             'id':p.id,
             'x':p.x,
