@@ -313,10 +313,11 @@
                 console.log('Conversation isOver:', conversationContent.data);
 
                 var url="add-point-form/"+ data["point_id"];
-                $.get(url).done(function(data) {
-                    fullScreenDiv.setContent(data);
-                    fullScreenDiv.update();
-                });
+                window.location.href = url
+                // $.get(url).done(function(data) {
+                //     fullScreenDiv.setContent(data);
+                //     fullScreenDiv.update();
+                // });
                 return;
             }
 
