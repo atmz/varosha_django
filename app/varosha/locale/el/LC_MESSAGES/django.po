@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-16 08:41+0000\n"
+"POT-Creation-Date: 2024-07-17 06:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,7 +65,7 @@ msgstr "Άλλο"
 msgid "Type"
 msgstr "Κατηγορία"
 
-#: varosha/models.py:67 varosha/models.py:396 varosha/templates/index.html:437
+#: varosha/models.py:67 varosha/models.py:396 varosha/templates/index.html:438
 msgid "URL"
 msgstr "Διεύθυνση URL"
 
@@ -91,10 +91,6 @@ msgstr "Έτος Γέννησης"
 msgid "Year of Death"
 msgstr "Έτος Θανάτου"
 
-#: varosha/templates/add_point_from_map_form.html:20
-msgid "Associated People"
-msgstr "Σχετιζόμενα Άτομα"
-
 #: varosha/models.py:375
 #, fuzzy
 #| msgid "Mother:"
@@ -107,9 +103,13 @@ msgstr "Μητέρα"
 msgid "Father"
 msgstr "Πατέρας"
 
-#: varosha/models.py:395 varosha/templates/index.html:434
+#: varosha/models.py:395 varosha/templates/index.html:435
 msgid "Link Name"
 msgstr "Όνομα Συνδέσμου"
+
+#: varosha/templates/add_point_from_map_form.html:20
+msgid "Associated People"
+msgstr "Σχετιζόμενα Άτομα"
 
 #: varosha/templates/add_point_from_map_form.html:40
 #: varosha/templates/index.html:180
@@ -208,47 +208,47 @@ msgstr "Διαλέξτε φωτογραφία:"
 msgid "Upload"
 msgstr "Μεταφόρτωση"
 
-#: varosha/templates/index.html:389
+#: varosha/templates/index.html:390
 msgid "Name"
 msgstr "Όνομα"
 
-#: varosha/templates/index.html:392
+#: varosha/templates/index.html:393
 msgid "Name (Greek)"
 msgstr "Όνομα (Ελληνικά)"
 
-#: varosha/templates/index.html:395
+#: varosha/templates/index.html:396
 msgid "Birth Year"
 msgstr "Έτος Γέννησης"
 
-#: varosha/templates/index.html:398
+#: varosha/templates/index.html:399
 msgid "Death Year"
 msgstr "Έτος Θανάτου"
 
-#: varosha/templates/index.html:401 varosha/templates/media_gallery.html:160
+#: varosha/templates/index.html:402 varosha/templates/media_gallery.html:160
 msgid "Add New Person"
 msgstr "Προσθήκη Νέου Προσώπου"
 
-#: varosha/templates/index.html:440
+#: varosha/templates/index.html:441
 msgid "Add New Link"
 msgstr "Προσθήκη Νέου Συνδέσμου"
 
-#: varosha/templates/index.html:511
+#: varosha/templates/index.html:512
 msgid "Upload Photo"
 msgstr "Ανέβασμα Φωτογραφίας"
 
-#: varosha/templates/index.html:513
+#: varosha/templates/index.html:514
 msgid "Add Person"
 msgstr "Προσθήκη Προσώπου"
 
-#: varosha/templates/index.html:514
+#: varosha/templates/index.html:515
 msgid "Add Link"
 msgstr "Προσθήκη Συνδέσμου"
 
-#: varosha/templates/index.html:548
-msgid "Points of Interest"
-msgstr "Αξιοθέατα"
+#: varosha/templates/index.html:549
+msgid "Places"
+msgstr "Τοποθεσίες"
 
-#: varosha/templates/index.html:560
+#: varosha/templates/index.html:561
 msgid "Photo Gallery"
 msgstr "Φωτογραφική Συλλογή"
 
@@ -351,3 +351,6 @@ msgstr "Εσείς"
 #: varosha/views.py:249
 msgid "AI Helper"
 msgstr "Βοηθός AI"
+
+#~ msgid "Points of Interest"
+#~ msgstr "Αξιοθέατα"

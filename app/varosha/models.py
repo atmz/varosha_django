@@ -368,8 +368,8 @@ class Message(models.Model):
 
 
 class Person(models.Model):
-    name = models.CharField(max_length=64, verbose_name=_("Name in English"))
-    name_gr = models.CharField(max_length=64, verbose_name=_("Name in Greek"))
+    name = models.CharField(max_length=64, verbose_name=_("Name in English"), null=True, blank=True)
+    name_gr = models.CharField(max_length=64, verbose_name=_("Name in Greek"), null=True, blank=True)
     birth_year = models.CharField(max_length=4, null=True, blank=True, verbose_name=_("Year of Birth"))
     death_year = models.CharField(max_length=4, null=True, blank=True, verbose_name=_("Year of Death"))
     mother = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children_from_mother' , verbose_name=_("Mother"))
