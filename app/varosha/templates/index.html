@@ -182,6 +182,9 @@
                         <input name="name_gr" id="name_gr" >
                         <input name="type" id="type" ">
                     </form>
+                    <div id="spinner" class="spinner-overlay" style="display: none;">
+                        <div class="spinner"></div>
+                    </div>
                 </div>
             `;
 
@@ -193,32 +196,60 @@
             $('.point-type-button').click(function() {
                 var type = $(this).data('type');
                 $('#type').val(type);
+                var $buttons = $('.point-type-button');
+                var $spinner = $('#spinner');
+                var maxRetries = 3;
+                var retryCount = 0;
 
-                // Send AJAX request to create conversation
-                $.ajax({
-                    url: '/create-new-point-conversation/',
-                    type: 'POST',
-                    headers: {
-                        'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
-                    },
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        type: type,
-                        x: $('#x').val(),
-                        y: $('#y').val()
-                    }),
-                    success: function(data) {
-                        console.log('Conversation created:', data);
 
-                        fetchConversation(data.conversation_id);
-                        // // Show the form and submit button after successful creation
-                        // $('#point-form').show();
-                        // $('#submit-button').show();
-                    },
-                    error: function(error) {
-                        console.error('Error creating conversation:', error);
-                    }
-                });
+                function createConversation() {
+                    // Block further clicks and show spinner
+                    $buttons.prop('disabled', true);
+                    $spinner.show();
+
+                    // Send AJAX request to create conversation
+                    $.ajax({
+                        url: '/create-new-point-conversation/',
+                        type: 'POST',
+                        headers: {
+                            'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
+                        },
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            type: type,
+                            x: $('#x').val(),
+                            y: $('#y').val()
+                        }),
+                        success: function(data) {
+                            console.log('Conversation created:', data);
+
+                            // Hide the spinner
+                            $spinner.hide();
+
+                            // Enable the buttons again
+                            $buttons.prop('disabled', false);
+
+                            fetchConversation(data.conversation_id);
+                        },
+                        error: function(error) {
+                            console.error('Error creating conversation:', error);
+
+                            // Retry after 1 second if not exceeded max retries
+                            if (retryCount < maxRetries) {
+                                retryCount++;
+                                setTimeout(createConversation, 1000);
+                            } else {
+                                // Hide the spinner and enable the buttons if max retries reached
+                                $spinner.hide();
+                                $buttons.prop('disabled', false);
+                            }
+                        }
+                    });
+                };
+
+
+                // Initial call to create conversation
+                createConversation();
             }); 
 
             // $('#media-upload-form').submit(function(event) {
