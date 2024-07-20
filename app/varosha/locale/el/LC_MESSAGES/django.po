@@ -191,8 +191,6 @@ msgstr ""
 "να εξερευνηθούν από όλους."
 
 #: varosha/templates/index.html:173
-#, fuzzy
-#| msgid "Add Link"
 msgid "Add pin"
 msgstr "Προσθήκη σημείου"
 
