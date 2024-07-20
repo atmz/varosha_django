@@ -20,6 +20,9 @@ from .forms import MediaForm, PointAddFromMapForm, PointDeleteForm, PointForm, P
 
 from .settings import MEDIA_URL
 from django.conf import settings
+import logging
+
+logger = logging.getLogger('varosha') 
 
 def point_form(request, point_id=None):
     # if this is a POST request we need to process the form data
@@ -119,6 +122,10 @@ def point_add_from_map_form(request, point_id=None):
                 person.save()
             point.persons.set(persons)
             person_formset.save_m2m()
+
+        else:
+            logger.debug(f"PointAddFromMapForm: {point_form.errors}")
+            logger.debug(f"PointAddFromMapForm: {person_formset.errors}")
 
         return redirect(f'{reverse("index")}?lat={point.x}&lng={point.y}')    
     else:
