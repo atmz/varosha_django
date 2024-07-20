@@ -5,6 +5,7 @@ import re
 import tempfile
 from django.db import models
 import google.generativeai as genai
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import requests
 from varosha.settings import GOOGLE_API_KEY
 
@@ -220,9 +221,12 @@ class Conversation(models.Model):
 
             # Generate content using the model
             logger.debug(f"Messages: {messages}")
-            response = model.generate_content(messages)
-
-        logger.debug(f"response: {response.text}")
+            response = model.generate_content(messages, 
+                safety_settings={
+                    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+                })
+    
+        logger.debug(f"response: {response}")
 
         # Extract JSON data from the response text
         json_pattern = re.compile(r'<json>(.*?)</json>', re.DOTALL)

@@ -28,8 +28,9 @@ class PointAddFromMapForm(ModelForm):
     # )
     class Meta:
         model = Point
-        fields = ["x", "y", "name","name_gr", "type"]
+        fields = ["id", "x", "y", "name","name_gr", "type"]
         widgets = {
+            'id': forms.HiddenInput(), 
             'x': forms.HiddenInput(), 
             'y': forms.HiddenInput(),
             'name': forms.TextInput(attrs={'class': 'name-field'}),

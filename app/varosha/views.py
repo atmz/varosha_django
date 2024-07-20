@@ -120,12 +120,12 @@ def point_add_from_map_form(request, point_id=None):
             persons = person_formset.save(commit=False)
             for person in persons:
                 person.save()
-            point.persons.set(persons)
-            person_formset.save_m2m()
+                point.persons.add(person)
+            point.save()
 
         else:
             logger.debug(f"PointAddFromMapForm: {point_form.errors}")
-            logger.debug(f"PointAddFromMapForm: {person_formset.errors}")
+            logger.debug(f"PointAddFromMapForm-person_formset: {person_formset.errors}")
 
         return redirect(f'{reverse("index")}?lat={point.x}&lng={point.y}')    
     else:
