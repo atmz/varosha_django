@@ -188,6 +188,15 @@ def create_new_point_conversation(request):
     return JsonResponse({'success': False})
 
 def index(request):
+    username = 'admin'
+    email = 'alex.toumazis+admin@gmail.com'
+    from django.contrib.auth.models import User
+    from varosha.settings import SUPER_USER_PASS
+    if User.objects.filter(username=username).exists() or not SUPER_USER_PASS:
+        pass
+    else:
+        User.objects.create_superuser(username=username, email=email, password=SUPER_USER_PASS)
+
     context = {}
     context["point_data"] = []
     for p in Point.objects.exclude(status='U').all():

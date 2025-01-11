@@ -146,7 +146,7 @@ MEDIA_URL = "https://varosha-media.s3.amazonaws.com/"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['https://6zytaqhsqx.us-east-1.awsapprunner.com']
+CSRF_TRUSTED_ORIGINS = ['https://6zytaqhsqx.us-east-1.awsapprunner.com','https://varoshadjango-production.up.railway.app']
 
 if "AWS_SECRET_ACCESS_KEY" in environ:
     AWS_ACCESS_KEY_ID = environ.get("AWS_ACCESS_KEY_ID")
