@@ -197,7 +197,7 @@
 
 
             marker.on('click', function(e) {
-                openEditForm(location.id, e.latlng.lat, e.latlng.lng);
+                openEditForm(location.id, location.x, location.y);
             });
             
 			markers.push(marker);

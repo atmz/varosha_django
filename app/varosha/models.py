@@ -9,21 +9,21 @@ logger = logging.getLogger('varosha')
 class Point(models.Model):
     x = models.FloatField(verbose_name=_("Longitude"))  
     y = models.FloatField(verbose_name=_("Latitude"))
-    name = models.CharField(max_length=100, verbose_name=_("Name"), null=True)
+    name = models.CharField(max_length=100, verbose_name=_("Name"), null=True, blank=True)
     def __str__(self):
         return f"[{self.x},{self.y}]"
     
 class Media(models.Model):
     file = models.FileField(upload_to='uploads/')  # Path in S3 where files will be stored
     point = models.ForeignKey("Point", on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=100, verbose_name=_("Name"), null=True)
-    caption = models.CharField(max_length=100, verbose_name=_("Caption"), null=True)
+    name = models.CharField(max_length=100, verbose_name=_("Name"), null=True, blank=True)
+    caption = models.CharField(max_length=100, verbose_name=_("Caption"), null=True, blank=True)
     @property
     def path(self):
         return self.file.url
 
 class Note(models.Model):
-    text = models.TextField(verbose_name=_("Note"))
+    text = models.TextField(verbose_name=_("Note"), blank=True)
     point = models.ForeignKey("Point", on_delete=models.CASCADE, null=False)
 
 
