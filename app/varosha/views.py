@@ -1,6 +1,8 @@
 import json
 import os
 import re
+from django.db.models import Q
+
 from django.utils.translation import gettext as _
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -12,11 +14,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from django.views.decorators.http import require_POST
-from .models import Conversation
-from .forms import PersonFormSet, UserChatBotAIConversationSendMessageForm
 
-from .models import Media, Person, Point
-from .forms import MediaForm, PointAddFromMapForm, PointDeleteForm, PointForm, PersonForm, PersonDeleteForm, PointLinkForm
+from .models import Media, Note, Point
+from .forms import MediaForm, NoteForm, PointEditForm, PointForm
 
 from .settings import MEDIA_URL
 from django.conf import settings
@@ -45,49 +45,6 @@ def point_form(request, point_id=None):
 
     return render(request, "point_form.html", {"form": form, "points": Point.objects.all()})
 
-def person_form(request, person_id=None):
-    if person_id:
-        person = get_object_or_404(Person, id=person_id)
-    else:
-        person = None
-
-    if request.method == "POST":
-        form = PersonForm(request.POST, instance=person)
-        if form.is_valid():
-            form.save()
-            return redirect("/person-form")   # Redirect to the form page after saving
-    else:
-        form = PersonForm(instance=person)
-
-    return render(request, "person_form.html", {"form": form, "persons": Person.objects.all()})
-
-
-def person_form_ajax(request):
-    form = PersonForm(request.POST)
-    if form.is_valid():
-        form.save()
-        return JsonResponse({"success": "saved person"})
-    return JsonResponse({"error": "failed to save"})
-
-
-def link_form_ajax(request):
-    if request.method == 'POST':
-        form = PointLinkForm(request.POST)
-        if form.is_valid():
-            link = form.save(commit=False)
-            point_id = request.POST.get('point_id')
-            point = get_object_or_404(Point, id=point_id)
-            link.point = point
-            link.save()
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False, 'error': form.errors})
-    return JsonResponse({'success': False, 'error': 'Invalid request method'})
-
-def delete_person(request, person_id):
-    person = get_object_or_404(Person, id=person_id)
-    person.delete()
-    return redirect("/person-form")  # Redirect to your form page after deletion
 
 def delete_media(request, media_id):
     media = get_object_or_404(Media, id=media_id)
@@ -100,42 +57,46 @@ def delete_point(request, point_id):
     point.delete()
     return redirect("/point-form")  # Redirect to your form page after deletion
 
+def create_point(request):
+    x = request.GET.get('x')
+    y = request.GET.get('y')
+    point = Point(x=x, y=y)
+    point.save()
+    return redirect(f'edit-point/{point.id}/')    
 
-def point_add_from_map_form(request, point_id=None):
+
+def edit_point(request, point_id=None):
     associated_people = False
-    if point_id:
-        point = get_object_or_404(Point, id=point_id)
-        associated_people = point.persons.all().exists()
-    else:
-        point = Point()
-
+    point = get_object_or_404(Point, id=point_id)
     if request.method == 'POST':
-        point_form = PointAddFromMapForm(request.POST, instance=point)
-        person_formset = PersonFormSet(request.POST, queryset=point.persons.all())
+        point_form = PointEditForm(request.POST, instance=point)
+        note_form = NoteForm(request.POST)
 
-        if point_form.is_valid() and person_formset.is_valid():
+        if point_form.is_valid():
             point = point_form.save()
+            if note_form.is_valid() and note_form.cleaned_data.get('text'):  # Only save if there's text
+                note = note_form.save(commit=False)
+                note.point = point
+                note.save()
 
-            # Handle many-to-many relationship
-            persons = person_formset.save(commit=False)
-            for person in persons:
-                person.save()
-                point.persons.add(person)
-            point.save()
 
         else:
             logger.debug(f"PointAddFromMapForm: {point_form.errors}")
-            logger.debug(f"PointAddFromMapForm-person_formset: {person_formset.errors}")
 
         return redirect(f'{reverse("index")}?lat={point.x}&lng={point.y}')    
     else:
-        point_form = PointAddFromMapForm(instance=point)
-        person_formset = PersonFormSet(queryset=point.persons.all())
+        point_form = PointEditForm(instance=point)
+        note_form = NoteForm(request.POST)
+    # Get existing notes
+    existing_notes = Note.objects.filter(point=point)
 
-    return render(request, 'add_point_from_map_form.html', {
+    existing_media = Media.objects.filter(point=point)
+
+    return render(request, 'edit_point_form.html', {
         'point_form': point_form,
-        'person_formset': person_formset,
-        'associated_people': associated_people,
+        'note_form': note_form,
+        'existing_notes': existing_notes,
+        'existing_media': existing_media,
 
     })
 
@@ -150,11 +111,13 @@ def media_form(request):
             # Get the current language
             current_language = get_language()
 
-            # Start a new conversation for the uploaded media with the current language
-            conversation = Conversation.objects.create(point=media.point, media=media, language=current_language)
-            conversation.initialize()
+            # # Start a new conversation for the uploaded media with the current language
+            # conversation = Conversation.objects.create(point=media.point, media=media, language=current_language)
+            # conversation.initialize()
             
-            return JsonResponse({'success': True, 'conversation_id': conversation.id})
+            return JsonResponse({'success': True, 
+                'media_url': media.file.url,  # Assuming you have a media model with a file field
+                'message': 'Upload successful'})
         else:
             return JsonResponse({'success': False, 'error': form.errors})
 
@@ -163,29 +126,29 @@ def media_form(request):
 
     return render(request, "media_form.html", {"form": form, "media": Media.objects.all()})
 
-def create_new_point_conversation(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        type = data.get('type')
-        x = data.get('x')
-        y = data.get('y')
+# def create_new_point_conversation(request):
+#     if request.method == "POST":
+#         data = json.loads(request.body)
+#         type = data.get('type')
+#         x = data.get('x')
+#         y = data.get('y')
 
-        # Get the current language
-        current_language = get_language()
+#         # Get the current language
+#         current_language = get_language()
 
-        point =  Point.objects.create(
-            x=x,
-            y=y,
-            type=type,
-            status='U'
-        )
-        # Start a new conversation for the uploaded media with the current language
-        conversation = Conversation.objects.create(point=point, language=current_language)
-        conversation.initialize()
+#         point =  Point.objects.create(
+#             x=x,
+#             y=y,
+#             type=type,
+#             status='U'
+#         )
+#         # Start a new conversation for the uploaded media with the current language
+#         conversation = Conversation.objects.create(point=point, language=current_language)
+#         conversation.initialize()
         
-        return JsonResponse({'success': True, 'conversation_id': conversation.id})
+#         return JsonResponse({'success': True, 'conversation_id': conversation.id})
 
-    return JsonResponse({'success': False})
+#     return JsonResponse({'success': False})
 
 def index(request):
     username = 'admin'
@@ -199,33 +162,17 @@ def index(request):
 
     context = {}
     context["point_data"] = []
-    for p in Point.objects.exclude(status='U').all():
+    for p in  Point.objects.filter(
+        Q(name__isnull=False) & ~Q(name='') |
+        Q(media__isnull=False) |
+        Q(note__isnull=False)
+    ):
         point_data = {
             'id':p.id,
             'x':p.x,
             'y':p.y,
             'name':p.name,
-            'name_gr':p.name_gr,
         }
-        media = p.media_set.all()
-        if media.exists():
-            point_data['media'] = [{'url': m.path} for m in media]
-        else:
-            point_data['media'] = []
-             # Include associated links
-        links = p.links.all()
-        point_data['links'] = [{'name': link.name, 'url': link.url} for link in links]
-        # Include associated people with birth and death dates
-        associated_people = p.persons.all()
-        point_data['people'] = [
-            {
-                'name': person.name,
-                'name_gr': person.name_gr,
-                'birth_year': person.birth_year,
-                'death_year': person.death_year
-            } for person in associated_people
-        ]
-        #point_data['people'] = [] # No people for now
         context["point_data"].append(point_data)
     return render(request, "index.html", context)
 
@@ -304,48 +251,4 @@ def media_gallery(request):
     media_list = Media.objects.select_related('point').all()
     for media in media_list:
         media.is_video = '.mp4?' in media.path or '.webm?' in media.path
-    person_list = Person.objects.all()
-    return render(request, 'media_gallery.html', {'media_list': media_list, 'person_list': person_list})
-
-
-def person_gallery(request):
-    person_list = Person.objects.all()
-    return render(request, 'person_gallery.html', {'person_list': person_list})
-
-
-def tag_people(request):
-    if request.method == "POST":
-        media_id = request.POST.get('media_id')
-        existing_person_id = request.POST.get('existing_person')
-        new_person_name = request.POST.get('new_person_name') or None
-        new_person_birth_year = request.POST.get('new_person_birth_year') or None
-        new_person_death_year = request.POST.get('new_person_death_year') or None
-        new_person_mother = request.POST.get('new_person_mother') or None
-        new_person_father = request.POST.get('new_person_father') or None
-
-        media = get_object_or_404(Media, id=media_id)
-
-        if existing_person_id:
-            person = get_object_or_404(Person, id=existing_person_id)
-        elif new_person_name:
-            # Check if the name is in Greek or Latin characters
-            if re.search('[\u0370-\u03FF\u1F00-\u1FFF]', new_person_name):
-                name_kwargs = {'name_gr': new_person_name}
-            else:
-                name_kwargs = {'name': new_person_name}
-            person = Person.objects.create(
-                birth_year=new_person_birth_year,
-                death_year=new_person_death_year,
-                mother=Person.objects.filter(id=new_person_mother).first(),
-                father=Person.objects.filter(id=new_person_father).first(),
-                **name_kwargs
-            )
-        else:
-            return JsonResponse({'error': 'No person selected or provided.'}, status=400)
-
-        media.persons.add(person)
-        return JsonResponse({'success': 'Person tagged successfully.'})
-
-    return JsonResponse({'error': 'Invalid request method.'}, status=400)
-
-
+    return render(request, 'media_gallery.html', {'media_list': media_list})

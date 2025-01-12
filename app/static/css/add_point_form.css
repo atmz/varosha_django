@@ -73,28 +73,7 @@
     background-color: #0056b3;
 }
 
-/* Person form styling */
-.person-form {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #fff;
-}
-
-.person-form:nth-child(odd) {
-    background-color: #f1f1f1;
-}
-
 /* Reducing space between form elements */
 .styled-form .form-row {
     margin-bottom: 5px;
-}
-
-/* Hide management form */
-#persons .management-form {
-    display: none;
 }

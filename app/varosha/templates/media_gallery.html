@@ -68,9 +68,6 @@
             text-decoration: none;
             cursor: pointer;
         }
-        .new-person-fields {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -115,86 +112,12 @@
                             {% endif %}
                         </a>
                     </p>
-                    {% if media.persons.exists %}
-                    <p><strong>{% trans "People:" %}</strong>
-                        {% for person in media.persons.all %}
-                            {% if current_language == 'el' %}
-                                {{ person.name_gr }} ({% trans "Born" %} {{person.birth_year}})
-                            {% else %}
-                                {{ person.name }} ({% trans "Born" %} {{person.birth_year}})
-                            {% endif %}
-                            {% if not forloop.last %}, {% endif %}
-                        {% endfor %}
-                    </p>
-                {% endif %}
                     <div class="tag-people">
                         <button onclick="openTagPeopleForm({{ media.id }}, '{{ media.path }}', '{{ media.is_video }}')">{% trans "Tag People" %}</button>
                     </div>
                 </div>
             </div>
         {% endfor %}
-    </div>
-
-    <div id="tag-people-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div class="media-item" id="media-preview"></div>
-            <form id="tag-people-form">
-                {% csrf_token %}
-                <input type="hidden" name="media_id" id="media_id" value="">
-                <div>
-                    <label for="existing-person">{% trans "Existing Person:" %}</label>
-                    <select name="existing_person" id="existing-person">
-                        <option value="">{% trans "Select a person" %}</option>
-                        {% for person in person_list %}
-                            {% if current_language == 'el' %}
-                                <option value="{{ person.id }}">{{ person.name_gr }}</option>
-                            {% else %}
-                                <option value="{{ person.id }}">{{ person.name }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select></div>
-                <br>
-                <button type="button" id="new-person-button">{% trans "New Person" %}</button>
-                <div class="new-person-fields">
-                    <h3>{% trans "Add New Person" %}</h3>
-                    <label for="new-person-name">{% trans "Name:" %}</label>
-                    <input type="text" name="new_person_name" id="new-person-name">
-                    <br>
-                    <label for="new-person-birth-year">{% trans "Birth Year:" %}</label>
-                    <input type="text" name="new_person_birth_year" id="new-person-birth-year">
-                    <br>
-                    <label for="new-person-death-year">{% trans "Death Year:" %}</label>
-                    <input type="text" name="new_person_death_year" id="new-person-death-year">
-                    <br>
-                    <label for="new-person-mother">{% trans "Mother:" %}</label>
-                    <select name="new_person_mother" id="new-person-mother">
-                        <option value="">{% trans "Select a person" %}</option>
-                        {% for person in person_list %}
-                            {% if current_language == 'el' %}
-                                <option value="{{ person.id }}">{{ person.name_gr }}</option>
-                            {% else %}
-                                <option value="{{ person.id }}">{{ person.name }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                    <br>
-                    <label for="new-person-father">{% trans "Father:" %}</label>
-                    <select name="new_person_father" id="new-person-father">
-                        <option value="">{% trans "Select a person" %}</option>
-                        {% for person in person_list %}
-                            {% if current_language == 'el' %}
-                                <option value="{{ person.id }}">{{ person.name_gr }}</option>
-                            {% else %}
-                                <option value="{{ person.id }}">{{ person.name }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                </div>
-                <br>
-                <button type="submit">{% trans "Tag" %}</button>
-            </form>
-        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -225,28 +148,6 @@
                 }
             }
 
-            $('#new-person-button').click(function() {
-                $('#existing-person').val('');
-                $('#existing-person').parent().hide();
-                $('.new-person-fields').show();
-            });
-
-            $('#tag-people-form').submit(function(event) {
-                event.preventDefault();
-                var formData = $(this).serialize();
-                $.ajax({
-                    url: '{% url "tag_people" %}',
-                    type: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        modal.style.display = "none";
-                        location.reload(); // Reload to see the new tags
-                    },
-                    error: function(response) {
-                        alert('{% trans "Error tagging people. Please try again." %}');
-                    }
-                });
-            });
         });
 
         function openTagPeopleForm(mediaId, mediaPath, isVideo) {
@@ -255,8 +156,6 @@
                 ? '<video class=media-preview-video autoplay controls><source src="' + mediaPath + '" type="video/mp4">{% trans "Your browser does not support the video tag." %}</video>' 
                 : '<img class=media-preview-image src="' + mediaPath + '" alt="Media">';
             $('#media-preview').html(mediaPreview);
-            $('#existing-person').parent().show();
-            $('.new-person-fields').hide();
             document.getElementById("tag-people-modal").style.display = "block";
         }
     </script>

@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html></html>
+<head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Varosha - maps</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css'>
+    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+</head>
+<body>
+    <div id="map" style="width: 1400px; height: 1000px;"></div>
+
+
+    <script>
+        var currentLocale = document.body.getAttribute('data-locale');
+
+        var corner1 = L.latLng(35.128819,33.921361),
+        corner2 = L.latLng(35.082100,33.988048),
+        bounds = L.latLngBounds(corner1, corner2);
+        center = L.latLng(35.1162,33.9502)
+        const map = L.map('map',{
+            center: center,
+            zoom: 16,
+            maxZoom: 19,
+            minZoom:15,
+            maxBounds: bounds
+        });
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+        var selectedLayer = getCookie('selectedLayer') || "Street map";
+
+
+        const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        const osm2 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        
+        var sat_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/sat256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
+        var aerial_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/1963_256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
+        var survey_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/survey_256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
+
+        var baseMaps = {
+            "Street map": osm,
+        };
+        var layerMaps = {
+            "Street map": osm2,
+            "2023 Satellite": sat_layer,
+            "1963 Aerial": aerial_layer,
+            "1929 Survey": survey_layer,
+        };
+
+        // Select the saved layer
+        for (var layerName in layerMaps) {
+            if (layerMaps.hasOwnProperty(layerName) && layerName === selectedLayer) {
+                map.addLayer(layerMaps[layerName]);
+            } else {
+                map.removeLayer(layerMaps[layerName]);
+            }
+        }
+        
+
+        var layerControl = L.control.layers(layerMaps, {}, {
+            collapsed: false,
+        }).addTo(map);
+
+
+
+
+        map.on('baselayerchange', function(e) {
+            setCookie('selectedLayer', e.name, 7);
+        });
+
+
+        var addPointPopup = L.popup();
+        
+
+
+
+        function getQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                lat: parseFloat(urlParams.get('lat')),
+                lng: parseFloat(urlParams.get('lng')),
+                point_id: parseInt(urlParams.get('point_id')),
+            };
+        }
+
+        $(document).ready(function() {
+            const { lat, lng } = getQueryParams();
+            if (!isNaN(lat) && !isNaN(lng)) {
+            // Find the marker at the specified lat and lng
+            let foundMarker = null;
+            markers.forEach(function(marker) {
+                const markerLatLng = marker.getLatLng();
+                if (markerLatLng.lat === lat && markerLatLng.lng === lng) {
+                    foundMarker = marker;
+                }
+            });
+
+            // Center the map on the marker and trigger a click if found
+            if (foundMarker) {
+                map.setView(foundMarker.getLatLng(), 16);
+                foundMarker.fire('click');
+            } else {
+                map.setView([lat, lng], 18);
+            }
+        }
+        });
+    </script>
+</body>
+</html>

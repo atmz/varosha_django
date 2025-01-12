@@ -1,0 +1,684 @@
+{% load i18n %}
+{% get_current_language as current_language %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="{{ current_language }}">
+<head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Varosha - maps</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+</head>
+<body data-locale="{{ current_language }}">
+    {{ point_data|json_script:"point-data" }}
+    <div id="map" style="width: 1400px; height: 1000px;"></div>
+    <div id="fullScreenView">
+        <div id="close-icon">&#x2715;</div>
+        <div id="conversation-content"></div>
+        <form id="user-message-form">
+            {% csrf_token %}
+            <input type="hidden" id="point_id" name="point_id">
+            <input type="hidden" id="point_x" name="point_x">
+            <input type="hidden" id="point_y" name="point_y">
+            <input type="hidden" name="conversation_id">
+            <input type="text" id="user_message" name="user_message" placeholder="Type your message here...">
+            <button id="submitBtn" type="submit">Send</button>
+        </form>
+        <form id="close-conversation-form">
+            <button type="submit">Close</button>
+        </form>
+    </div>
+
+
+    <script>
+        var currentLocale = document.body.getAttribute('data-locale');
+
+        var corner1 = L.latLng(35.128819,33.921361),
+        corner2 = L.latLng(35.082100,33.988048),
+        bounds = L.latLngBounds(corner1, corner2);
+        center = L.latLng(35.1162,33.9502)
+        const map = L.map('map',{
+            center: center,
+            zoom: 16,
+            maxZoom: 19,
+            minZoom:15,
+            maxBounds: bounds
+        });
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+        var selectedLayer = getCookie('selectedLayer') || "{% trans "Street map" %}";
+        var hasSeenInstructionalPopup = getCookie('hasSeenInstructionalPopup') === 'true';
+
+        // Create a new Leaflet control for the language switcher
+        var LanguageControl = L.Control.extend({
+            onAdd: function(map) {
+                var div = L.DomUtil.create('div', 'language-switcher-control');
+                div.innerHTML = '<form action="{% url "set_language" %}" method="post">' +
+                    '{% csrf_token %}' +
+                    '<select name="language" onchange="this.form.submit()">' +
+                    '{% get_current_language as LANGUAGE_CODE %}' +
+                    '{% get_available_languages as LANGUAGES %}' +
+                    '{% for code, name in LANGUAGES %}' +
+                    '<option value="{{ code }}" {% if code == LANGUAGE_CODE %}selected{% endif %}>{{ name }}</option>' +
+                    '{% endfor %}' +
+                    '</select>' +
+                    '</form>';
+                L.DomEvent.disableClickPropagation(div);
+                return div;
+            }
+        });
+
+        // Add the language switcher control to the map
+        map.addControl(new LanguageControl({position: 'topright'}));
+
+        const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        const osm2 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        
+        var sat_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/sat256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
+        var aerial_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/1963_256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
+        var survey_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/survey_256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
+
+        var baseMaps = {
+            "{% trans "Street map" %}": osm,
+        };
+        var layerMaps = {
+            "{% trans "Street map" %}": osm2,
+            "{% trans "2023 Satellite" %}": sat_layer,
+            "{% trans "1963 Aerial"%}": aerial_layer,
+            "{% trans "1929 Survey"%}": survey_layer,
+        };
+
+        // Select the saved layer
+        for (var layerName in layerMaps) {
+            if (layerMaps.hasOwnProperty(layerName) && layerName === selectedLayer) {
+                map.addLayer(layerMaps[layerName]);
+            } else {
+                map.removeLayer(layerMaps[layerName]);
+            }
+        }
+        function showInstructionalPopup(step = 1) {
+            let popupContent = '';
+            switch(step) {
+                case 1:
+                    popupContent = '<p>{% trans "Welcome to the interactive map of Varosha!" %}<br />{% trans "Explore the history of the fenced-off city through different layers showing a current satellite view, a 1963 aerial view, and a set of 1929 survey maps." %}<br /><br /><a href="#" onclick="showInstructionalPopup(2)">More...</a></p>';
+                    break;
+                case 2:
+                    popupContent = '<p>{% trans "Did you know you can add new locations to the map?" %}<br />{% trans "Simply click on any point on the map to start adding a new location. Share your knowledge and enrich the map with your contributions!" %}<br /><br /><a href="#" onclick="showInstructionalPopup(3)">More...</a></p>';
+                    break;
+                case 3:
+                    popupContent = '<p>{% trans "Click on any existing location to see more details and add photos." %}<br />{% trans "You can view photos, videos, and information added by others, and contribute your own photos to tell the story of Varosha." %}<br /><br /><a href="#" onclick="showInstructionalPopup(4)">More...</a></p>';
+                    break;
+                case 4:
+                    popupContent = '<p>{% trans "When you add photos, our friendly chatbot will assist you in labeling it appropriately." %}<br />{% trans "This ensures all contributions are well-organized and easy to explore for everyone." %}<br /><br /></p>';
+                    break;
+            }
+            var popup = L.popup({ keepInView: true })
+                .setLatLng(center)
+                .setContent(popupContent)
+                .openOn(map);
+            }
+        
+        function openEditForm(pointId, x, y) {
+            addPointPopup
+                .setLatLng([x,y])
+                .setContent("")
+                .openOn(map);
+            var url="add-point-form?id="+ pointId;
+            $.get(url).done(function(data) {
+                addPointPopup.setContent(data);
+                addPointPopup.update();
+            });
+        }
+
+        function openAddPointForm(x, y) {
+            var popupContent = `
+                {% csrf_token %}
+                <div id="add-pin-container">
+                    <div>
+                        <button type="button" class="point-type-button" data-type="H">{% translate "Home" %}</button>
+                        <button type="button" class="point-type-button" data-type="B">{% translate "Business" %}</button>
+                        <button type="button" class="point-type-button" data-type="O">{% translate "Landmark" %}</button>
+                    </div>
+                    <button type="submit" id="submit-button" class="submit-button" style="display:none;">{% translate "Save" %}</button>
+                    <form id="point-form" method="post" class="styled-form" style="display:none;">
+                        <input type="hidden" name="x" id="x" value="${x}">
+                        <input type="hidden" name="y" id="y" value="${y}">
+                        <input name="name" id="name" >
+                        <input name="name_gr" id="name_gr" >
+                        <input name="type" id="type" ">
+                    </form>
+                    <div id="spinner" class="spinner-overlay" style="display: none;">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            `;
+
+            var popup = L.popup()
+                .setLatLng([x, y])
+                .setContent(popupContent)
+                .openOn(map);
+
+            $('.point-type-button').click(function() {
+                var type = $(this).data('type');
+                $('#type').val(type);
+                var $buttons = $('.point-type-button');
+                var $spinner = $('#spinner');
+                var maxRetries = 3;
+                var retryCount = 0;
+
+
+                function createConversation() {
+                    // Block further clicks and show spinner
+                    $buttons.prop('disabled', true);
+                    $spinner.show();
+
+                    // Send AJAX request to create conversation
+                    $.ajax({
+                        url: '/create-new-point-conversation/',
+                        type: 'POST',
+                        headers: {
+                            'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
+                        },
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            type: type,
+                            x: $('#x').val(),
+                            y: $('#y').val()
+                        }),
+                        success: function(data) {
+                            console.log('Conversation created:', data);
+
+                            // Hide the spinner
+                            $spinner.hide();
+
+                            // Enable the buttons again
+                            $buttons.prop('disabled', false);
+
+                            fetchConversation(data.conversation_id);
+                        },
+                        error: function(error) {
+                            console.error('Error creating conversation:', error);
+
+                            // Retry after 1 second if not exceeded max retries
+                            if (retryCount < maxRetries) {
+                                retryCount++;
+                                setTimeout(createConversation, 1000);
+                            } else {
+                                // Hide the spinner and enable the buttons if max retries reached
+                                $spinner.hide();
+                                $buttons.prop('disabled', false);
+                            }
+                        }
+                    });
+                };
+
+
+                // Initial call to create conversation
+                createConversation();
+            }); 
+
+            // $('#media-upload-form').submit(function(event) {
+
+            // $('#media-upload-form').submit(function(event) {
+            //     event.preventDefault();
+            //     $("#media-upload-form #submitBtn").attr("disabled", true);
+            //     var formData = new FormData(this);
+            //     $.ajax({
+            //         url: $(this).attr('action'),
+            //         type: $(this).attr('method'),
+            //         data: formData,
+            //         processData: false,
+            //         contentType: false,
+            //         success: function(response) {
+            //             if (response.success) {
+            //                 // Store coordinates in hidden inputs
+            //                 $('#user-message-form input[name="point_x"]').val(x);
+            //                 $('#user-message-form input[name="point_y"]').val(y);
+            //                 // Fetch and display the conversation
+            //                 fetchConversation(response.conversation_id);
+            //             } else {
+            //                 alert('Error uploading media: ' + response.error);
+            //             }
+            //         }
+            //     });
+            // });
+        }
+
+        function openUploadForm(pointId, x, y) {
+            var popupContent = `
+                <form id="media-upload-form" action="/media-form/" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="point" id="point" value="${pointId}">
+                    <input type="hidden" name="source" id="source" value="unknown">
+                    <label for="file">{% trans "Choose photo:" %}</label>
+                    <input type="file" name="file" id="file" accept="image/*,video/*">
+                    <button id = "submitBtn" type="submit">{% trans "Upload" %}</button>
+                </form>
+            `;
+
+            var popup = L.popup()
+                .setLatLng([x, y])
+                .setContent(popupContent)
+                .openOn(map);
+
+            $('#media-upload-form').submit(function(event) {
+                event.preventDefault();
+                $("#media-upload-form #submitBtn").attr("disabled", true);
+                var formData = new FormData(this);
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: $(this).attr('method'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            // Store coordinates in hidden inputs
+                            $('#user-message-form input[name="point_x"]').val(x);
+                            $('#user-message-form input[name="point_y"]').val(y);
+                            // Fetch and display the conversation
+                            fetchConversation(response.conversation_id);
+                        } else {
+                            alert('Error uploading media: ' + response.error);
+                        }
+                    }
+                });
+            });
+        }
+        function displayConversation(data) {
+            var mapDiv = document.getElementById('map');
+            mapDiv.style.display = "none";
+            var fullScreenDiv = document.getElementById('fullScreenView');
+            fullScreenDiv.style.display = "block";
+
+            var conversationContent = $('#conversation-content');
+
+            if (!conversationContent.data('initialized')) {
+                conversationContent.empty();
+                if(data.media_path) {
+                    conversationContent.append('<p><img src=' + data.media_path + '></p>');
+                }
+                conversationContent.data('initialized', true);
+            }
+
+            if(data["is_over"] && data["type"] == "point")
+            {
+                console.log('Conversation isOver:', conversationContent.data);
+
+                var url="add-point-form/"+ data["point_id"];
+                window.location.href = url
+                // $.get(url).done(function(data) {
+                //     fullScreenDiv.setContent(data);
+                //     fullScreenDiv.update();
+                // });
+                return;
+            }
+
+            var lastMessageId = conversationContent.data('lastMessageId') || 0;
+            var newMessages = data.messages.filter(message => message.id > lastMessageId);
+            newMessages.forEach(function(message) {
+                conversationContent.append('<p><strong>' + message.sender + ':</strong> ' + message.text + '</p>');
+            });
+            if (newMessages.length) {
+                conversationContent.data('lastMessageId', newMessages[newMessages.length - 1].id);
+            }
+
+            conversationContent.scrollTop(conversationContent[0].scrollHeight);
+
+            // Update the hidden input for conversation ID
+            $('#user-message-form input[name="conversation_id"]').val(data.conversation_id);
+
+            $('#close-conversation-form').off('submit').submit(function(event) {
+                event.preventDefault();
+                var point_x = $('#user-message-form input[name="point_x"]').val();
+                var point_y = $('#user-message-form input[name="point_y"]').val();
+                window.location.href = `/?lat=${point_x}&lng=${point_y}`;
+            });
+
+            $('#close-icon').off('click').on('click', function(event) {
+                var point_x = $('#user-message-form input[name="point_x"]').val();
+                var point_y = $('#user-message-form input[name="point_y"]').val();
+                window.location.href = `/?lat=${point_x}&lng=${point_y}`;
+            });
+
+
+            $('#user-message-form').off('submit').submit(function(event) {
+                event.preventDefault();
+                $("#user-message-form #submitBtn").attr("disabled", true);
+
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: '/chat-bot-ai-send-message/',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        fetchConversation(data.conversation_id);
+                        $("#user-message-form #user_message").val("");
+                        $("#user-message-form #submitBtn").attr("disabled", false);
+                    },
+                    error: function(response) {
+                        alert('Error sending message: ' + response.error);
+                    }
+                });
+            });
+        }
+
+        function fetchConversation(conversationId) {
+            $.ajax({
+                url: `/get-conversation/${conversationId}/`,
+                type: 'GET',
+                success: function(response) {
+                    displayConversation(response);
+                }
+            });
+        }
+
+        function openAddPersonForm(pointId, x, y) {
+            var popup = L.popup()
+                .setLatLng([x,y])
+                .setContent(`
+                    <form id="add-person-from-map-form" action="/person-form-ajax/" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="points" value="${pointId}">
+                        <label for="name">{% trans "Name" %}:</label>
+                        <input type="text" name="name" id="name" required>
+                        <br />
+                        <label for="name_gr">{% trans "Name (Greek)" %}:</label>
+                        <input type="text" name="name_gr" id="name_gr">
+                        <br />
+                        <label for="birth_year">{% trans "Birth Year" %}:</label>
+                        <input type="text" name="birth_year" id="birth_year">
+                        <br />
+                        <label for="death_year">{% trans "Death Year" %}:</label>
+                        <input type="text" name="death_year" id="death_year">
+                        <br />
+                        <button type="submit">{% trans "Add New Person" %}</button>
+                    </form>
+                `)
+                .openOn(map);
+
+            $('#add-person-from-map-form').submit(function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: $(this).attr('method'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            popup.close();
+							location.reload();  // Reload the page to see the new link
+                        } else {
+                            alert('Error uploading media: ' + response.error);
+                        }
+                    }
+                });
+            });
+        }
+
+		function openAddLinkForm(pointId, x, y) {
+			var popup = L.popup()
+				.setLatLng([x, y])
+				.setContent(`
+					<form id="add-link-from-map-form" action="/link-form-ajax/" method="post">
+						{% csrf_token %}
+						<input type="hidden" name="point_id" value="${pointId}">
+						<label for="link_name">{% trans "Link Name" %}:</label>
+						<input type="text" name="name" id="link_name" required>
+						<br />
+						<label for="link_url">{% trans "URL" %}:</label>
+						<input type="url" name="url" id="link_url" required>
+						<br />
+						<button type="submit">{% trans "Add New Link" %}</button>
+					</form>
+				`)
+				.openOn(map);
+
+			$('#add-link-from-map-form').submit(function(event) {
+				event.preventDefault();
+				var formData = new FormData(this);
+				$.ajax({
+					url: $(this).attr('action'),
+					type: $(this).attr('method'),
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function(response) {
+						if (response.success) {
+							popup.close();
+							location.reload();  // Reload the page to see the new link
+						} else {
+							alert('Error adding link: ' + response.error);
+						}
+					}
+				});
+			});
+		}
+
+        const markers = [];
+        const dbPointData = JSON.parse(
+            document.getElementById('point-data').textContent
+        );
+
+        dbPointData.forEach(function(location) {
+			var marker = L.marker([location.x, location.y]);
+
+			var locationName = location.name
+			if((!locationName || currentLocale === 'el') && location.name_gr) {
+				locationName = location.name_gr
+			}
+
+			var popupContent = '<div class="popup-content">';
+            if (location.media && location.media.length > 0) {
+                var mediaContainer = '<div class="media-thumbnails-container"><div class="media-thumbnails">';
+                location.media.forEach(function(media) {
+                    var media_src = media.url;
+                    if (media_src.includes('.mp4?') || media_src.includes('.webm?')) {
+                        mediaContainer += '<div class="media-thumbnail"><a class="popup-video" href="' + media_src + '"><video width="100" height="100" muted><source src="' + media_src + '" type="video/mp4">Your browser does not support the video tag.</video></a></div>';
+                    } else {
+                        mediaContainer += '<div class="media-thumbnail"><a class="popup-image" href="' + media_src + '"><img src="' + media_src + '" width="100" height="100"></a></div>';
+                    }
+                });
+                mediaContainer += '</div></div>';
+                popupContent += mediaContainer;
+            }
+			popupContent += '<p>' + locationName + '</p>';
+
+			if (location.people && location.people.length > 0) {
+				popupContent += '<ul>';
+				location.people.forEach(function(person) {
+					var personName = (currentLocale === 'el') ? person.name_gr : person.name;
+					var birthDeathInfo = (person.birth_year || '') + " - " + (person.death_year || '');
+					popupContent += '<li>' + personName + ' (' + birthDeathInfo + ')</li>';
+				});
+				popupContent += '</ul>';
+			}
+			if (location.links && location.links.length > 0) {
+				popupContent += '<ul>';
+				location.links.forEach(function(link) {
+					popupContent += '<li><a href="' + link.url + '" target="_blank">' + link.name + '</a></li>';
+				});
+				popupContent += '</ul>';
+			}
+			popupContent += '<button onclick="openUploadForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Upload Photo" %}</button>';
+			// No people for now
+			popupContent += '<button onclick="openAddPersonForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Add Person" %}</button>';
+			//popupContent += '<button onclick="openAddLinkForm(' + location.id + ',' + location.x + ',' + location.y + ')">{% trans "Add Link" %}</button>';
+			popupContent += '</div>';
+
+			marker.bindPopup(popupContent);
+			markers.push(marker);
+
+			marker.on('popupopen', function() {
+				new Swiper('.swiper-container', {
+					navigation: {
+						nextEl: '.swiper-button-next',
+						prevEl: '.swiper-button-prev',
+					},
+					pagination: {
+						el: '.swiper-pagination',
+						clickable: true,
+					},
+				});
+
+				// Initialize Magnific Popup
+				$('.popup-image').magnificPopup({
+					type: 'image',
+					gallery: {
+						enabled: true
+					}
+				});
+
+				$('.popup-video').magnificPopup({
+					type: 'iframe'
+				});
+			});
+		});
+
+        var poi = L.layerGroup(markers).addTo(map);
+        var overlayMaps = {
+            "{% trans "Places" %}": poi
+        };
+
+        var layerControl = L.control.layers(layerMaps, overlayMaps, {
+            collapsed: false,
+        }).addTo(map);
+
+
+        // Custom Control for Photo Gallery Link
+        var photoGalleryControl = L.Control.extend({
+            onAdd: function(map) {
+                var div = L.DomUtil.create('div', 'photo-gallery-control');
+                div.innerHTML = '<a href="{% url 'media_gallery' %}" target="_self" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">{% trans "Photo Gallery" %}</a>';
+                return div;
+            },
+            onRemove: function(map) {
+                // Nothing to do here
+            }
+        });
+
+        // Adding the custom control to the map
+        map.addControl(new photoGalleryControl({ position: 'topright' }));
+              // Custom Control for Info Button
+              var infoControl = L.Control.extend({
+            onAdd: function(map) {
+                var div = L.DomUtil.create('div', 'info-control');
+                div.innerHTML = '<button id="help-icon" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">&#9432;</button>';
+                div.style.backgroundColor = 'white';
+                div.style.padding = '5px';
+                div.style.border = '1px solid #ccc';
+                div.style.borderRadius = '5px';
+                L.DomEvent.on(div, 'click', function(event) {
+                    showInstructionalPopup();
+                });
+                return div;
+            },
+            onRemove: function(map) {
+                // Nothing to do here
+            }
+        });
+
+        // Adding the custom info control to the map
+        map.addControl(new infoControl({ position: 'topleft' }));
+
+        map.on('baselayerchange', function(e) {
+            setCookie('selectedLayer', e.name, 7);
+        });
+
+
+        if (!hasSeenInstructionalPopup) {
+            showInstructionalPopup();
+            setCookie('hasSeenInstructionalPopup', 'true', 7);
+        }
+
+        var addPointPopup = L.popup();
+        
+
+        function onClick(e) {
+            if (!Boolean(map.getContainer().querySelector('.leaflet-popup'))) {
+                openAddPointForm(e.latlng.lat, e.latlng.lng);
+                // addPointPopup
+                //     .setLatLng(e.latlng)
+                //     .setContent("")
+                //     .openOn(map);
+                // var url = "add-point-form?x=" + e.latlng.lat + "&y=" + e.latlng.lng;
+                // $.get(url).done(function(data) {
+                //     addPointPopup.setContent(data);
+                //     addPointPopup.update();
+                // });
+            }
+        }
+
+        map.on('click', onClick);
+
+
+        function getQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                lat: parseFloat(urlParams.get('lat')),
+                lng: parseFloat(urlParams.get('lng')),
+                point_id: parseInt(urlParams.get('point_id')),
+            };
+        }
+
+        $(document).ready(function() {
+            const { lat, lng } = getQueryParams();
+            if (!isNaN(lat) && !isNaN(lng)) {
+            // Find the marker at the specified lat and lng
+            let foundMarker = null;
+            markers.forEach(function(marker) {
+                const markerLatLng = marker.getLatLng();
+                if (markerLatLng.lat === lat && markerLatLng.lng === lng) {
+                    foundMarker = marker;
+                }
+            });
+
+            // Center the map on the marker and trigger a click if found
+            if (foundMarker) {
+                map.setView(foundMarker.getLatLng(), 16);
+                foundMarker.fire('click');
+            } else {
+                map.setView([lat, lng], 18);
+            }
+        }
+        });
+    </script>
+</body>
+</html>
