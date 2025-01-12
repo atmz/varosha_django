@@ -79,7 +79,7 @@
         var hasSeenInstructionalPopup = getCookie('hasSeenInstructionalPopup') === 'true';
 
         // Create a new Leaflet control for the language switcher
-        var LanguageControl = L.Control.extend({
+        var LanguageControlSwitcher = L.Control.extend({
             onAdd: function(map) {
                 var div = L.DomUtil.create('div', 'language-switcher-control');
                 div.innerHTML = '<form action="{% url "set_language" %}" method="post">' +
@@ -96,9 +96,9 @@
                 return div;
             }
         });
-
+        languageControl = new LanguageControlSwitcher({position: 'topright'})
         // Add the language switcher control to the map
-        map.addControl(new LanguageControl({position: 'topright'}));
+        map.addControl(languageControl);
 
         const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 20,
@@ -132,6 +132,38 @@
             }
         }
         var spinner = '<div id="spinner" class="spinner-overlay" style="display: none;"><div class="spinner"></div></div>'
+        
+
+        function loadPopup(data) {
+                map.removeControl(layerControl);
+                map.removeControl(languageControl);
+                map.removeControl(map.zoomControl);
+
+                addPointPopup.setContent(data);
+                addPointPopup.update();
+                var inputFile = document.getElementById(`file-upload`);
+                var inputFileName = document.getElementById(`file-upload-filename`);
+                var loadFileButton = document.getElementById(`load-file-button`);
+                
+                var uploadButton = document.getElementById(`upload-button`);
+                inputFile.addEventListener('change', () => {
+                    if(inputFile.files.length) {
+                        uploadButton.click();
+                    }
+                    // if(inputFile.files.length) {
+                    //     uploadButton.style.display = '';
+                    //     loadFileButton.value = "{% trans "Change photo" %}";
+                    //     var filename = inputFile.files[0].name;
+                    //     inputFileName.innerText = filename;
+                    // } else {
+                    //     uploadButton.style.display = 'none';
+                    //     loadFileButton.value = "{% trans "Add photo" %}";
+                    //     inputFileName.innerText =  '';
+                    // }
+                    
+                });
+        }
+        
         function createPoint(x, y) {
             addPointPopup
                 .setLatLng([x,y])
@@ -139,8 +171,7 @@
                 .openOn(map);
             var url="create-point?x="+ x+"&y="+y;
             $.get(url).done(function(data) {
-                addPointPopup.setContent(data);
-                addPointPopup.update();
+                loadPopup(data);
             });
             
         }
@@ -151,50 +182,10 @@
                 .openOn(map);
             var url="edit-point/"+ pointId;
             $.get(url).done(function(data) {
-                addPointPopup.setContent(data);
-                addPointPopup.update();
+                loadPopup(data);
             });
         }
 
-        function openUploadForm(pointId, x, y) {
-            var popupContent = `
-                <form id="media-upload-form" action="/media-form/" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="hidden" name="point" id="point" value="${pointId}">
-                    <input type="hidden" name="source" id="source" value="unknown">
-                    <label for="file">{% trans "Choose photo:" %}</label>
-                    <input type="file" name="file" id="file" accept="image/*,video/*">
-                    <button id = "submitBtn" type="submit">{% trans "Upload" %}</button>
-                </form>
-            `;
-
-            var popup = L.popup()
-                .setLatLng([x, y])
-                .setContent(popupContent)
-                .openOn(map);
-
-            $('#media-upload-form').submit(function(event) {
-                event.preventDefault();
-                $("#media-upload-form #submitBtn").attr("disabled", true);
-                var formData = new FormData(this);
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: $(this).attr('method'),
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        if (response.success) {
-                            $('#user-message-form input[name="point_x"]').val(x);
-                            $('#user-message-form input[name="point_y"]').val(y);
-                        } else {
-                            alert('Error uploading media: ' + response.error);
-                        }
-                    }
-                });
-            });
-        }
-        
         const markers = [];
         const dbPointData = JSON.parse(
             document.getElementById('point-data').textContent
@@ -239,6 +230,11 @@
         var addPointPopup = L.popup();
         
 
+        addPointPopup.on("remove", function () {
+            map.addControl(languageControl);
+            map.addControl(layerControl);
+            map.addControl(map.zoomControl);
+        });
 
         function onClick(e) {
             if (!Boolean(map.getContainer().querySelector('.leaflet-popup'))) {
@@ -261,9 +257,9 @@
         // Add this function to handle media uploads
         function uploadMedia(pointId) {
             const form = document.getElementById(`media-upload-form-${pointId}`);
-            const fileInput = document.getElementById(`file-${pointId}`);
+            const fileInput = document.getElementById(`file-upload`);
             const statusDiv = document.getElementById(`upload-status-${pointId}`);
-            const previewDiv = document.getElementById(`media-preview-${pointId}`);
+            const previewDiv = document.getElementById(`media-preview`);
             
             if (!fileInput.files.length) {
                 statusDiv.innerHTML = '{% translate "Please select a file first" %}';
@@ -288,6 +284,7 @@
                     statusDiv.innerHTML = '{% translate "Upload successful!" %}';
                     // Add preview if it's an image
                     if (data.media_url && fileInput.files[0].type.startsWith('image/')) {
+                        previewDiv.style.display = ''
                         previewDiv.innerHTML = `<img src="${data.media_url}" alt="Uploaded media" class="upload-preview">`;
                     }
                     // Clear the file input
