@@ -1,5 +1,7 @@
 from django import forms
 from django.forms import ModelForm
+from django.utils.translation import gettext as _
+
 
 from .models import Point, Media, Note
 
@@ -25,7 +27,7 @@ class PointEditForm(ModelForm):
             'id': forms.HiddenInput(), 
             'x': forms.HiddenInput(), 
             'y': forms.HiddenInput(),
-            'name': forms.TextInput(attrs={'class': 'name-field'}),
+            'name': forms.TextInput(attrs={'class': 'name-field', 'placeholder': _('Name')}),
         }
 
     def save(self, commit=True):
@@ -44,7 +46,7 @@ class PointDeleteForm(ModelForm):
 class MediaForm(ModelForm):
      class Meta:
          model = Media
-         fields = ["file", "source", "point"]
+         fields = ["file", "point"]
 
 
 class UserChatBotAIConversationSendMessageForm(forms.Form):

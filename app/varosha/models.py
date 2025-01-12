@@ -15,7 +15,6 @@ class Point(models.Model):
     
 class Media(models.Model):
     file = models.FileField(upload_to='uploads/')  # Path in S3 where files will be stored
-    source = models.CharField(max_length=64, default="unknown")
     point = models.ForeignKey("Point", on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=100, verbose_name=_("Name"), null=True)
     caption = models.CharField(max_length=100, verbose_name=_("Caption"), null=True)
