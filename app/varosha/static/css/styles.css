@@ -52,6 +52,11 @@ html, body {
     color: #333;
 }
 
+
+.styled-form input.name-field {
+    flex: 1 1 300px; /* Adjust width for name fields */
+}
+
 .styled-form input[type="text"],
 .styled-form input[type="email"],
 .styled-form input[type="password"],

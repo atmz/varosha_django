@@ -131,11 +131,11 @@
                 map.removeLayer(layerMaps[layerName]);
             }
         }
-        
+        var spinner = '<div id="spinner" class="spinner-overlay" style="display: none;"><div class="spinner"></div></div>'
         function createPoint(x, y) {
             addPointPopup
                 .setLatLng([x,y])
-                .setContent("")
+                .setContent(spinner)
                 .openOn(map);
             var url="create-point?x="+ x+"&y="+y;
             $.get(url).done(function(data) {
@@ -147,7 +147,7 @@
         function openEditForm(pointId, x, y) {
             addPointPopup
                 .setLatLng([x,y])
-                .setContent("")
+                .setContent(spinner)
                 .openOn(map);
             var url="edit-point/"+ pointId;
             $.get(url).done(function(data) {

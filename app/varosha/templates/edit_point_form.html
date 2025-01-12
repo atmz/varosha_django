@@ -2,7 +2,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/add_point_form.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/edit_point_form.css' %}">
 </head>
 <form id="edit-point-form" action="{% url 'edit-point-form' point_form.instance.id %}" method="post" class="styled-form">
     {% csrf_token %}
