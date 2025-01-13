@@ -42,20 +42,7 @@
 
 
     <script>
-        var currentLocale = document.body.getAttribute('data-locale');
 
-        var corner1 = L.latLng(35.128819,33.921361),
-        corner2 = L.latLng(35.082100,33.988048),
-        bounds = L.latLngBounds(corner1, corner2);
-        center = L.latLng(35.1162,33.9502)
-        let activePopup = null;
-        const map = L.map('map',{
-            center: center,
-            zoom: 16,
-            maxZoom: 19,
-            minZoom:15,
-            maxBounds: bounds
-        });
         function setCookie(name, value, days) {
             var expires = "";
             if (days) {
@@ -76,8 +63,26 @@
             }
             return null;
         }
+        var currentLocale = document.body.getAttribute('data-locale');
+
+        var corner1 = L.latLng(35.128819,33.921361),
+        corner2 = L.latLng(35.082100,33.988048),
+        bounds = L.latLngBounds(corner1, corner2);
+        center = L.latLng(35.1162,33.9502)
+        let activePopup = null;
+        var savedZoom = getCookie('mapZoom');
+        var defaultZoom = 16;  // or whatever your default is
+        var initialZoom = savedZoom ? parseInt(savedZoom) : defaultZoom;
+        const map = L.map('map',{
+            center: center,
+            zoom: initialZoom,
+            maxZoom: 19,
+            minZoom:15,
+            maxBounds: bounds
+        });
         var selectedLayer = getCookie('selectedLayer') || "{% trans "Street map" %}";
         var hasSeenInstructionalPopup = getCookie('hasSeenInstructionalPopup') === 'true';
+
 
         // Create a new Leaflet control for the language switcher
         var LanguageControlSwitcher = L.Control.extend({
@@ -101,6 +106,16 @@
         // Add the language switcher control to the map
         map.addControl(languageControl);
 
+
+        // Custom Control for Photo Gallery Link
+        var photoGalleryControlButton = L.Control.extend({
+            onAdd: function(map) {
+                var div = L.DomUtil.create('div', 'photo-gallery-control');
+                div.innerHTML = '<a href="{% url 'media_gallery' %}" target="_self" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">{% trans "Photo Gallery" %}</a>';
+                return div;
+            }
+        });
+        photoGalleryControl = new photoGalleryControlButton({position: 'topright'})
         const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 20,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -136,10 +151,12 @@
         
 
         function loadPopup(data) {
+                setCookie('mapZoom', map.getZoom(), 7);  // Saves for 7 days
                 activePopup = addPointPopup;
                 map.removeControl(layerControl);
                 map.removeControl(languageControl);
                 map.removeControl(map.zoomControl);
+                map.removeControl(photoGalleryControl);
 
                 addPointPopup.setContent(data);
                 addPointPopup.update();
@@ -214,19 +231,8 @@
         var layerControl = L.control.layers(layerMaps, overlayMaps, {
             collapsed: false,
         }).addTo(map);
+        map.addControl(photoGalleryControl);
 
-
-        // Custom Control for Photo Gallery Link
-        var photoGalleryControl = L.Control.extend({
-            onAdd: function(map) {
-                var div = L.DomUtil.create('div', 'photo-gallery-control');
-                div.innerHTML = '<a href="{% url 'media_gallery' %}" target="_self" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">{% trans "Photo Gallery" %}</a>';
-                return div;
-            },
-            onRemove: function(map) {
-                // Nothing to do here
-            }
-        });
 
 
         var addPointPopup = L.popup();
@@ -236,6 +242,8 @@
             map.addControl(languageControl);
             map.addControl(layerControl);
             map.addControl(map.zoomControl);
+
+            map.addControl(photoGalleryControl);
             activePopup = null;
         });
 
@@ -309,7 +317,6 @@
             
             uplpoadCommon(formData);
         }
-        // Add this to handle paste events globally in your form
 
         // Modify paste handler to check for active popup
         document.addEventListener('paste', function(event) {
@@ -333,6 +340,10 @@
                     break;
                 }
             }
+        });
+
+        map.on('baselayerchange', function(e) {
+            setCookie('selectedLayer', e.name, 7);
         });
 
         $(document).ready(function() {

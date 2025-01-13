@@ -48,9 +48,12 @@
         corner2 = L.latLng(35.082100,33.988048),
         bounds = L.latLngBounds(corner1, corner2);
         center = L.latLng(35.1162,33.9502)
+        var savedZoom = getCookie('mapZoom');
+        var defaultZoom = 16;  // or whatever your default is
+        var initialZoom = savedZoom ? parseInt(savedZoom) : defaultZoom;
         const map = L.map('map',{
             center: center,
-            zoom: 16,
+            zoom: initialZoom,
             maxZoom: 19,
             minZoom:15,
             maxBounds: bounds
