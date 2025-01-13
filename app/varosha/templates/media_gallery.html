@@ -74,47 +74,36 @@
     <div class="media-gallery">
         {% for media in media_list %}
             <div class="media-item">
-                {% if media.is_video %}
-                    <a class="popup-video" href="{{ media.path }}">
-                        <video autoplay controls>
-                            <source src="{{ media.path }}" type="video/mp4">
-                            {% trans "Your browser does not support the video tag." %}
-                        </video>
-                    </a>
-                {% else %}
-                    <a class="popup-link" href="{{ media.path }}">
-                        <img src="{{ media.path }}" alt="{{ media.type }}">
-                    </a>
+                {% if media.point.name %}
+                <p><strong>{{ media.point.name }}</strong> </p>
+
+                {% endif %}
+                {% if media.path %}
+                <a class="popup-link" href="{{ media.path }}">
+                    <img src="{{ media.path }}" alt="{{ media.type }}">
+                </a>
                 {% endif %}
                 <div class="media-details">
-                    <p><strong>{% trans "Source:" %}</strong> 
-                        {% if media.url %}
-                            <a href="{{ media.url }}">{{ media.source }}</a>
-                        {% else %}
-                            {{ media.source }}
-                        {% endif %}
+                    {% if media.name %}
+                    <p><strong>{{ media.name }}</strong> </p>
+                    {% endif %}
+
+                    {% if media.caption %}
+                    <p>
+                        {{ media.caption }}
                     </p>
-                    <p><strong>{% trans "Date:" %}</strong> {{ media.date }}</p>
-                    <p><strong>{% trans "Description:" %}</strong> 
-                        {% if current_language == 'el' %}
-                            {{ media.description_el }}
-                        {% else %}
-                            {{ media.description_en }}
-                        {% endif %}
+                    {% endif %}
+                    {% if media.text %}
+                    <p>
+                        {{ media.text }}
                     </p>
-                    <p><strong>{% trans "Type:" %}</strong> {{ media.get_type_display }}</p>
-                    <p><strong>{% trans "Location:" %}</strong> 
+                    {% endif %}
+
+                    <p>
                         <a href="{% url 'index' %}?lat={{ media.point.x|unlocalize }}&lng={{ media.point.y|unlocalize }}">
-                            {% if current_language == 'el' and media.point.name_gr %}
-                                {{ media.point.name_gr }}
-                            {% else %}
-                                {{ media.point.name }}
-                            {% endif %}
+                            {% trans "View on map" %} 
                         </a>
                     </p>
-                    <div class="tag-people">
-                        <button onclick="openTagPeopleForm({{ media.id }}, '{{ media.path }}', '{{ media.is_video }}')">{% trans "Tag People" %}</button>
-                    </div>
                 </div>
             </div>
         {% endfor %}
@@ -150,14 +139,6 @@
 
         });
 
-        function openTagPeopleForm(mediaId, mediaPath, isVideo) {
-            $('#media_id').val(mediaId);
-            var mediaPreview = isVideo == 'True' 
-                ? '<video class=media-preview-video autoplay controls><source src="' + mediaPath + '" type="video/mp4">{% trans "Your browser does not support the video tag." %}</video>' 
-                : '<img class=media-preview-image src="' + mediaPath + '" alt="Media">';
-            $('#media-preview').html(mediaPreview);
-            document.getElementById("tag-people-modal").style.display = "block";
-        }
     </script>
 </body>
 </html>

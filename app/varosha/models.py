@@ -10,6 +10,7 @@ class Point(models.Model):
     x = models.FloatField(verbose_name=_("Longitude"))  
     y = models.FloatField(verbose_name=_("Latitude"))
     name = models.CharField(max_length=100, verbose_name=_("Name"), null=True, blank=True)
+    time_added = models.DateTimeField(auto_now=True)
     def __str__(self):
         return f"[{self.x},{self.y}]"
     
@@ -18,6 +19,7 @@ class Media(models.Model):
     point = models.ForeignKey("Point", on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=100, verbose_name=_("Name"), null=True, blank=True)
     caption = models.CharField(max_length=100, verbose_name=_("Caption"), null=True, blank=True)
+    time_added = models.DateTimeField(auto_now=True)
     @property
     def path(self):
         return self.file.url
@@ -25,6 +27,7 @@ class Media(models.Model):
 class Note(models.Model):
     text = models.TextField(verbose_name=_("Note"), blank=True)
     point = models.ForeignKey("Point", on_delete=models.CASCADE, null=False)
+    time_added = models.DateTimeField(auto_now=True)
 
 
 

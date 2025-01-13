@@ -111,7 +111,7 @@
         var photoGalleryControlButton = L.Control.extend({
             onAdd: function(map) {
                 var div = L.DomUtil.create('div', 'photo-gallery-control');
-                div.innerHTML = '<a href="{% url 'media_gallery' %}" target="_self" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">{% trans "Photo Gallery" %}</a>';
+                div.innerHTML = '<a href="{% url 'media_gallery' %}" target="_self" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">{% trans "Photo Gallery" %}</a><br><a href="{% url 'feed' %}" target="_self" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">{% trans "Feed" %}</a>';
                 return div;
             }
         });

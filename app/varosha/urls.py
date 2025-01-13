@@ -35,6 +35,7 @@ urlpatterns = [
     path("media-form/", views.media_form, name="media-form"),
     path('delete-media/<int:media_id>/', views.delete_media, name='delete_media'),
     path('media-gallery/', views.media_gallery, name='media_gallery'),
+    path('feed/', views.feed, name='feed'),
 
 
 
