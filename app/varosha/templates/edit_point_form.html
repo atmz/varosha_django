@@ -40,14 +40,14 @@
 </form>
 
     <div class="media-upload-section">
-        <form id="media-upload-form-{{point_form.instance.id}}" enctype="multipart/form-data">
+        <form id="media-upload-form" enctype="multipart/form-data">
             <input type="hidden" name="point" value="{{point_form.instance.id}}">
-            <button id ="upload-button" class="upload-button" type="button" onclick="uploadMedia({{point_form.instance.id}})" style="display: none">{% translate "Upload" %}</button>
+            <button id ="upload-button" class="upload-button" type="button" onclick="uploadMedia()" style="display: none">{% translate "Upload" %}</button>
             <span id="file-upload-filename"></span>
             <input type="file" name="file" id="file-upload" accept="image/*,video/*" style="display: none">
 
         </form>
-        <div id="upload-status-{{point_form.instance.id}}"></div>
+        <div id="upload-status"></div>
         <div id="media-preview" class="media-thumbnail" style="display: none"></div>
     </div>
 

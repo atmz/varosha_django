@@ -2,6 +2,7 @@ import json
 import os
 import re
 from django.db.models import Q
+from django.utils import timezone
 
 from django.utils.translation import gettext as _
 from django.http import HttpResponseRedirect, JsonResponse
@@ -106,6 +107,20 @@ def media_form(request):
     if request.method == "POST":
         form = MediaForm(request.POST, request.FILES)
         if form.is_valid():
+            original_file = request.FILES['file']
+            file_ext = os.path.splitext(original_file.name)[1].lower()
+            point_id = form.cleaned_data['point'].id
+            timestamp =  timezone.now().strftime('%Y%m%d_%H%M%S')
+
+            # Check if this is a pasted image or regular upload
+            if original_file.name == 'blob': # Pasted images typically come as 'blob'
+                new_filename = f'point_{point_id}_{timestamp}{file_ext}'
+            else:
+                # Keep original filename but add point_id and timestamp
+                original_name = os.path.splitext(original_file.name)[0]
+                new_filename = f'point_{point_id}_{timestamp}_{original_name}{file_ext}'
+           
+            form.instance.file.name = new_filename
             media = form.save()
 
             # Get the current language

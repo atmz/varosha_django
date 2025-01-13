@@ -48,6 +48,7 @@
         corner2 = L.latLng(35.082100,33.988048),
         bounds = L.latLngBounds(corner1, corner2);
         center = L.latLng(35.1162,33.9502)
+        let activePopup = null;
         const map = L.map('map',{
             center: center,
             zoom: 16,
@@ -135,6 +136,7 @@
         
 
         function loadPopup(data) {
+                activePopup = addPointPopup;
                 map.removeControl(layerControl);
                 map.removeControl(languageControl);
                 map.removeControl(map.zoomControl);
@@ -160,7 +162,7 @@
                     //     loadFileButton.value = "{% trans "Add photo" %}";
                     //     inputFileName.innerText =  '';
                     // }
-                    
+                activePopup
                 });
         }
         
@@ -234,6 +236,7 @@
             map.addControl(languageControl);
             map.addControl(layerControl);
             map.addControl(map.zoomControl);
+            activePopup = null;
         });
 
         function onClick(e) {
@@ -254,23 +257,16 @@
             };
         }
 
-        // Add this function to handle media uploads
-        function uploadMedia(pointId) {
-            const form = document.getElementById(`media-upload-form-${pointId}`);
-            const fileInput = document.getElementById(`file-upload`);
-            const statusDiv = document.getElementById(`upload-status-${pointId}`);
-            const previewDiv = document.getElementById(`media-preview`);
-            
-            if (!fileInput.files.length) {
-                statusDiv.innerHTML = '{% translate "Please select a file first" %}';
-                return;
-            }
-
-            const formData = new FormData(form);
-            
+        function uplpoadCommon(formData) {
             // Add CSRF token
             formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
-            
+    
+            // Show upload status
+            const statusDiv = document.getElementById('upload-status');
+            const previewDiv = document.getElementById(`media-preview`);
+            const fileInput = document.getElementById(`file-upload`);
+
+            statusDiv.innerHTML = 'Uploading pasted image...';
             statusDiv.innerHTML = '{% translate "Uploading..." %}';
             
             fetch('/media-form/', {
@@ -283,7 +279,7 @@
                 if (data.success) {
                     statusDiv.innerHTML = '{% translate "Upload successful!" %}';
                     // Add preview if it's an image
-                    if (data.media_url && fileInput.files[0].type.startsWith('image/')) {
+                    if (data.media_url) {
                         previewDiv.style.display = ''
                         previewDiv.innerHTML = `<img src="${data.media_url}" alt="Uploaded media" class="upload-preview">`;
                     }
@@ -298,6 +294,46 @@
                 console.error('Upload error:', error);
             });
         }
+
+        function uploadPastedImage(file) {
+            const form = document.getElementById(`media-upload-form`);
+            const formData = new FormData(form);
+            formData.append('file', file);
+            uplpoadCommon(formData);
+        }
+
+        // Add this function to handle media uploads
+        function uploadMedia(pointId) {
+            const form = document.getElementById(`media-upload-form`);
+            const formData = new FormData(form);
+            
+            uplpoadCommon(formData);
+        }
+        // Add this to handle paste events globally in your form
+
+        // Modify paste handler to check for active popup
+        document.addEventListener('paste', function(event) {
+            // Only handle paste if popup is active
+            if (!activePopup) {
+                return;
+            }
+            
+            const fileInput = document.getElementById(`file-upload`);
+            if(fileInput.length) {
+                // Ignore paste if file has been input
+                return;
+            }
+            const items = event.clipboardData.items;
+            
+            for (const item of items) {
+                if (item.type.startsWith('image/')) {
+                    event.preventDefault();
+                    const file = item.getAsFile();
+                    uploadPastedImage(file);
+                    break;
+                }
+            }
+        });
 
         $(document).ready(function() {
             const { lat, lng } = getQueryParams();
