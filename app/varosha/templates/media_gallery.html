@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load l10n %}
+{% load thumbnail %}
 {% get_current_language as current_language %}
 {% load static %}
 <!DOCTYPE html>
@@ -80,9 +81,15 @@
                 {% endif %}
                 {% if media.path %}
                 <a class="popup-link" href="{{ media.path }}">
-                    <img src="{{ media.path }}" alt="{{ media.type }}">
+                    {% thumbnail media.file "100x100" crop="center" as im %}
+                        <img src="{{ media.path }}">
+                        {% empty %}
+                            <p>No image</p>
+                    {% endthumbnail %}
                 </a>
+                
                 {% endif %}
+
                 <div class="media-details">
                     {% if media.name %}
                     <p><strong>{{ media.name }}</strong> </p>
