@@ -184,6 +184,25 @@
                     // }
                 activePopup
                 });
+                new Swiper('.swiper-container', {
+					navigation: {
+						nextEl: '.swiper-button-next',
+						prevEl: '.swiper-button-prev',
+					},
+					pagination: {
+						el: '.swiper-pagination',
+						clickable: true,
+					},
+				});
+
+				// Initialize Magnific Popup
+				$('.popup-image').magnificPopup({
+					type: 'image',
+					gallery: {
+						enabled: true
+					}
+				});
+
         }
         
         function createPoint(x, y) {
