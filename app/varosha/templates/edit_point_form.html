@@ -1,4 +1,5 @@
 {% load i18n static %}
+{% load thumbnail %}
 <form id="edit-point-form" action="{% url 'edit-point-form' point_form.instance.id %}" method="post" class="styled-form">
     {% csrf_token %}
     <div class="form-row"  style="display:none;">
