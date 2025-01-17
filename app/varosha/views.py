@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.utils import timezone
 
 from django.utils.translation import gettext as _
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from django.utils.translation import activate
@@ -22,22 +22,24 @@ from .forms import MediaForm, NoteForm, PointEditForm, PointForm
 from .settings import MEDIA_URL
 from django.conf import settings
 import logging
+from django.template import loader
 
 logger = logging.getLogger('varosha') 
 
 def _get_point_html(request, point):
     # Get existing notes
+    point_form = PointEditForm(instance=point)
+    note_form = NoteForm()
     existing_notes = Note.objects.filter(point=point)
 
     existing_media = Media.objects.filter(point=point)
 
-    return render(request, 'edit_point_form.html', {
+    return loader.render_to_string('edit_point_form.html', {
         'point_form': point_form,
         'note_form': note_form,
         'existing_notes': existing_notes,
         'existing_media': existing_media,
-
-    })
+    }, request)
 
 def point_form(request, point_id=None):
     # if this is a POST request we need to process the form data
@@ -100,9 +102,7 @@ def edit_point(request, point_id=None):
 
         return redirect(f'{reverse("index")}?lat={point.x}&lng={point.y}')    
     else:
-        point_form = PointEditForm(instance=point)
-        note_form = NoteForm(request.POST)
-    return _get_point_html(request, point)
+        return HttpResponse(_get_point_html(request, point))
 
     
 
