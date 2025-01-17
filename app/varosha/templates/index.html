@@ -128,6 +128,7 @@
         var sat_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/sat256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
         var aerial_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/1963_256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
         var survey_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/survey_256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
+        var map_1968_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/map_1968_256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
 
         var baseMaps = {
             "{% trans "Street map" %}": osm,
@@ -136,6 +137,7 @@
             "{% trans "Street map" %}": osm2,
             "{% trans "2023 Satellite" %}": sat_layer,
             "{% trans "1963 Aerial"%}": aerial_layer,
+            "{% trans "1968 Map"%}": map_1968_layer,
             "{% trans "1929 Survey"%}": survey_layer,
         };
 
