@@ -207,6 +207,13 @@
                 loadPopup(data);
             });
         }
+        function openEditFormWithData(pointId, x, y, data) {
+            addPointPopup
+                .setLatLng([x,y])
+                .setContent(spinner)
+                .openOn(map);
+            loadPopup(data);
+        }
 
         const markers = [];
         const dbPointData = JSON.parse(
@@ -219,7 +226,7 @@
 
 
             marker.on('click', function(e) {
-                openEditForm(location.id, location.x, location.y);
+                openEditForm(location.id, location.x, location.y, location.html);
             });
             
 			markers.push(marker);

@@ -25,6 +25,20 @@ import logging
 
 logger = logging.getLogger('varosha') 
 
+def _get_point_html(request, point):
+    # Get existing notes
+    existing_notes = Note.objects.filter(point=point)
+
+    existing_media = Media.objects.filter(point=point)
+
+    return render(request, 'edit_point_form.html', {
+        'point_form': point_form,
+        'note_form': note_form,
+        'existing_notes': existing_notes,
+        'existing_media': existing_media,
+
+    })
+
 def point_form(request, point_id=None):
     # if this is a POST request we need to process the form data
     if point_id:
@@ -88,18 +102,7 @@ def edit_point(request, point_id=None):
     else:
         point_form = PointEditForm(instance=point)
         note_form = NoteForm(request.POST)
-    # Get existing notes
-    existing_notes = Note.objects.filter(point=point)
-
-    existing_media = Media.objects.filter(point=point)
-
-    return render(request, 'edit_point_form.html', {
-        'point_form': point_form,
-        'note_form': note_form,
-        'existing_notes': existing_notes,
-        'existing_media': existing_media,
-
-    })
+    return _get_point_html(request, point)
 
     
 
@@ -187,6 +190,7 @@ def index(request):
             'x':p.x,
             'y':p.y,
             'name':p.name,
+            'html':_get_point_html(request, point)
         }
         context["point_data"].append(point_data)
     return render(request, "index.html", context)
