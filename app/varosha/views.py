@@ -190,7 +190,7 @@ def index(request):
             'x':p.x,
             'y':p.y,
             'name':p.name,
-            'html':_get_point_html(request, point)
+            'html':_get_point_html(request, p)
         }
         context["point_data"].append(point_data)
     return render(request, "index.html", context)
