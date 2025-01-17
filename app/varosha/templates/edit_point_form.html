@@ -30,7 +30,12 @@
     {% if existing_media  %}
         <div class="media-thumbnails-container"><div class="media-thumbnails">
             {% for media in existing_media  %}
-                <div class="media-thumbnail"><a class="popup-image" target="_blank" href="{{media.path}}"><img src="{{media.path}}" width="100" height="100"></a></div>
+            
+                <div class="media-thumbnail"><a class="popup-image" target="_blank" href="{{media.path}}">
+                    {% thumbnail media.file "100x100" crop="center" as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                    {% endthumbnail %}
+                </a></div>
             {% endfor %}
         </div></div>
     {% endif %}
