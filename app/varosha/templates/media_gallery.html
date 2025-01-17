@@ -81,7 +81,7 @@
                 {% endif %}
                 {% if media.path %}
                 <a class="popup-link" href="{{ media.path }}">
-                    {% thumbnail media.file "100x100" crop="center" as im %}
+                    {% thumbnail media.file "300x300" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
                         {% empty %}
                             <p>No image</p>
