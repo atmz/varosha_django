@@ -153,6 +153,7 @@ if "AWS_SECRET_ACCESS_KEY" in environ:
     AWS_ACCESS_KEY_ID = environ.get("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = environ.get("AWS_SECRET_ACCESS_KEY")
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    THUMBNAIL_STORAGE = DEFAULT_FILE_STORAGE
     AWS_STORAGE_BUCKET_NAME = 'varosha-media'
     AWS_S3_FILE_OVERWRITE = False
     AWS_DEFAULT_ACL = None
@@ -170,7 +171,7 @@ if "SUPER_USER_PASS" in environ:
 else:
     SUPER_USER_PASS = None
 
-
+THUMBNAIL_DEBUG=True
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
