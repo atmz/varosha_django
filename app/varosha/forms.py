@@ -16,7 +16,7 @@ class NoteForm(ModelForm):
         model = Note
         fields = ['text']
         widgets = {
-            'text': forms.Textarea(attrs={'class': 'note-field', 'rows': 3, 'placeholder': _('Add note, memory or name')}),
+            'text': forms.Textarea(attrs={'class': 'note-field', 'rows': 3, 'placeholder': _('Add note, memory or name'),'cols':30}),
         }
 
 class PointEditForm(ModelForm):
