@@ -112,7 +112,10 @@ def media_form(request):
         if form.is_valid():
             original_file = request.FILES['file']
             file_ext = os.path.splitext(original_file.name)[1].lower()
-            point_id = form.cleaned_data['point'].id
+            if form.cleaned_data['point']:
+                point_id = form.cleaned_data['point'].id
+            else:
+                point_id = "no_point"
             timestamp =  timezone.now().strftime('%Y%m%d_%H%M%S')
 
             # Check if this is a pasted image or regular upload
