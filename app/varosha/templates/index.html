@@ -41,7 +41,6 @@
         </form>
     </div>
 
-
     <script>
 
         function setCookie(name, value, days) {
@@ -303,8 +302,10 @@
             const previewDiv = document.getElementById(`media-preview`);
             const fileInput = document.getElementById(`file-upload`);
 
-            statusDiv.innerHTML = 'Uploading pasted image...';
-            statusDiv.innerHTML = '{% translate "Uploading..." %}';
+            if(activePopup) {
+                statusDiv.innerHTML = 'Uploading pasted image...';
+                statusDiv.innerHTML = '{% translate "Uploading..." %}';
+            }
             
             fetch('/media-form/', {
                 method: 'POST',
@@ -314,16 +315,18 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    statusDiv.innerHTML = '{% translate "Upload successful!" %}';
-                    // Add preview if it's an image
-                    if (data.media_url) {
-                        previewDiv.style.display = ''
-                        previewDiv.innerHTML = `<img src="${data.media_url}" alt="Uploaded media" class="upload-preview">`;
+                    if(activePopup) {
+                        statusDiv.innerHTML = '{% translate "Upload successful!" %}';
+                        // Add preview if it's an image
+                        if (data.media_url) {
+                            previewDiv.style.display = ''
+                            previewDiv.innerHTML = `<img src="${data.media_url}" alt="Uploaded media" class="upload-preview">`;
+                        }
+                        // Clear the file input
+                        fileInput.value = '';
+                    } else {
+                        statusDiv.innerHTML = `{% translate "Upload failed" %}: ${data.error}`;
                     }
-                    // Clear the file input
-                    fileInput.value = '';
-                } else {
-                    statusDiv.innerHTML = `{% translate "Upload failed" %}: ${data.error}`;
                 }
             })
             .catch(error => {
@@ -333,10 +336,16 @@
         }
 
         function uploadPastedImage(file) {
-            const form = document.getElementById(`media-upload-form`);
-            const formData = new FormData(form);
-            formData.append('file', file);
-            uplpoadCommon(formData);
+            if(activePopup) {
+                const form = document.getElementById(`media-upload-form`);
+                const formData = new FormData(form);
+                formData.append('file', file);
+                uplpoadCommon(formData);
+            } else {
+                const formData = new FormData();
+                formData.append('file', file);
+                uplpoadCommon(formData);
+            }
         }
 
         // Add this function to handle media uploads
@@ -349,20 +358,19 @@
 
         // Modify paste handler to check for active popup
         document.addEventListener('paste', function(event) {
-            // Only handle paste if popup is active
-            if (!activePopup) {
-                return;
-            }
             
-            const fileInput = document.getElementById(`file-upload`);
-            if(fileInput.length) {
-                // Ignore paste if file has been input
-                return;
+            if (activePopup) {
+                const fileInput = document.getElementById(`file-upload`);
+                if(fileInput.length) {
+                    // Ignore paste if file has been input
+                    return;
+                }
             }
             const items = event.clipboardData.items;
             
             for (const item of items) {
                 if (item.type.startsWith('image/')) {
+                    
                     event.preventDefault();
                     const file = item.getAsFile();
                     uploadPastedImage(file);
