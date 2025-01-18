@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-13 11:36+0000\n"
+"POT-Creation-Date: 2025-01-18 13:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,248 +16,131 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+#: varosha/forms.py:19
+msgid "Add note, memory or name"
+msgstr "Προσθέστε σημείωση, ανάμνηση ή όνομα"
 
-
-#: varosha/forms.py:30 varosha/models.py:12 varosha/models.py:19
+#: varosha/forms.py:30 varosha/models.py:12 varosha/models.py:20
 #: varosha/templates/index_old.html:421
 msgid "Name"
 msgstr "Όνομα"
 
 #: varosha/models.py:10
 msgid "Longitude"
-msgstr "Γεωγραφικό Μήκος"
+msgstr "Γεωγραφικό μήκος"
 
 #: varosha/models.py:11
 msgid "Latitude"
-msgstr "Γεωγραφικό Πλάτος"
+msgstr "Γεωγραφικό πλάτος"
 
-#: varosha/models.py:20
-#, fuzzy
-#| msgid "Location:"
+#: varosha/models.py:21
 msgid "Caption"
-msgstr "Τοποθεσία:"
+msgstr "Λεζάντα"
 
-#: varosha/models.py:26
+#: varosha/models.py:28
 msgid "Note"
 msgstr "Σημείωση"
 
-#: varosha/forms.py:19
-msgid "Add note, memory or name"
-msgstr "Προσθέστε σημείωση, ανάμνηση ή όνομα"
-
-#: varosha/templates/edit_point_form.html:37
+#: varosha/templates/edit_point_form.html:43
 #: varosha/templates/index_old.html:180
 msgid "Save"
 msgstr "Αποθήκευση"
 
-#: varosha/templates/edit_point_form.html:45
+#: varosha/templates/edit_point_form.html:51
 #: varosha/templates/index_old.html:293
 msgid "Upload"
 msgstr "Μεταφόρτωση"
 
-#: varosha/templates/index.html:83 varosha/templates/index.html:133
-#: varosha/templates/index.html:136 varosha/templates/index_old.html:81
+#: varosha/templates/index.html:83 varosha/templates/index.html:134
+#: varosha/templates/index.html:137 varosha/templates/index_old.html:81
 #: varosha/templates/index_old.html:120 varosha/templates/index_old.html:123
 msgid "Street map"
 msgstr "Χάρτης οδών"
 
 #: varosha/templates/index.html:114 varosha/templates/index_old.html:592
 msgid "Photo Gallery"
-msgstr "Φωτογραφική Συλλογή"
+msgstr "Φωτογραφική συλλογή"
 
-#: varosha/templates/index.html:137 varosha/templates/index_old.html:124
+#: varosha/templates/index.html:114
+msgid "Feed"
+msgstr "Ροή"
+
+#: varosha/templates/index.html:138 varosha/templates/index_old.html:124
 msgid "2023 Satellite"
-msgstr "Δορυφόρος 2023"
+msgstr "Δορυφορική εικόνα 2023"
 
-#: varosha/templates/index.html:138 varosha/templates/index_old.html:125
+#: varosha/templates/index.html:139 varosha/templates/index_old.html:125
 msgid "1963 Aerial"
 msgstr "Αεροφωτογραφία 1963"
 
-#: varosha/templates/index.html:139 varosha/templates/index_old.html:126
+#: varosha/templates/index.html:140
+msgid "1968 Map"
+msgstr "Χάρτης 1968"
+
+#: varosha/templates/index.html:181
+msgid "Add photo"
+msgstr "Προσθήκη φωτογραφίας"
+
+#: varosha/templates/index.html:319
+msgid "Upload successful!"
+msgstr "Η μεταφόρτωση ολοκληρώθηκε με επιτυχία!"
+
+#: varosha/templates/media_gallery.html:112
+msgid "View on map"
+msgstr "Προβολή στον χάρτη"
+
+#: varosha/templates/media_gallery.html:115
+msgid "No map location known, yet"
+msgstr "Δεν είναι ακόμη γνωστή η τοποθεσία στον χάρτη"
+
+#: varosha/templates/index.html:141 varosha/templates/index_old.html:126
 msgid "1929 Survey"
 msgstr "Χάρτης 1929"
 
-#: varosha/templates/index.html:174
-#, fuzzy
-#| msgid "Choose photo:"
+#: varosha/templates/index.html:176
 msgid "Change photo"
-msgstr "Διαλέξτε φωτογραφία:"
+msgstr "Αλλαγή φωτογραφίας"
 
-#: varosha/templates/index.html:179
-#, fuzzy
-#| msgid "Add pin"
-msgid "Add photo"
-msgstr "Προσθήκη σημείου"
-
-#: varosha/templates/index.html:228 varosha/templates/index_old.html:580
+#: varosha/templates/index.html:256 varosha/templates/index_old.html:580
 msgid "Places"
 msgstr "Τοποθεσίες"
 
-#: varosha/templates/index.html:278
-#, fuzzy
-#| msgid "Upload"
+#: varosha/templates/index.html:307
 msgid "Uploading..."
-msgstr "Μεταφόρτωση"
+msgstr "Γίνεται μεταφόρτωση..."
 
-#: varosha/templates/index.html:288
-msgid "Upload successful!"
-msgstr ""
-
-#: varosha/templates/index.html:297 varosha/templates/index.html:301
-#, fuzzy
-#| msgid "Upload"
+#: varosha/templates/index.html:328 varosha/templates/index.html:333
 msgid "Upload failed"
-msgstr "Μεταφόρτωση"
+msgstr "Αποτυχία μεταφόρτωσης"
 
-#: varosha/templates/index_old.html:141
-msgid "Welcome to the interactive map of Varosha!"
-msgstr "Καλώς ήρθατε στον διαδραστικό χάρτη του Βαρωσίου!"
-
-#: varosha/templates/index_old.html:141
-msgid ""
-"Explore the history of the fenced-off city through different layers showing "
-"a current satellite view, a 1963 aerial view, and a set of 1929 survey maps."
-msgstr ""
-"Εξερευνήστε την ιστορία της περιφραγμένης πόλης μέσα από διάφορα επίπεδα που "
-"δείχνουν μια τρέχουσα δορυφορική προβολή, μια αεροφωτογραφία του 1963, και "
-"μια σειρά χαρτών από το 1929."
-
-#: varosha/templates/index_old.html:144
-msgid "Did you know you can add new locations to the map?"
-msgstr "Ξέρατε ότι μπορείτε να προσθέσετε νέα σημεία στον χάρτη;"
-
-#: varosha/templates/index_old.html:144
-msgid ""
-"Simply click on any point on the map to start adding a new location. Share "
-"your knowledge and enrich the map with your contributions!"
-msgstr ""
-"Απλά κάντε κλικ σε οποιοδήποτε σημείο στον χάρτη για να ξεκινήσετε να "
-"προσθέτετε μια νέα τοποθεσία. Μοιραστείτε τις γνώσεις σας και εμπλουτίστε "
-"τον χάρτη με τις συνεισφορές σας!"
-
-#: varosha/templates/index_old.html:147
-msgid "Click on any existing location to see more details and add photos."
-msgstr ""
-"Κάντε κλικ σε οποιαδήποτε υπάρχουσα τοποθεσία για να δείτε περισσότερες "
-"λεπτομέρειες και να προσθέσετε φωτογραφίες."
-
-#: varosha/templates/index_old.html:147
-msgid ""
-"You can view photos, videos, and information added by others, and contribute "
-"your own photos to tell the story of Varosha."
-msgstr ""
-"Μπορείτε να δείτε φωτογραφίες, βίντεο και πληροφορίες που προστέθηκαν από "
-"άλλους, και να συνεισφέρετε τις δικές σας φωτογραφίες για να διηγηθείτε την "
-"ιστορία της Αμμοχώστου."
-
-#: varosha/templates/index_old.html:150
-msgid ""
-"When you add photos, our friendly chatbot will assist you in labeling it "
-"appropriately."
-msgstr ""
-"Όταν προσθέτετε φωτογραφίες, το φιλικό μας chatbot θα σας βοηθήσει να τις "
-"επισημάνετε κατάλληλα."
-
-#: varosha/templates/index_old.html:150
-msgid ""
-"This ensures all contributions are well-organized and easy to explore for "
-"everyone."
-msgstr ""
-"Αυτό διασφαλίζει ότι όλες οι συνεισφορές είναι καλά οργανωμένες και εύκολες "
-"να εξερευνηθούν από όλους."
-
-#: varosha/templates/index_old.html:176
-msgid "Home"
-msgstr "Κατοικία"
-
-#: varosha/templates/index_old.html:177
-msgid "Business"
-msgstr "Επιχείρηση"
-
-#: varosha/templates/index_old.html:178
-msgid "Landmark"
-msgstr "Σημείο Ενδιαφέροντος"
-
-#: varosha/templates/index_old.html:291
-msgid "Choose photo:"
-msgstr "Διαλέξτε φωτογραφία:"
-
-#: varosha/templates/index_old.html:424
-msgid "Name (Greek)"
-msgstr "Όνομα (Ελληνικά)"
-
-#: varosha/templates/index_old.html:427
-msgid "Birth Year"
-msgstr "Έτος Γέννησης"
-
-#: varosha/templates/index_old.html:430
-msgid "Death Year"
-msgstr "Έτος Θανάτου"
-
-#: varosha/templates/index_old.html:433
-msgid "Add New Person"
-msgstr "Προσθήκη Νέου Προσώπου"
-
-#: varosha/templates/index_old.html:466
-msgid "Link Name"
-msgstr "Όνομα Συνδέσμου"
-
-#: varosha/templates/index_old.html:469
-msgid "URL"
-msgstr "Διεύθυνση URL"
-
-#: varosha/templates/index_old.html:472
-msgid "Add New Link"
-msgstr "Προσθήκη Νέου Συνδέσμου"
-
-#: varosha/templates/index_old.html:543
-msgid "Upload Photo"
-msgstr "Ανέβασμα Φωτογραφίας"
-
-#: varosha/templates/index_old.html:545
-msgid "Add Person"
-msgstr "Προσθήκη Προσώπου"
-
-#: varosha/templates/index_old.html:546
-msgid "Add Link"
-msgstr "Προσθήκη Συνδέσμου"
-
-#: varosha/templates/media_gallery.html:81
-#: varosha/templates/media_gallery.html:156
-msgid "Your browser does not support the video tag."
-msgstr "Ο περιηγητής σας δεν υποστηρίζει την ετικέτα βίντεο."
-
-#: varosha/templates/media_gallery.html:90
-msgid "Source:"
-msgstr "Πηγή:"
-
-#: varosha/templates/media_gallery.html:97
-msgid "Date:"
-msgstr "Ημερομηνία:"
-
-#: varosha/templates/media_gallery.html:98
-msgid "Description:"
-msgstr "Περιγραφή:"
-
-#: varosha/templates/media_gallery.html:105
-msgid "Type:"
-msgstr "Κατηγορία:"
-
-#: varosha/templates/media_gallery.html:106
-msgid "Location:"
-msgstr "Τοποθεσία:"
-
-#: varosha/templates/media_gallery.html:116
-msgid "Tag People"
-msgstr "Επισημάνετε Άτομα"
-
-#: varosha/views.py:225
+#: varosha/views.py:232
 msgid "You"
 msgstr "Εσείς"
 
-#: varosha/views.py:227
+#: varosha/views.py:234
 msgid "AI Helper"
 msgstr "Βοηθός AI"
+
+#~ msgid "Your browser does not support the video tag."
+#~ msgstr "Ο περιηγητής σας δεν υποστηρίζει την ετικέτα βίντεο."
+
+#~ msgid "Source:"
+#~ msgstr "Πηγή:"
+
+#~ msgid "Date:"
+#~ msgstr "Ημερομηνία:"
+
+#~ msgid "Description:"
+#~ msgstr "Περιγραφή:"
+
+#~ msgid "Type:"
+#~ msgstr "Κατηγορία:"
+
+#~ msgid "Location:"
+#~ msgstr "Τοποθεσία:"
+
+#~ msgid "Tag People"
+#~ msgstr "Επισημάνετε Άτομα"
 
 #~ msgid "Name in Greek"
 #~ msgstr "Όνομα στα Ελληνικά"

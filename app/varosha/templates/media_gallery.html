@@ -107,9 +107,13 @@
                     {% endif %}
 
                     <p>
+                        {% if media.point %}
                         <a href="{% url 'index' %}?lat={{ media.point.x|unlocalize }}&lng={{ media.point.y|unlocalize }}">
                             {% trans "View on map" %} 
                         </a>
+                        {% else %}
+                            {% trans "No map location known, yet" %} 
+                        {% endif %}
                     </p>
                 </div>
             </div>
