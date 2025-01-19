@@ -81,6 +81,10 @@ msgstr "Χάρτης 1968"
 msgid "Add photo"
 msgstr "Προσθήκη φωτογραφίας"
 
+#: varosha/templates/index.html:181
+msgid "Add Photo"
+msgstr "Προσθήκη Φωτογραφίας"
+
 #: varosha/templates/index.html:319
 msgid "Upload successful!"
 msgstr "Η μεταφόρτωση ολοκληρώθηκε με επιτυχία!"
