@@ -38,6 +38,7 @@ urlpatterns = [
     path('feed/', views.feed, name='feed'),
     path('associate-image/<int:image_id>/', views.associate_image_with_point, name='associate_image_with_point'),
     path('set-location/<int:image_id>/', views.set_image_location, name='set_location'),
+    path('update-media/<int:media_id>/', views.update_media_field, name='update_media_field'),
 
 
 

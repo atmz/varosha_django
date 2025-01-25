@@ -33,7 +33,9 @@
         <div class="media-thumbnails-container"><div class="media-thumbnails">
             {% for media in existing_media  %}
             
-                <div class="media-thumbnail"><a class="popup-image" target="_blank" href="{{media.path}}">
+                <div class="media-thumbnail"><a class="popup-image" target="_blank" href="{{media.path}}" 
+                    data-name="{{ media.name|default:'' }}" 
+                    data-caption="{{ media.caption|default:'' }}">
                     {% thumbnail media.file "100x100" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
                     {% endthumbnail %}

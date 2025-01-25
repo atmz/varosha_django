@@ -201,7 +201,25 @@
 					type: 'image',
 					gallery: {
 						enabled: true
-					}
+					},
+                    callbacks: {
+                        markupParse: function(template, values, item) {
+                            // Get name and caption from the clicked element
+                            const name = item.el.attr('data-name') || '';
+                            const caption = item.el.attr('data-caption') || '';
+
+                            // Add name and caption to the popup content
+                            values.title = `<div class="popup-details">
+                                                <h3>${name}</h3>
+                                                <p>${caption}</p>
+                                            </div>`;
+                        }
+                    },
+                    image: {
+                        titleSrc: function(item) {
+                            return item.el.attr('data-name') || ''; // Use 'name' as the title in gallery mode
+                        }
+                    }
 				});
 
         }

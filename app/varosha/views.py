@@ -334,3 +334,22 @@ def associate_image_with_point(request, image_id):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
+def update_media_field(request, media_id):
+    if request.method == 'POST':
+        field = request.POST.get('field')
+        value = request.POST.get('value')
+
+        try:
+            media = Media.objects.get(id=media_id)
+
+            if field in ['name', 'caption']:
+                setattr(media, field, value)
+                media.save()
+                return JsonResponse({'status': 'success', 'message': f'{field} updated successfully!'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Invalid field.'})
+        except Media.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Media not found.'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})

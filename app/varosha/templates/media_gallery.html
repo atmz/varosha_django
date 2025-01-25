@@ -71,49 +71,59 @@
         }
     </style>
 </head>
-<body>
-    <div class="media-gallery">
+    <body>
+        <div class="media-gallery">
         {% for media in media_list %}
             <div class="media-item">
-                {% if media.point.name %}
-                <p><strong>{{ media.point.name }}</strong> </p>
-
-                {% endif %}
+                <!-- Media Thumbnail -->
                 {% if media.path %}
-                <a class="popup-link" href="{{ media.path }}">
-                    {% thumbnail media.file "300x300" crop="center" as im %}
+                    <a class="popup-link" href="{{ media.path }}"
+                        data-name="{{ media.name|default:'' }}" 
+                        data-caption="{{ media.caption|default:'' }}"
+                    >
+                        {% thumbnail media.file "300x300" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
                         {% empty %}
                             <p>No image</p>
-                    {% endthumbnail %}
-                </a>
-                
+                        {% endthumbnail %}
+                    </a>
                 {% endif %}
 
+                <!-- Media Name -->
                 <div class="media-details">
-                    {% if media.name %}
-                    <p><strong>{{ media.name }}</strong> </p>
-                    {% endif %}
-
-                    {% if media.caption %}
                     <p>
-                        {{ media.caption }}
+                        {% if media.name %}
+                            <strong>{{ media.name }}</strong>
+                        {% else %}
+                            <form class="inline-form" data-media-id="{{ media.id }}" data-field="name">
+                                <input type="text" name="value" placeholder="{% trans 'Enter name' %}" required>
+                                <button type="submit">{% trans "Save" %}</button>
+                            </form>
+                        {% endif %}
                     </p>
-                    {% endif %}
-                    {% if media.text %}
-                    <p>
-                        {{ media.text }}
-                    </p>
-                    {% endif %}
 
+                    <!-- Media Caption -->
+                    <p>
+                        {% if media.caption %}
+                            {{ media.caption }}
+                        {% else %}
+                            <form class="inline-form" data-media-id="{{ media.id }}" data-field="caption">
+                                <input type="text" name="value" placeholder="{% trans 'Enter caption' %}" required>
+                                <button type="submit">{% trans "Save" %}</button>
+                            </form>
+                        {% endif %}
+                    </p>
+
+                    <!-- View or Set Location -->
                     <p>
                         {% if media.point %}
-                        <a href="{% url 'index' %}?lat={{ media.point.x|unlocalize }}&lng={{ media.point.y|unlocalize }}">
-                            {% trans "View on map" %} 
-                        </a>
+                            <a href="{% url 'index' %}?lat={{ media.point.x|unlocalize }}&lng={{ media.point.y|unlocalize }}">
+                                {% trans "View on map" %}
+                            </a>
                         {% else %}
-                            {% trans "No map location known, yet" %} :<a href="{% url 'set_location' media.id %}">{% trans "Set map location" %}</a>
-                    {% endif %}
+                            {% trans "No map location known, yet" %}:
+                            <a href="{% url 'set_location' media.id %}">{% trans "Set map location" %}</a>
+                        {% endif %}
                     </p>
                 </div>
             </div>
@@ -128,6 +138,24 @@
                 type: 'image',
                 gallery: {
                     enabled: true
+                },
+                callbacks: {
+                    markupParse: function(template, values, item) {
+                        // Get name and caption from the clicked element
+                        const name = item.el.attr('data-name') || '';
+                        const caption = item.el.attr('data-caption') || '';
+
+                        // Add name and caption to the popup content
+                        values.title = `<div class="popup-details">
+                                            <h3>${name}</h3>
+                                            <p>${caption}</p>
+                                        </div>`;
+                    }
+                },
+                image: {
+                    titleSrc: function(item) {
+                        return item.el.attr('data-name') || ''; // Use 'name' as the title in gallery mode
+                    }
                 }
             });
 
@@ -149,7 +177,46 @@
             }
 
         });
+        
+      document.addEventListener('DOMContentLoaded', () => {
+        // Attach event listener to inline forms
+            document.querySelectorAll('.inline-form').forEach(form => {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
 
+                    const mediaId = this.dataset.mediaId;
+                    const field = this.dataset.field;
+                    const value = this.querySelector('input[name="value"]').value;
+
+                    // Send AJAX request
+                    fetch(`/update-media/${mediaId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                        body: new URLSearchParams({ field, value }),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+
+                                // Replace the form with the updated value
+                                const newContent = document.createElement('strong');
+                                newContent.textContent = value;
+
+                                // Replace the form element with the updated value
+                                this.replaceWith(newContent);
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error:', err);
+                        });
+                });
+            });
+        });
     </script>
 </body>
 </html>
