@@ -12,11 +12,17 @@ html, body {
 
 .leaflet-popup-content-wrapper {
     max-width: 95vw; /* Set the width of the popup to 100% of the viewport width */
-    min-width: 300px; /* Ensure a minimum width for the popup */
+    min-width: 300px;
     width: auto; /* Allow the width to be responsive */
 }
+
+@media (min-width: 1024px) {
+    .leaflet-popup-content-wrapper {
+        min-width: 500px; /* On desktop, enforce a minimum of 500px */
+    }
+}
 .leaflet-popup-content {
-    max-width: 100% !important; /* Ensure media fills the popup width */
+    min-width: 90% !important; /* Ensure media fills the popup width */
     overflow-y: auto; /* Enable vertical scrolling if content exceeds the height */
 }
 
@@ -34,7 +40,6 @@ html, body {
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 10px;
-    max-width: 350px;
     margin: auto;
     font-family: 'Arial', sans-serif;
 }
@@ -239,12 +244,18 @@ html, body {
 
 .note-field {
     width: 100%;
+    box-sizing: border-box; /* Ensures padding and border are included in the width */
+    resize: none; /* Optional: prevents manual resizing of the textarea */
     padding: 8px;
     margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-family: 'Arial', sans-serif;
 
+}
+
+.note-field::placeholder {
+    font-family: 'Arial', sans-serif; /* Ensures the font for the placeholder text */
 }
 
 .existing-notes {
