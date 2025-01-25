@@ -36,6 +36,9 @@ urlpatterns = [
     path('delete-media/<int:media_id>/', views.delete_media, name='delete_media'),
     path('media-gallery/', views.media_gallery, name='media_gallery'),
     path('feed/', views.feed, name='feed'),
+    path('associate-image/<int:image_id>/', views.associate_image_with_point, name='associate_image_with_point'),
+    path('set-location/<int:image_id>/', views.set_image_location, name='set_location'),
+
 
 
 

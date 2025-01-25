@@ -280,3 +280,57 @@ def feed(request):
     feed+=list( Note.objects.select_related('point').all().order_by("-time_added"))
     feed.sort(key=lambda x: x.time_added, reverse=True)
     return render(request, 'media_gallery.html', {'media_list': feed})
+
+
+
+def set_image_location(request, image_id):
+    # Get the image by ID
+    image = get_object_or_404(Media, id=image_id)
+    
+    context = {
+        'image_id': image_id,
+        'image_url': image.file.url,  # URL to the uploaded image
+    }
+    context["point_data"] = []
+    for p in  Point.objects.filter(
+        Q(name__isnull=False) & ~Q(name='') |
+        Q(media__isnull=False) |
+        Q(note__isnull=False)
+    ):
+        point_data = {
+            'id':p.id,
+            'x':p.x,
+            'y':p.y,
+            'name':p.name,
+            'html':_get_point_html(request, p)
+        }
+        context["point_data"].append(point_data)
+    return render(request, "set_location.html", context)
+
+
+def associate_image_with_point(request, image_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            point_id = data.get('point_id')
+            lat = data.get('lat')
+            lng = data.get('lng')
+
+            # Get the image
+            image = get_object_or_404(Media, id=image_id)
+
+            if point_id:
+                # Associate with an existing point
+                point = get_object_or_404(Point, id=point_id)
+            else:
+                # Create a new point
+                point = Point.objects.create(x=lng, y=lat)
+
+            # Associate the image with the point
+            image.point = point
+            image.save()
+
+            return JsonResponse({'status': 'success', 'message': 'Image associated successfully!', 'point_id': point.id})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})

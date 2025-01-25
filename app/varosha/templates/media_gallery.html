@@ -112,8 +112,8 @@
                             {% trans "View on map" %} 
                         </a>
                         {% else %}
-                            {% trans "No map location known, yet" %} 
-                        {% endif %}
+                            {% trans "No map location known, yet" %} :<a href="{% url 'set_location' media.id %}">{% trans "Set map location" %}</a>
+                    {% endif %}
                     </p>
                 </div>
             </div>

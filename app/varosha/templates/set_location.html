@@ -1,0 +1,163 @@
+{% load i18n %}
+{% load thumbnail %}
+{% get_current_language as current_language %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Varosha - maps</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+</head>
+<body>
+    {{ point_data|json_script:"point-data" }}
+    <div class="image-preview">
+        <h2>{% translate 'Set Location for the Image' %}</h2>
+        <img src="{{ image_url }}" alt="Image Preview">
+    </div>
+    <div id="map"></div>
+    
+    <script>
+       const imageId = {{ image_id }};
+        const dbPointData = JSON.parse(
+            document.getElementById('point-data').textContent
+        );
+
+
+        let selectedPoint = null;
+
+
+        var corner1 = L.latLng(35.148819,33.921361),
+        corner2 = L.latLng(35.082100,33.988048),
+        bounds = L.latLngBounds(corner1, corner2);
+        center = L.latLng(35.1162,33.9502)
+        let activePopup = null;
+        var initialZoom = 16;
+        const map = L.map('map',{
+            center: center,
+            zoom: initialZoom,
+            maxZoom: 19,
+            minZoom:15,
+            maxBounds: bounds
+        });
+
+        const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        const osm2 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        
+        var sat_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/sat256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
+        var aerial_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/1963_256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
+        var survey_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/survey_256/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
+        var map_1968_layer = L.tileLayer('https://varosha-map-data.s3.amazonaws.com/army_map_1968/{z}/{x}/{y}.png', {minZoom: 15, maxZoom: 19, tms: false, attribution: 'Created by QGIS'});
+
+        var baseMaps = {
+            "{% trans "Street map" %}": osm,
+        };
+        var layerMaps = {
+            "{% trans "Street map" %}": osm2,
+            "{% trans "2023 Satellite" %}": sat_layer,
+            "{% trans "1963 Aerial"%}": aerial_layer,
+            "{% trans "1968 Map"%}": map_1968_layer,
+            "{% trans "1929 Survey"%}": survey_layer,
+        };
+        map.addLayer(osm2);
+
+        var markers = []
+        // Add existing markers
+
+        dbPointData.forEach(function(location) {
+            var marker = L.marker([location.x, location.y]);
+
+            marker.on('click', function () {
+                // When a marker is clicked, save its ID as the selected point
+                selectedPoint = { id: location.id };
+
+                saveLocation();
+            });
+			markers.push(marker);
+
+        });
+        var poi = L.layerGroup(markers).addTo(map);
+        var overlayMaps = {
+            "{% trans "Places" %}": poi
+        };
+
+
+        var layerControl = L.control.layers(layerMaps, overlayMaps, {
+            collapsed: false,
+        }).addTo(map);
+
+        // Handle map clicks to create a new point
+        map.on('click', function (e) {
+            const { lat, lng } = e.latlng;
+
+            // Remove previous marker if any
+            if (selectedPoint && selectedPoint.marker) {
+                map.removeLayer(selectedPoint.marker);
+            }
+
+            // Add a new marker
+            const newMarker = L.marker([lat, lng]).addTo(map);
+
+            // Store the new point coordinates
+            selectedPoint = {
+                lat: lat,
+                lng: lng,
+                marker: newMarker,
+            };
+
+            saveLocation();
+        });
+
+        L.DomUtil.addClass(map._container,'crosshair-cursor-enabled');
+
+        // Save button functionality
+        function saveLocation() {
+            if (!selectedPoint) {
+                alert('Please select a location by clicking on the map or an existing marker.');
+                return;
+            }
+
+            const payload = selectedPoint.id
+                ? { point_id: selectedPoint.id } // Existing point
+                : { lat: selectedPoint.lat, lng: selectedPoint.lng }; // New point
+
+            // Send the location to the server
+            fetch(`/associate-image/${imageId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify(payload),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Location saved successfully!');
+                    window.location.href = '/'; // Redirect to index or another page
+                } else {
+                    alert('An error occurred: ' + data.message);
+                }
+            });
+        };
+    </script>
+</body>
+</html>
