@@ -111,7 +111,7 @@ msgid ""
 "Use this control to switch between different map layers, such as current "
 "satellite and historical aerial and map views."
 msgstr ""
-"Χρησιμοποιήστε τούτον τον έλεγχο για να αλλάζετε μεταξύ διαφορετικών "
+"Χρησιμοποιήστε τούτον τον επιλογέα για να αλλάζετε μεταξύ διαφορετικών "
 "στρωμάτων του χάρτη, όπως δορυφορικές τζιαι ιστορικές αεροφωτογραφίες"
 
 #: varosha/templates/index.html:199
