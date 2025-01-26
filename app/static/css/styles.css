@@ -307,3 +307,7 @@ html, body {
 .leaflet-container.crosshair-cursor-enabled {
     cursor:crosshair;
 }
+
+.introjs-tooltipReferenceLayer {
+    visibility: visible !important; /* fix for https://github.com/usablica/intro.js/issues/2081 */
+}
