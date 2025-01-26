@@ -20,6 +20,9 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js/minified/introjs.min.css">
+<script src="https://cdn.jsdelivr.net/npm/intro.js/minified/intro.min.js"></script>
+
 </head>
 <body data-locale="{{ current_language }}">
     {{ point_data|json_script:"point-data" }}
@@ -111,13 +114,33 @@
         var photoGalleryControlButton = L.Control.extend({
             onAdd: function(map) {
                 var div = L.DomUtil.create('div', 'photo-gallery-control');
-                div.innerHTML = '<a href="{% url 'media_gallery' %}" target="_self" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">{% trans "Photo Gallery" %}</a><a href="{% url 'feed' %}" target="_self" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">{% trans "Feed" %}</a>';
+                div.innerHTML = '<a id="photo-gallery-button" href="{% url 'media_gallery' %}" target="_self" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">{% trans "Photo Gallery" %}</a>'
+                + '<a  id="feed-button"  href="{% url 'feed' %}" target="_self" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">{% trans "Feed" %}</a>';
                 
                 L.DomEvent.disableClickPropagation(div);
                 return div;
             }
         });
         photoGalleryControl = new photoGalleryControlButton({position: 'topright'})
+        // Custom Control for Photo Gallery Link
+        var helpButtonControl = L.Control.extend({
+
+            onAdd: function(map) {
+                var div = L.DomUtil.create('div', 'info-control');
+                div.innerHTML = '<button id="help-icon" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">&#9432;</button>';
+                div.style.backgroundColor = 'white';
+                div.style.padding = '5px';
+                div.style.border = '1px solid #ccc';
+                div.style.borderRadius = '5px';
+                L.DomEvent.on(div, 'click', function(event) {
+                    showTour();
+                });
+                L.DomEvent.disableClickPropagation(div);
+                return div;
+            },
+        });
+        helpButtonControl = new helpButtonControl({position: 'topright'})
+
         const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 20,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -153,6 +176,47 @@
         }
         var spinner = '<div id="spinner" class="spinner-overlay" style="display: none;"><div class="spinner"></div></div>'
         
+        function showTour() {
+
+            introJs()
+            .setOptions({
+                steps: [
+                    {
+                        element: '.map',
+                        intro: '{% trans " This is an interactive map of Varosha that aims to allow everyone to share their memories and photos, and virtually explore the fenced-off city" %}',
+                    },
+                    {
+                        element: '.leaflet-control-layers',
+                        intro: '{% trans "Use this control to switch between different map layers, such as current satellite and historical aerial and map views." %}'
+                    },
+                    {
+                        element: '.leaflet-marker-icon',
+                        intro: '{% trans "Click on any marker to view photos and memories associated with that location." %}',
+                    },
+                    {
+                        element: '#add-pin-container',
+                        intro: '{% trans "Click anywhere on the map to add photos and memories for a new location" %}',
+                    },
+                    {
+                        element: '#photo-gallery-button',
+                        intro: '{% trans "Here, you can view a gallery with all the photos that have been added to the map." %}',
+                    },
+                    {
+                        element: '#feed-button',
+                        intro: '{% trans "This button takes you to a chronological feed of added photos and memories" %}',
+                    },
+                    {
+                        element: '.info-control',
+                        intro: '{% trans "Finally, click here to see these instructions again" %}',
+                    },
+                ],
+                showProgress: true, // Show progress dots at the bottom
+                showBullets: false, // Disable step bullets
+                exitOnOverlayClick: false, // Prevent accidental exits
+                doneLabel: '{% trans "Finish" %}', // Customize the finish button
+            })
+            .start();
+        }
 
         function loadPopup(data) {
                 setCookie('mapZoom', map.getZoom(), 7);  // Saves for 7 days
@@ -161,6 +225,7 @@
                 map.removeControl(languageControl);
                 map.removeControl(map.zoomControl);
                 map.removeControl(photoGalleryControl);
+                map.removeControl(helpButtonControl);
 
                 addPointPopup.setContent(data);
                 addPointPopup.update();
@@ -280,6 +345,7 @@
             collapsed: false,
         }).addTo(map);
         map.addControl(photoGalleryControl);
+        map.addControl(helpButtonControl);
 
 
 
@@ -289,9 +355,10 @@
         addPointPopup.on("remove", function () {
             map.addControl(languageControl);
 
-map.addControl(photoGalleryControl);
+            map.addControl(photoGalleryControl);
             map.addControl(layerControl);
             map.addControl(map.zoomControl);
+            map.addControl(helpButtonControl);
             activePopup = null;
         });
 
@@ -421,6 +488,12 @@ map.addControl(photoGalleryControl);
             } else {
                 map.setView([lat, lng], 18);
             }
+        }
+
+        var hasSeenTour = getCookie('hasSeenTour');
+        if(!hasSeenTour) {
+            showTour()
+            setCookie('hasSeenTour', 1)
         }
         });
     </script>

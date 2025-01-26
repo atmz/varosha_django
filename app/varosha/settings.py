@@ -118,12 +118,12 @@ USE_I18N = True
 USE_L10N = True
 
 # Set the default language, or use LANGUAGE_CODE to specify your default language
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'el-gr'
 
 # Define available languages
 LANGUAGES = [
-    ('en', 'English'),
     ('el', 'Ελληνικά'),
+    ('en', 'English'),
 ]
 
 
