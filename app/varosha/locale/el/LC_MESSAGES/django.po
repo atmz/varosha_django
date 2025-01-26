@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-26 13:21+0000\n"
+"POT-Creation-Date: 2025-01-26 17:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,104 +58,121 @@ msgstr "Προσθήκη Φωτογραφίας"
 msgid "Upload"
 msgstr "Μεταφόρτωση"
 
-#: varosha/templates/index.html:86 varosha/templates/index.html:159
-#: varosha/templates/index.html:162 varosha/templates/index_old.html:81
+#: varosha/templates/index.html:12
+msgid "Varosha Mapping Project"
+msgstr "Ψηφιακό Χαρτογραφικό Αρχείο Βαρωσιού"
+
+#: varosha/templates/index.html:91 varosha/templates/index.html:164
+#: varosha/templates/index.html:167 varosha/templates/index_old.html:81
 #: varosha/templates/index_old.html:120 varosha/templates/index_old.html:123
 #: varosha/templates/set_location.html:71
 #: varosha/templates/set_location.html:74
 msgid "Street map"
 msgstr "Χάρτης οδών"
 
-#: varosha/templates/index.html:117 varosha/templates/index_old.html:592
+#: varosha/templates/index.html:122 varosha/templates/index_old.html:592
 msgid "Photo Gallery"
 msgstr "Φωτογραφική συλλογή"
 
-#: varosha/templates/index.html:118
+#: varosha/templates/index.html:123
 msgid "Feed"
 msgstr "Ροή"
 
-#: varosha/templates/index.html:163 varosha/templates/index_old.html:124
+#: varosha/templates/index.html:168 varosha/templates/index_old.html:124
 #: varosha/templates/set_location.html:75
 msgid "2023 Satellite"
 msgstr "Δορυφορική εικόνα 2023"
 
-#: varosha/templates/index.html:164 varosha/templates/index_old.html:125
+#: varosha/templates/index.html:169 varosha/templates/index_old.html:125
 #: varosha/templates/set_location.html:76
 msgid "1963 Aerial"
 msgstr "Αεροφωτογραφία 1963"
 
-#: varosha/templates/index.html:165 varosha/templates/set_location.html:77
+#: varosha/templates/index.html:170 varosha/templates/set_location.html:77
 msgid "1968 Map"
 msgstr "Χάρτης 1968"
 
-#: varosha/templates/index.html:166 varosha/templates/index_old.html:126
+#: varosha/templates/index.html:171 varosha/templates/index_old.html:126
 #: varosha/templates/set_location.html:78
 msgid "1929 Survey"
 msgstr "Χάρτης 1929"
 
-#: varosha/templates/index.html:186
+#: varosha/templates/index.html:191
 msgid ""
 " This is an interactive map of Varosha that aims to allow everyone to share "
 "their memories and photos, and virtually explore the fenced-off city"
-msgstr "Αυτός είναι διαδραστικός χάρτης της Βαρωσίας που σκοπό έσει να αφήκει τον καθένα να μοιραστεί τες αναμνήσεις του, τες φωτογραφίες του τζιαι να εξερευνήσει εικονικά την κλειστή μας πόλη"
+msgstr ""
+"Αυτός είναι διαδραστικός χάρτης της Βαρωσίας που σκοπό έσει να αφήκει τον "
+"καθένα να μοιραστεί τες αναμνήσεις του, τες φωτογραφίες του τζιαι να "
+"εξερευνήσει εικονικά την κλειστή μας πόλη"
 
-#: varosha/templates/index.html:190
+#: varosha/templates/index.html:195
 msgid ""
 "Use this control to switch between different map layers, such as current "
 "satellite and historical aerial and map views."
-msgstr "Χρησιμοποιήστε τούτον τον έλεγχο για να αλλάζετε μεταξύ διαφορετικών στρωμάτων του χάρτη, όπως δορυφορικές τζιαι ιστορικές αεροφωτογραφίες"
+msgstr ""
+"Χρησιμοποιήστε τούτον τον έλεγχο για να αλλάζετε μεταξύ διαφορετικών "
+"στρωμάτων του χάρτη, όπως δορυφορικές τζιαι ιστορικές αεροφωτογραφίες"
 
-#: varosha/templates/index.html:194
+#: varosha/templates/index.html:199
 msgid ""
 "Click on any marker to view photos and memories associated with that "
 "location."
-msgstr "Πατήστε πάνω σε οποιονδήποτε δείκτη για να δείτε φωτογραφίες τζιαι αναμνήσεις που συνδέονται με την τοποθεσία"
+msgstr ""
+"Πατήστε πάνω σε οποιονδήποτε δείκτη για να δείτε φωτογραφίες τζιαι "
+"αναμνήσεις που συνδέονται με την τοποθεσία"
 
-#: varosha/templates/index.html:198
+#: varosha/templates/index.html:203
 msgid "Click anywhere on the map to add photos and memories for a new location"
-msgstr "Πατήστε οπουδήποτε πάνω στον χάρτη για να προσθέσετε φωτογραφίες τζιαι αναμνήσεις σε μια καινούργια τοποθεσία"
+msgstr ""
+"Πατήστε οπουδήποτε πάνω στον χάρτη για να προσθέσετε φωτογραφίες τζιαι "
+"αναμνήσεις σε μια καινούργια τοποθεσία"
 
-#: varosha/templates/index.html:202
+#: varosha/templates/index.html:207
 msgid ""
 "Here, you can view a gallery with all the photos that have been added to the "
 "map."
-msgstr "Εδώ μπορείτε να δείτε μια γκαλερί με όλες τες φωτογραφίες που εν προστεθειμένες στον χάρτη"
+msgstr ""
+"Εδώ μπορείτε να δείτε μια γκαλερί με όλες τες φωτογραφίες που εν "
+"προστεθειμένες στον χάρτη"
 
-#: varosha/templates/index.html:206
+#: varosha/templates/index.html:211
 msgid ""
 "This button takes you to a chronological feed of added photos and memories"
-msgstr "Τούτο το κουμπί σας πάει σε μια χρονολογική ροή από προστεθειμένες φωτογραφίες τζιαι αναμνήσεις"
+msgstr ""
+"Τούτο το κουμπί σας πάει σε μια χρονολογική ροή από προστεθειμένες "
+"φωτογραφίες τζιαι αναμνήσεις"
 
-#: varosha/templates/index.html:210
+#: varosha/templates/index.html:215
 msgid "Finally, click here to see these instructions again"
 msgstr "Τέλος, πατήστε εδώ για να δείτε πάλε τούτες τες οδηγίες"
 
-#: varosha/templates/index.html:216
+#: varosha/templates/index.html:221
 msgid "Finish"
 msgstr "Τέλος"
 
-#: varosha/templates/index.html:243
+#: varosha/templates/index.html:248
 msgid "Change photo"
 msgstr "Αλλαγή φωτογραφίας"
 
-#: varosha/templates/index.html:248
+#: varosha/templates/index.html:253
 msgid "Add photo"
 msgstr "Προσθήκη φωτογραφίας"
 
-#: varosha/templates/index.html:341 varosha/templates/index_old.html:580
+#: varosha/templates/index.html:346 varosha/templates/index_old.html:580
 #: varosha/templates/set_location.html:99
 msgid "Places"
 msgstr "Τοποθεσίες"
 
-#: varosha/templates/index.html:393
+#: varosha/templates/index.html:398
 msgid "Uploading..."
 msgstr "Γίνεται μεταφόρτωση..."
 
-#: varosha/templates/index.html:405
+#: varosha/templates/index.html:410
 msgid "Upload successful!"
 msgstr "Η μεταφόρτωση ολοκληρώθηκε με επιτυχία!"
 
-#: varosha/templates/index.html:414 varosha/templates/index.html:419
+#: varosha/templates/index.html:419 varosha/templates/index.html:424
 msgid "Upload failed"
 msgstr "Αποτυχία μεταφόρτωσης"
 
