@@ -77,42 +77,48 @@
             <div class="media-item">
                 <!-- Media Thumbnail -->
                 {% if media.path %}
-                    <a class="popup-link" href="{{ media.path }}"
-                        data-name="{{ media.name|default:'' }}" 
-                        data-caption="{{ media.caption|default:'' }}"
-                    >
-                        {% thumbnail media.file "300x300" crop="center" as im %}
-                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-                        {% empty %}
-                            <p>No image</p>
-                        {% endthumbnail %}
-                    </a>
-                {% endif %}
+                        <a class="popup-link" href="{{ media.path }}"
+                            data-name="{{ media.name|default:'' }}" 
+                            data-caption="{{ media.caption|default:'' }}"
+                        >
+                            {% thumbnail media.file "300x300" crop="center" as im %}
+                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                            {% empty %}
+                                <p>No image</p>
+                            {% endthumbnail %}
+                        </a>
 
-                <!-- Media Name -->
-                <div class="media-details">
-                    <p>
-                        {% if media.name %}
-                            <strong>{{ media.name }}</strong>
-                        {% else %}
-                            <form class="inline-form" data-media-id="{{ media.id }}" data-field="name">
-                                <input type="text" name="value" placeholder="{% trans 'Enter name' %}" required>
-                                <button type="submit">{% trans "Save" %}</button>
-                            </form>
-                        {% endif %}
-                    </p>
+                    <!-- Media Name -->
+                    <div class="media-details">
+                        <p>
+                            {% if media.name %}
+                                <strong>{{ media.name }}</strong>
+                            {% else %}
+                                <form class="inline-form" data-media-id="{{ media.id }}" data-field="name">
+                                    <input type="text" name="value" placeholder="{% trans 'Enter name' %}" required>
+                                    <button type="submit">{% trans "Save" %}</button>
+                                </form>
+                            {% endif %}
+                        </p>
 
-                    <!-- Media Caption -->
-                    <p>
-                        {% if media.caption %}
-                            {{ media.caption }}
-                        {% else %}
-                            <form class="inline-form" data-media-id="{{ media.id }}" data-field="caption">
-                                <input type="text" name="value" placeholder="{% trans 'Enter caption' %}" required>
-                                <button type="submit">{% trans "Save" %}</button>
-                            </form>
+                        <!-- Media Caption -->
+                        <p>
+                            {% if media.caption %}
+                                {{ media.caption }}
+                            {% else %}
+                                <form class="inline-form" data-media-id="{{ media.id }}" data-field="caption">
+                                    <input type="text" name="value" placeholder="{% trans 'Enter caption' %}" required>
+                                    <button type="submit">{% trans "Save" %}</button>
+                                </form>
+                            {% endif %}
+                        </p>
+                    {% else %}
+                    {% if media.text %}
+                    <div class="media-details">
+                        <p>{{ media.text }}</p>
                         {% endif %}
-                    </p>
+                    
+                    {% endif %}
 
                     <!-- View or Set Location -->
                     <p>
