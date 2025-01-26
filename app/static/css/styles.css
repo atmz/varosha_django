@@ -59,7 +59,10 @@ html, body {
 
 
 .styled-form input.name-field {
-    flex: 1 1 300px; /* Adjust width for name fields */
+    width: 100%;
+    box-sizing: border-box; /* Ensures padding and border are included in the width */
+    padding: 8px;
+    margin-bottom: 10px;
 }
 
 .styled-form input[type="text"],
