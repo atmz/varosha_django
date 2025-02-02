@@ -1,5 +1,7 @@
 
 from django.db import models
+from django.contrib.auth.models import User
+
 from django.utils.translation import gettext_lazy as _
 import logging
 
@@ -11,6 +13,8 @@ class Point(models.Model):
     y = models.FloatField(verbose_name=_("Latitude"))
     name = models.CharField(max_length=100, verbose_name=_("Name"), null=True, blank=True)
     time_added = models.DateTimeField(auto_now=True)
+    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)  # Store user who created it
+    ip_address = models.GenericIPAddressField(null=True, blank=True)  # Store IP Address
     def __str__(self):
         return f"[{self.x},{self.y}]"
     
@@ -18,8 +22,11 @@ class Media(models.Model):
     file = models.ImageField(upload_to='uploads/')  # Path in S3 where files will be stored
     point = models.ForeignKey("Point", on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=100, verbose_name=_("Name"), null=True, blank=True)
-    caption = models.CharField(max_length=100, verbose_name=_("Caption"), null=True, blank=True)
+    caption = models.TextField(verbose_name=_("Caption"), null=True, blank=True)
     time_added = models.DateTimeField(auto_now=True)
+    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)  # Store user who created it
+    ip_address = models.GenericIPAddressField(null=True, blank=True)  # Store IP Address
+
     @property
     def path(self):
         return self.file.url
@@ -28,6 +35,8 @@ class Note(models.Model):
     text = models.TextField(verbose_name=_("Note"), blank=True)
     point = models.ForeignKey("Point", on_delete=models.CASCADE, null=False)
     time_added = models.DateTimeField(auto_now=True)
+    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)  # Store user who created it
+    ip_address = models.GenericIPAddressField(null=True, blank=True)  # Store IP Address
 
 
 
