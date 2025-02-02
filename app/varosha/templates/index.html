@@ -146,6 +146,36 @@
         });
         helpButtonControl = new helpButtonControl({position: 'topright'})
 
+        // Custom Control for Login/Logout
+        var loginControl = L.Control.extend({
+            onAdd: function(map) {
+                var div = L.DomUtil.create('div', 'info-control');
+
+                // Get login status from Django template variable
+                var isAuthenticated = {{ user.is_authenticated|lower }};  // True/False
+                var username = "{{ user.username }}";
+                var loginText = "{% trans 'Login' %}";
+                var logoutText = "{% trans 'Logout' %}";
+
+                if (isAuthenticated) {
+                    div.innerHTML = `<button id="user-info" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">👤 ${username} | <a href="{% url 'logout' %}" style="text-decoration: none; color: red;">${logoutText}</a></button>`;
+                } else {
+                    div.innerHTML = `<button id="login-button" style="background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;"><a href="{% url 'login' %}" style="text-decoration: none; color: black;">${loginText}</a></button>`;
+                }
+
+                div.style.backgroundColor = 'white';
+                div.style.padding = '5px';
+                div.style.border = '1px solid #ccc';
+                div.style.borderRadius = '5px';
+
+                L.DomEvent.disableClickPropagation(div);
+                return div;
+            }
+        });
+        // Add the control to the map
+        var loginControl = new loginControl({ position: 'topleft' });
+
+
         const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 20,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -215,10 +245,13 @@
                         intro: '{% trans "Finally, click here to see these instructions again" %}',
                     },
                 ],
+                
                 showProgress: true, // Show progress dots at the bottom
                 showBullets: false, // Disable step bullets
                 exitOnOverlayClick: false, // Prevent accidental exits
-                doneLabel: '{% trans "Finish" %}', // Customize the finish button
+                prevLabel: '{% trans "Back" %}', 
+                nextLabel: '{% trans "Next" %}', 
+                doneLabel: '{% trans "Finish" %}', // Customize the finish buttonz
             })
             .start();
         }
@@ -226,6 +259,7 @@
         function loadPopup(data) {
                 setCookie('mapZoom', map.getZoom(), 7);  // Saves for 7 days
                 activePopup = addPointPopup;
+                map.removeControl(loginControl);
                 map.removeControl(layerControl);
                 map.removeControl(languageControl);
                 map.removeControl(map.zoomControl);
@@ -351,6 +385,8 @@
         }).addTo(map);
         map.addControl(photoGalleryControl);
         map.addControl(helpButtonControl);
+        map.addControl(loginControl);
+        map.addControl(map.zoomControl);
 
 
 
@@ -362,6 +398,8 @@
 
             map.addControl(photoGalleryControl);
             map.addControl(layerControl);
+            map.removeControl(map.zoomControl);
+            map.addControl(loginControl);
             map.addControl(map.zoomControl);
             map.addControl(helpButtonControl);
             activePopup = null;

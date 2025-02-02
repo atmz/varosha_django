@@ -2,6 +2,9 @@ from django import forms
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
+
 
 from .models import Point, Media, Note
 
@@ -52,3 +55,14 @@ class MediaForm(ModelForm):
 class UserChatBotAIConversationSendMessageForm(forms.Form):
     conversation_id = forms.IntegerField()
     user_message = forms.CharField(widget=forms.Textarea)
+
+
+
+User = get_user_model()
+
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['email', 'password1', 'password2']

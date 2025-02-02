@@ -171,6 +171,11 @@ if "SUPER_USER_PASS" in environ:
 else:
     SUPER_USER_PASS = "dev-admin-pass"
 
+if "MAIL_PASS" in environ:
+    MAIL_PASS = environ.get("SUPER_USER_PASS")
+else:
+    MAIL_PASS = ""
+
 THUMBNAIL_DEBUG=True
 LOGGING = {
     'version': 1,

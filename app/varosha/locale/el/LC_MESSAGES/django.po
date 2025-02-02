@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-26 17:54+0000\n"
+"POT-Creation-Date: 2025-02-02 18:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,46 +17,49 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: varosha/forms.py:19
+#: varosha/forms.py:22
 msgid "Add note, memory or name"
 msgstr "Προσθέστε σημείωση, ανάμνηση ή όνομα"
 
-#: varosha/forms.py:30 varosha/models.py:12 varosha/models.py:20
+#: varosha/forms.py:33 varosha/models.py:14 varosha/models.py:24
 #: varosha/templates/index_old.html:421
 msgid "Name"
 msgstr "Όνομα"
 
-#: varosha/models.py:10
+#: varosha/models.py:12
 msgid "Longitude"
 msgstr "Γεωγραφικό μήκος"
 
-#: varosha/models.py:11
+#: varosha/models.py:13
 msgid "Latitude"
 msgstr "Γεωγραφικό πλάτος"
 
-#: varosha/models.py:21
+#: varosha/models.py:25
 msgid "Caption"
 msgstr "Λεζάντα"
 
-#: varosha/models.py:28
+#: varosha/models.py:35
 msgid "Note"
 msgstr "Σημείωση"
 
-#: varosha/templates/edit_point_form.html:46
-#: varosha/templates/index_old.html:180
-#: varosha/templates/media_gallery.html:100
-#: varosha/templates/media_gallery.html:112
+#: varosha/templates/edit_point_form.html:50
+#: varosha/templates/index_old.html:180 varosha/templates/media_gallery.html:99
+#: varosha/templates/media_gallery.html:111
 msgid "Save"
 msgstr "Αποθήκευση"
 
-#: varosha/templates/edit_point_form.html:47
+#: varosha/templates/edit_point_form.html:51
 msgid "Add Photo"
 msgstr "Προσθήκη Φωτογραφίας"
 
-#: varosha/templates/edit_point_form.html:54
+#: varosha/templates/edit_point_form.html:58
 #: varosha/templates/index_old.html:293
 msgid "Upload"
 msgstr "Μεταφόρτωση"
+
+#: varosha/templates/edit_point_form.html:69
+msgid "Delete Point"
+msgstr ""
 
 #: varosha/templates/index.html:12
 msgid "Varosha Mapping Project"
@@ -147,32 +150,40 @@ msgstr ""
 msgid "Finally, click here to see these instructions again"
 msgstr "Τέλος, πατήστε εδώ για να δείτε πάλε τούτες τες οδηγίες"
 
-#: varosha/templates/index.html:221
+#: varosha/templates/index.html:222
+msgid "Back"
+msgstr "Πίσω"
+
+#: varosha/templates/index.html:223
+msgid "Next"
+msgstr "Επόμενο"
+
+#: varosha/templates/index.html:224
 msgid "Finish"
 msgstr "Τέλος"
 
-#: varosha/templates/index.html:248
+#: varosha/templates/index.html:251
 msgid "Change photo"
 msgstr "Αλλαγή φωτογραφίας"
 
-#: varosha/templates/index.html:253
+#: varosha/templates/index.html:256
 msgid "Add photo"
 msgstr "Προσθήκη φωτογραφίας"
 
-#: varosha/templates/index.html:346 varosha/templates/index_old.html:580
+#: varosha/templates/index.html:349 varosha/templates/index_old.html:580
 #: varosha/templates/set_location.html:99
 msgid "Places"
 msgstr "Τοποθεσίες"
 
-#: varosha/templates/index.html:398
+#: varosha/templates/index.html:401
 msgid "Uploading..."
 msgstr "Γίνεται μεταφόρτωση..."
 
-#: varosha/templates/index.html:410
+#: varosha/templates/index.html:413
 msgid "Upload successful!"
 msgstr "Η μεταφόρτωση ολοκληρώθηκε με επιτυχία!"
 
-#: varosha/templates/index.html:419 varosha/templates/index.html:424
+#: varosha/templates/index.html:422 varosha/templates/index.html:427
 msgid "Upload failed"
 msgstr "Αποτυχία μεταφόρτωσης"
 
@@ -289,41 +300,93 @@ msgstr "Νέο Πρόσωπο"
 #: varosha/templates/index_old.html:546
 msgid "Add Link"
 msgstr ""
+#: varosha/templates/login.html:6 varosha/templates/login.html:9
+#: varosha/templates/login.html:23
+msgid "Login"
+msgstr "Σύνδεση"
 
-#: varosha/templates/media_gallery.html:99
+#: varosha/templates/login.html:17
+#, fuzzy
+#| msgid "Enter name"
+msgid "Username"
+msgstr "Όνομα χρήστη"
+
+#: varosha/templates/login.html:20 varosha/templates/register.html:20
+msgid "Password"
+msgstr "Κωδικός πρόσβασης"
+
+#: varosha/templates/login.html:26
+msgid "Don't have an account?"
+msgstr "Δεν έχετε λογαριασμό;"
+
+#: varosha/templates/login.html:27
+msgid "Register here"
+msgstr "Εγγραφείτε εδώ"
+
+#: varosha/templates/media_gallery.html:98
 msgid "Enter name"
-msgstr "Όνομα"
+msgstr "Εισαγάγετε όνομα"
 
-#: varosha/templates/media_gallery.html:111
+#: varosha/templates/media_gallery.html:110
 #, fuzzy
 #| msgid "Caption"
 msgid "Enter caption"
-msgstr "Λεζάντα"
+msgstr "Εισαγάγετε λεζάντα"
 
-#: varosha/templates/media_gallery.html:121
+#: varosha/templates/media_gallery.html:127
 msgid "View on map"
 msgstr "Προβολή στον χάρτη"
 
-#: varosha/templates/media_gallery.html:124
+#: varosha/templates/media_gallery.html:130
 msgid "No map location known, yet"
 msgstr "Δεν είναι ακόμη γνωστή η τοποθεσία στον χάρτη"
 
-#: varosha/templates/media_gallery.html:125
+#: varosha/templates/media_gallery.html:131
 #, fuzzy
 msgid "Set map location"
 msgstr "Ορίστε την τοποθεσία στον χάρτη"
+
+#: varosha/templates/media_gallery.html:137
+msgid "Delete Media"
+msgstr "Διαγραφή πολυμέσων"
+
+#: varosha/templates/register.html:6 varosha/templates/register.html:26
+msgid "Register"
+msgstr "Εγγραφή"
+
+#: varosha/templates/register.html:9
+msgid "Sign Up"
+msgstr "Εγγραφή"
+
+#: varosha/templates/register.html:12
+msgid "There were errors in your form. Please correct them and try again."
+msgstr "Υπήρχαν σφάλματα στη φόρμα σας. Διορθώστε τα και δοκιμάστε ξανά."
+
+#: varosha/templates/register.html:17
+msgid "Email"
+msgstr "Email"
+
+#: varosha/templates/register.html:23
+msgid "Confirm Password"
+msgstr "Επιβεβαίωση κωδικού πρόσβασης"
+
+#: varosha/templates/register.html:29
+msgid "Already have an account?"
+msgstr "Έχετε ήδη λογαριασμό;"
+
+#: varosha/templates/register.html:30
+msgid "Login here"
+msgstr "Συνδεθείτε εδώ"
 
 #: varosha/templates/set_location.html:27
 msgid "Set Location for the Image"
 msgstr "Ορίστε την τοποθεσία για την εικόνα"
 
-#: varosha/views.py:232
-msgid "You"
-msgstr "Εσείς"
+#~ msgid "You"
+#~ msgstr "Εσείς"
 
-#: varosha/views.py:234
-msgid "AI Helper"
-msgstr "Βοηθός AI"
+#~ msgid "AI Helper"
+#~ msgstr "Βοηθός AI"
 
 #~ msgid "Your browser does not support the video tag."
 #~ msgstr "Ο περιηγητής σας δεν υποστηρίζει την ετικέτα βίντεο."

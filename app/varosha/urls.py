@@ -44,5 +44,6 @@ urlpatterns = [
     path('delete-point/<int:point_id>/', views.delete_point, name='delete-point'),
     path('delete-media/<int:media_id>/', views.delete_media, name='delete-media'),
     path('create-superuser/', views.create_superuser, name='create_superuser'),
+    path('register/', views.register, name='register'),
     
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

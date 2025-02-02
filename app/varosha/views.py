@@ -24,6 +24,9 @@ from .utils import get_client_ip
 
 from .models import Media, Note, Point
 from .forms import MediaForm, NoteForm, PointEditForm, PointForm
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from .forms import RegisterForm
 
 from .settings import MEDIA_URL
 from django.conf import settings
@@ -342,3 +345,18 @@ def create_superuser(request):
         pass
     else:
         User.objects.create_superuser(username=username, email=email, password=SUPER_USER_PASS)
+
+
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.username = user.email  # Set email as username if using email-based login
+            user.save()
+            login(request, user)  # Automatically log in the user after registration
+            return redirect('index')  # Redirect to homepage after successful signup
+    else:
+        form = RegisterForm()
+
+    return render(request, 'register.html', {'form': form})
