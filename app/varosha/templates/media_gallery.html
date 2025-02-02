@@ -131,6 +131,12 @@
                             <a href="{% url 'set_location' media.id %}">{% trans "Set map location" %}</a>
                         {% endif %}
                     </p>
+                        {% if user.is_superuser or user == media.creator %}
+                            <form class="delete-media-form" action="{% url 'delete-media' media.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="delete-button">{% trans "Delete Media" %}</button>
+                            </form>
+                        {% endif %}
                 </div>
             </div>
         {% endfor %}

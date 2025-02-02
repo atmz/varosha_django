@@ -169,7 +169,7 @@ else:
 if "SUPER_USER_PASS" in environ:
     SUPER_USER_PASS = environ.get("SUPER_USER_PASS")
 else:
-    SUPER_USER_PASS = None
+    SUPER_USER_PASS = "dev-admin-pass"
 
 THUMBNAIL_DEBUG=True
 LOGGING = {

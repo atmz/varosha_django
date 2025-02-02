@@ -7,7 +7,11 @@
         {{ point_form.id }}{{ point_form.x }}{{ point_form.y }}
     </div>
     <div class="form-row">
-        {{ point_form.name }}
+        {% if point and point.name %}
+            <strong>{{ point.name }}</strong>
+        {% else %}
+            {{ point_form.name }}
+        {% endif %}
     </div>
 
     <!-- Display Existing Notes -->
@@ -59,5 +63,11 @@
         <div id="upload-status"></div>
         <div id="media-preview" class="media-thumbnail" style="display: none"></div>
     </div>
+    {% if user.is_superuser or user == point_form.instance.creator %}
+    <form id="delete-point-form" action="{% url 'delete-point' point_form.instance.id %}" method="post" class="styled-form">
+        {% csrf_token %}
+        <button type="submit" class="delete-button">{% translate "Delete Point" %}</button>
+    </form>
+{% endif %}
 
 

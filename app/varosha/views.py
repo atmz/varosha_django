@@ -3,18 +3,24 @@ import os
 import re
 from django.db.models import Q
 from django.utils import timezone
+from django.shortcuts import get_object_or_404, redirect
 
 from django.utils.translation import gettext as _
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
+from django.contrib.auth import authenticate, login, logout
 from django.utils.translation import activate
 from django.utils.translation import get_language
+from django.contrib.auth.decorators import login_required
+
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from django.views.decorators.http import require_POST
+
+from .utils import get_client_ip
 
 from .models import Media, Note, Point
 from .forms import MediaForm, NoteForm, PointEditForm, PointForm
@@ -35,6 +41,7 @@ def _get_point_html(request, point):
     existing_media = Media.objects.filter(point=point)
 
     return loader.render_to_string('edit_point_form.html', {
+        'point':point,
         'point_form': point_form,
         'note_form': note_form,
         'existing_notes': existing_notes,
@@ -78,6 +85,9 @@ def create_point(request):
     x = request.GET.get('x')
     y = request.GET.get('y')
     point = Point(x=x, y=y)
+    point.ip_address = get_client_ip(request)
+    if request.user.is_authenticated:
+        point.creator = request.user
     point.save()
     return redirect(f'edit-point/{point.id}/')    
 
@@ -128,14 +138,10 @@ def media_form(request):
            
             form.instance.file.name = new_filename
             media = form.save()
-
-            # Get the current language
-            current_language = get_language()
-
-            # # Start a new conversation for the uploaded media with the current language
-            # conversation = Conversation.objects.create(point=media.point, media=media, language=current_language)
-            # conversation.initialize()
-            
+            media.ip_address = get_client_ip(request)
+            if request.user.is_authenticated:
+                media.creator = request.user
+            media.save()
             return JsonResponse({'success': True, 
                 'media_url': media.file.url,  # Assuming you have a media model with a file field
                 'message': 'Upload successful'})
@@ -172,14 +178,6 @@ def media_form(request):
 #     return JsonResponse({'success': False})
 
 def index(request):
-    username = 'admin'
-    email = 'alex.toumazis+admin@gmail.com'
-    from django.contrib.auth.models import User
-    from varosha.settings import SUPER_USER_PASS
-    if User.objects.filter(username=username).exists() or not SUPER_USER_PASS:
-        pass
-    else:
-        User.objects.create_superuser(username=username, email=email, password=SUPER_USER_PASS)
 
     context = {}
     context["point_data"] = []
@@ -203,70 +201,6 @@ def set_language_to_greek(request):
     response = HttpResponseRedirect(reverse('index'))  # Redirect to the index page
     response.set_cookie(settings.LANGUAGE_COOKIE_NAME, 'el')
     return response
-
-@require_POST
-def user_chat_bot_ai_conversation_send_message(request):
-    form = UserChatBotAIConversationSendMessageForm(request.POST)
-    if form.is_valid():
-        conversation_id = form.cleaned_data['conversation_id']
-        user_message = form.cleaned_data['user_message']
-        
-        conversation = get_object_or_404(Conversation, id=conversation_id)
-        conversation.send_message(user_message)
-        
-        # Retrieve the conversation messages
-        messages = conversation.messages.all().values('sender', 'text', 'timestamp')
-        
-        return JsonResponse({'messages': list(messages), 'is_over': conversation.is_over}, status=200)
-    else:
-        return JsonResponse({'error': 'Invalid form data'}, status=400)
-    
-
-def get_conversation(request, conversation_id):
-    conversation = get_object_or_404(Conversation, id=conversation_id)
-
-    messages = conversation.messages.all().values('id','sender', 'text', 'timestamp')
-    localized_messages = []
-    for message in messages:
-        if message['sender'] == 'user':
-            sender = _('You')
-        elif message['sender'] == 'model':
-            sender = _('AI Helper')
-        else:
-            sender = message['sender']  # Fallback in case there are other senders
-        localized_messages.append({
-            'id': message['id'],
-            'sender': sender,
-            'text': message['text']
-        })
-    type =  "media" if conversation.media else "point"
-    if type == "media":
-        return JsonResponse({
-            'conversation_id': conversation.id,
-            'messages': localized_messages,
-            'type': 'media',
-            'media_path': conversation.media.path,
-            'is_over': conversation.is_over,
-            })
-    elif type == "point":
-        return JsonResponse({
-            'conversation_id': conversation.id,
-            'messages': localized_messages,
-            'type': 'point',
-            'point_id': conversation.point.id,
-            'is_over': conversation.is_over,
-        })
-
-
-def conversations_list(request):
-    conversations = Conversation.objects.all()
-    return render(request, 'conversations_list.html', {'conversations': conversations})
-
-@require_POST
-def delete_conversation(request, conversation_id):
-    conversation = get_object_or_404(Conversation, id=conversation_id)
-    conversation.delete()
-    return redirect(reverse('conversations_list'))
 
 
 def media_gallery(request):
@@ -353,3 +287,58 @@ def update_media_field(request, media_id):
         except Media.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Media not found.'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('index')  # Redirect to home page after login
+        else:
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
+
+    return render(request, 'login.html')
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')  # Redirect to login page after logout
+
+
+@login_required
+def delete_point(request, point_id):
+    point = get_object_or_404(Point, id=point_id)
+
+    # Ensure only creator or superuser can delete
+    if request.user == point.creator or request.user.is_superuser:
+        point.delete()
+        return redirect('index')  # Redirect to map or home
+
+    return HttpResponseForbidden("You are not allowed to delete this point.")
+
+
+
+@login_required
+def delete_media(request, media_id):
+    media = get_object_or_404(Media, id=media_id)
+
+    # Ensure only creator or superuser can delete
+    if request.user == media.creator or request.user.is_superuser:
+        media.delete()
+        return redirect('media_gallery')  # Redirect after deletion
+
+    return HttpResponseForbidden("You are not allowed to delete this media.")
+
+
+
+def create_superuser(request):
+    username = 'admin'
+    email = 'alex.toumazis+admin@gmail.com'
+    from django.contrib.auth.models import User
+    from varosha.settings import SUPER_USER_PASS
+    if User.objects.filter(username=username).exists() or not SUPER_USER_PASS:
+        pass
+    else:
+        User.objects.create_superuser(username=username, email=email, password=SUPER_USER_PASS)

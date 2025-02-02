@@ -39,9 +39,10 @@ urlpatterns = [
     path('associate-image/<int:image_id>/', views.associate_image_with_point, name='associate_image_with_point'),
     path('set-location/<int:image_id>/', views.set_image_location, name='set_location'),
     path('update-media/<int:media_id>/', views.update_media_field, name='update_media_field'),
-
-
-
-
-
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    path('delete-point/<int:point_id>/', views.delete_point, name='delete-point'),
+    path('delete-media/<int:media_id>/', views.delete_media, name='delete-media'),
+    path('create-superuser/', views.create_superuser, name='create_superuser'),
+    
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
